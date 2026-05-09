@@ -724,7 +724,7 @@ def run_radar_system():
         temp_path = final_path + ".tmp"
         try:
             with open(temp_path, 'w') as f:
-                json.dump(payload_data, f, separators=(',', ':'))
+                json.dump(payload_data, f, separators=(',', ':'), default=str)
             shutil.move(temp_path, final_path)
             print(f"   ✅ {filename} Written Successfully.")
         except Exception as e:
