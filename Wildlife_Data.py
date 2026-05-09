@@ -594,6 +594,8 @@ def run_radar_system():
     pokedex_stats = {}
     ALLOWED_TAXA = ["bird", "mammal", "reptile", "amphibian", "frog"]
     
+    df.columns = df.columns.str.strip()
+    
     df['DateObj'] = pd.to_datetime(df['Date/Time'], dayfirst=True, errors='coerce')
 
     if 'Notes' in df.columns:
