@@ -122,7 +122,7 @@ SPECIES_MAP = {
 # 🚨 
 EXCLUDE_LIST = [
     "fur seal", "little penguin", "red junglefowl", 
-    "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", " and ", "possums", "unknown", "domestic", "×", " sp.", "birds", "cattle", "pardalotes", "black faced cuckoo shrike", [...]
+    "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", " and ", "possums", "unknown", "domestic", "×", " sp.", "birds", "cattle", "pardalotes", "black faced cuckoo shrike",
 ]
 
 # 🚨 Force specific conservation statuses (Overrides DEECA and iNat)
