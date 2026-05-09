@@ -318,132 +318,103 @@ def run_radar_system():
             "species": int(len(v["species"])),
             "taxonomy_split": v["tax_split"]
         }
-        
-    # ==========================================
-    # --- LIBRARY PRE-CALCULATION ENGINE ---
-    # ==========================================
-    print("   📊 Pre-calculating Library stats...")
-    library_payload = {}
-    
-    # 0. Clean up headers
-    df.columns = df.columns.str.strip()
-    
-    # 1. HARD-LOCKED COLUMNS
-    species_col = 'Common Name'
-    date_col = 'Date/Time'
-    media_col = 'Media Type'
-    status_col = 'Conservation Status'
-    tax_col = 'Taxonomy'
-    zone_col = 'Zone'
 
-    # 2. Parse the exact Date format
-    df['DateObj'] = pd.to_datetime(df[date_col], dayfirst=True, errors='coerce')
+    # ==========================================
+    # --- 1. LIVE STATS ENGINE ---
+    # ==========================================
+    print("   📊 Crunching live statistics from spreadsheet...")
+    
+    pokedex_stats = {}
+    matrix_blacklist = ["Common Froglet", "Human", "Dog", "Short-finned Eel"]
+    
+    # Ensure date objects are ready for calculation
+    df['DateObj'] = pd.to_datetime(df['Date/Time'], dayfirst=True, errors='coerce')
 
-    # 3. Group the spreadsheet by the matched column
-    for species, group in df.groupby(species_col):
+    for species, group in df.groupby('Common Name'):
         clean_species_name = str(species).strip()
         
-        # --- EXCLUSION ENGINE ---
-        matrix_blacklist = ["Common Froglet", "Human", "Dog", "Short-finned Eel"]
+        # Skip blacklisted items
         if clean_species_name in matrix_blacklist:
             continue 
-            
-        try:
-            if tax_col in group.columns:
-                valid_tax = group[tax_col].replace(["", "nan", "NaN", "None"], pd.NA).dropna()
-                if len(valid_tax) > 0:
-                    raw_tax = str(valid_tax.to_list()).strip().lower()
-                    allowed_taxa = ["bird", "mammal", "reptile", "amphibian"]
-                    if not any(allowed in raw_tax for allowed in allowed_taxa):
-                        continue
-        except Exception:
-            pass 
-            
-        # A. Total Encounters
+
+        # A. Basic Counts & Dates
         encounters = int(len(group))
-        
-        # B. Latest Date
         latest_date = group['DateObj'].max()
         latest_str = "Unknown" if pd.isna(latest_date) else latest_date.strftime('%d/%m/%y')
-            
-        # C. Detection Profile
-        media_counts = group[media_col].astype(str).str.lower().value_counts()
+
+        # B. Detection Profile (Audio vs Visual)
+        media_counts = group['Media Type'].astype(str).str.lower().value_counts()
         audio_c, visual_c = 0, 0
+        for val, count in media_counts.items():
+            if 'audio' in val: audio_c += count
+            if 'visual' in val: visual_c += count
         
-        for media_val, count in media_counts.items():
-            if 'audio' in media_val and 'visual' in media_val or 'both' in media_val:
-                audio_c += count; visual_c += count
-            elif 'audio' in media_val:
-                audio_c += count
-            else:
-                visual_c += count
-                
         total_av = audio_c + visual_c
         if total_av > 0:
             a_pct = (audio_c / total_av) * 100
-            if a_pct >= 75: detection = "Audio"
-            elif a_pct <= 25: detection = "Visual"
-            else: detection = "Mixed"
+            detection = "Audio" if a_pct >= 75 else "Visual" if a_pct <= 25 else "Mixed"
         else:
             detection = "Unknown"
 
-        # D. Security Check
-        try:
-            if status_col in group.columns:
-                valid_status = group[status_col].replace(["", "nan", "NaN", "None"], pd.NA).dropna()
-                raw_status = str(valid_status.to_list()).strip().lower() if len(valid_status) > 0 else "unknown"
-            else:
-                raw_status = "unknown"
-        except:
-            raw_status = "unknown"
-
-        threat_keywords = ["vulnerable", "endangered", "critically", "threatened", "near threatened", "rare", "extinct"]
-        is_safe = not any(keyword in raw_status for keyword in threat_keywords)
+        # C. Security & Hotspot Logic
+        # Hidden hotspots for sensitive/threatened species
+        threat_keywords = ["vulnerable", "endangered", "threatened"]
+        raw_status = str(group['Conservation Status'].to_list()).lower()
         
-        if "glossy black-cockatoo" in str(species).lower() or "powerful owl" in str(species).lower():
-            is_safe = False
+        is_sensitive = any(k in raw_status for k in threat_keywords) or \
+                       any(s in clean_species_name.lower() for s in ["glossy black-cockatoo", "powerful owl"])
 
-        # E. Primary Hotspot
-        if not is_safe:
-            hotspot = "Hidden" 
+        if is_sensitive:
+            hotspot = "Hidden"
         else:
-            try:
-                if zone_col in group.columns:
-                    valid_zones = group[zone_col].replace(["", "nan", "NaN"], pd.NA).dropna()
-                    if len(valid_zones) > 0:
-                        raw_hotspot = str(valid_zones.mode().to_list())
-                        clean_hs = raw_hotspot.replace('[', '').replace(']', '').replace("'", "").replace('"', '').strip()
-                        
-                        if "Frankston Nature" in clean_hs or "Frankston NCR" in clean_hs: hotspot = "Frankston NCR"
-                        elif "Langwarrin" in clean_hs: hotspot = "Langwarrin FFR"
-                        elif "Pines" in clean_hs: hotspot = "The Pines"
-                        elif "Kananook" in clean_hs: hotspot = "Kananook Creek"
-                        else:
-                            words = clean_hs.split()
-                            hotspot = " ".join(words[:2]) if len(words) > 2 else clean_hs
-                    else: hotspot = "Unknown"
-                else: hotspot = "Unknown"
-            except: hotspot = "Unknown"
+            # Find the most common zone for this species
+            mode_zones = group['Zone'].mode()
+            hotspot = mode_zones.iloc if not mode_zones.empty else "Unknown"
 
-        # F. Taxonomy
-        try:
-            if tax_col in group.columns:
-                valid_tax = group[tax_col].replace(["", "nan", "NaN", "None"], pd.NA).dropna()
-                if len(valid_tax) > 0:
-                    taxonomy = str(valid_tax.to_list()).strip().title()
-                    if taxonomy.lower() == "nan": taxonomy = "Unknown"
-                else: taxonomy = "Unknown"
-            else: taxonomy = "Unknown"
-        except: taxonomy = "Unknown"
+        # D. Taxonomy
+        taxonomy = str(group['Taxonomy'].mode().iloc) if not group['Taxonomy'].dropna().empty else "Unknown"
 
-        # Save to the dictionary
-        library_payload[clean_species_name] = {
+        # Store these results in our temporary dictionary
+        pokedex_stats[clean_species_name] = {
             "count": encounters,
             "latest_date": latest_str,
             "detection": detection, 
             "hotspot": hotspot,
             "taxonomy": taxonomy
         }
+
+    # ==========================================
+    # --- 2. MASTER MERGE ---
+    # ==========================================
+    print("   🧬 Merging with Expected Master List...")
+    
+    with open('expected_species_master.json', 'r') as f:
+        library_payload = json.load(f)
+
+    for sp_name, stats in pokedex_stats.items():
+        if sp_name in library_payload:
+            # Species was expected and found! Update its card.
+            entry = library_payload[sp_name]
+            entry['status'] = "recorded"
+            entry['liveCount'] = stats['count']
+            entry['liveLastSighted'] = stats['latest_date']
+            entry['liveDetection'] = stats['detection']
+            entry['liveHotspot'] = stats['hotspot']
+            entry['liveTaxonomy'] = stats['taxonomy']
+        else:
+            # Species was NOT on the expected list but we found it anyway!
+            library_payload[sp_name] = {
+                "scientific_name": "Incipient Record",
+                "threat_status": "Recorded",
+                "status": "recorded",
+                "liveCount": stats['count'],
+                "liveLastSighted": stats['latest_date'],
+                "liveDetection": stats['detection'],
+                "liveHotspot": stats['hotspot'],
+                "liveTaxonomy": stats['taxonomy']
+            }
+
+    print(f"   ✅ Library Complete: {len(library_payload)} total species cards ready.")
 
     # ==========================================
     # --- FINAL PAYLOAD SPLIT & LOCAL EXPORT ---
