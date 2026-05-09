@@ -11,16 +11,266 @@ import pickle
 import numpy as np
 import math
 import shutil
+import glob
+import io
 
 # ==========================================
 # --- CONFIGURATION ---
 # ==========================================
+
+BASE_DIR = "."
+VBA_DIR = os.path.join(BASE_DIR, "VBA_Raw_Data")
 SHEET_KEY = "1yx3Jq6JQmpLkL737nwahTfOMAHjy52rZ1LULIyXRZRY"
 OUTPUT_DIR = "."
 INAT_USERNAME = "irreparable" 
 MAX_TARGETS_PER_ZONE = 4
 
-# OFFICIAL RESERVES (Must match Website CSS)
+# --- MASTER TAXONOMY MAP ---
+SPECIES_MAP = {
+    "gray fantail": "Grey Fantail",
+    "gray shrikethrush": "Grey Shrikethrush",
+    "gray butcherbird": "Grey Butcherbird",
+    "gray teal": "Grey Teal",
+    "peewee": "Magpie-lark",
+    "magpie lark": "Magpie-lark",
+    "willie wagtail": "Willie Wagtail",
+    "rainbow lorikeet": "Eastern Rainbow Lorikeet",
+    "echidna": "Eastern Short-beaked Echidna",
+    "magpie": "Australian Magpie",
+    "tasmanian scrubwren": "White-browed Scrubwren",
+    "kookaburra": "Laughing Kookaburra",
+    "red browed firetail": "Red-browed Finch",
+    "gbc": "Glossy Black-Cockatoo",
+    "glossy black cockatoo": "Glossy Black-Cockatoo",
+    "yellow tailed black cockatoo": "Yellow-tailed Black-Cockatoo",
+    "black shouldered kite": "Black-shouldered Kite",
+    "australian swamp rat": "Swamp Rat",
+    "australian ibis": "Australian White Ibis",
+    "australian rufous fantail": "Rufous Fantail",
+    "pale-flecked garden sunskink": "Garden Skink",
+    "grey shrike thrush": "Grey Shrikethrush",
+    "superb fairy wren": "Superb Fairywren",
+    "yellow rumped thornbill": "Yellow-rumped Thornbill",
+    "white browed scrubwren": "White-browed Scrubwren",
+    "white striped free tailed bat": "White-striped Free-tailed Bat",
+    "southern free tailed bat": "South-eastern Free-tailed Bat",
+    "eastern shrike tit": "Eastern Shriketit", 
+    "white winged triller": "White-winged Triller",
+    "white throated treecreeper": "White-throated Treecreeper",
+    "white naped honeyeater": "White-naped Honeyeater",
+    "brown headed honeyeater": "Brown-headed Honeyeater",
+    "yellow faced honeyeater": "Yellow-faced Honeyeater",
+    "white eared honeyeater": "White-eared Honeyeater",
+    "white plumed honeyeater": "White-plumed Honeyeater",
+    "red browed finch": "Red-browed Finch",
+    "eastern snake necked turtle": "Eastern Snake-necked Turtle",
+    "eastern three lined skink": "Eastern Three-lined Skink",
+    "lesser long eared bat": "Lesser Long-eared Bat",
+    "short beaked echidna": "Eastern Short-beaked Echidna",
+    "common brush tailed possum": "Common Brushtail Possum",
+    "eastern ring tailed possum": "Common Ringtail Possum",
+    "black tailed wallaby": "Swamp Wallaby",
+    "bare nosed wombat": "Bare-nosed Wombat",
+    "straw necked ibis": "Straw-necked Ibis",
+    "white faced heron": "White-faced Heron",
+    "sulphur crested cockatoo": "Sulphur-crested Cockatoo",
+    "blue winged parrot": "Blue-winged Parrot",
+    "australian owlet nightjar": "Australian Owlet-nightjar",
+    "fan tailed cuckoo": "Fan-tailed Cuckoo",
+    "southern brown tree frog southern": "Southern Brown Tree Frog",
+    "hoary headed grebe": "Hoary-headed Grebe",
+    "blue billed duck": "Blue-billed Duck",
+    "scaly breasted lorikeet": "Scaly-breasted Lorikeet",
+    "painted button quail": "Painted Buttonquail",
+    "white necked heron": "White-necked Heron",
+    "gang gang cockatoo": "Gang-gang Cockatoo",
+    "white throated needletail": "White-throated Needletail",
+    "white fronted chat": "White-fronted Chat",
+    "southern emu wren": "Southern Emu-wren",
+    "olive backed oriole": "Olive-backed Oriole",
+    "black faced cuckooshrike": "Black-faced Cuckooshrike",
+    "red bellied black snake": "Red-bellied Black Snake",
+    "wedge tailed eagle": "Wedge-tailed Eagle",
+    "white winged chough": "White-winged Chough",
+    "white throated nightjar": "White-throated Nightjar",
+    "pale flecked garden sunskink": "Pale-flecked Garden Sunskink",
+    "dark flecked garden sunskink": "Dark-flecked Garden Sunskink",
+    "great crested tern": "Greater Crested Tern",
+    "red necked avocet": "Red-necked Avocet",
+    "short tailed shearwater": "Short-tailed Shearwater",
+    "blotched bluetongue": "Blotched Blue-tongued Lizard",
+    "common bluetongue": "Common Blue-tongued Lizard",
+    "blotched blue tongued lizard": "Blotched Blue-tongued Lizard",
+    "common blue tongued lizard": "Common Blue-tongued Lizard",
+    "garden skink": "Pale-flecked Garden Sunskink",
+    "pobblebonk frog": "Eastern Banjo Frog",
+    "blue faced honeyeater": "Blue-faced Honeyeater",
+    "grey headed flying fox": "Grey-headed Flying-fox",
+    "white lipped snake": "White-lipped Snake",
+    "eastern short necked turtle": "Eastern Short-necked Turtle",
+    "long billed corella": "Long-billed Corella",
+    "tree dragon": "Jacky Dragon",
+    "white footed dunnart": "White-footed Dunnart",
+    "whites skink": "White's Skink",
+    "white s skink": "White's Skink",
+    "eurasian blackbird": "Common Blackbird",
+    "rock pigeon": "Feral Pigeon",
+    "lowlands copperhead": "Lowland Copperhead",
+    "buff banded rail": "Buff-banded Rail"
+}
+
+# 🚨 
+EXCLUDE_LIST = [
+    "fur seal", "little penguin", "red junglefowl", 
+    "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", " and ", "possums", "unknown", "domestic", "×", " sp.", "birds", "cattle", "pardalotes", "black faced cuckoo shrike", "ferret", "common froglet", "european starling", "scarlet myzomela"
+]
+
+# 🚨 Force specific conservation statuses (Overrides DEECA and iNat)
+STATUS_OVERRIDES = {
+    "Glossy Black-Cockatoo": "Critically Endangered",
+    "Swamp Wallaby": "Least Concern",
+    "Grey-headed Flying-fox": "Vulnerable",
+    "Red Fox": "Introduced", 
+    "Koala": "Vulnerable",
+    "European Rabbit": "Introduced",
+    "European Greenfinch": "Introduced",
+    "Common Blackbird": "Introduced",
+    "Common Myna": "Introduced",
+    "European Rabbit": "Introduced",
+    "Common Starling": "Introduced",
+    "European Goldfinch": "Introduced",
+    "House Sparrow": "Introduced",
+    "House Mouse": "Introduced",
+    "Black Rat": "Introduced",
+    "Brown Rat": "Introduced",
+    "Feral Pigeon": "Introduced",
+    "Domestic Mallard": "Introduced",
+    "Magpie Goose": "Vulnerable",
+    "Grey-headed Flying-fox": "Vulnerable"
+}
+
+def normalize_species_name(name):
+    safe_name = str(name).replace("-", " ") 
+    clean_name = safe_name.strip().lower()
+    if clean_name in SPECIES_MAP: 
+        return SPECIES_MAP[clean_name]
+        
+    title_name = safe_name.strip().title()
+    lowercase_suffixes = [
+        'tailed', 'rumped', 'eared', 'breasted', 'winged', 'naped', 
+        'bellied', 'capped', 'crowned', 'throated', 'backed', 'billed', 
+        'faced', 'headed', 'necked', 'eyed', 'legged', 'footed', 'browed',
+        'wren', 'shrike', 'cuckoo', 'quail', 'knee'
+    ]
+    for suffix in lowercase_suffixes:
+        title_name = title_name.replace(f"-{suffix.title()}", f"-{suffix}")
+        
+    return title_name.replace("'S", "'s")
+
+def parse_vba_summary(filepath):
+    with open(filepath, 'r', encoding='latin1') as f:
+        lines = f.readlines()
+
+    reserve_name = "Unknown Reserve"
+    header_idx = -1
+
+    for i, line in enumerate(lines):
+        safe_line = str(line)
+        if "Name:" in safe_line and reserve_name == "Unknown Reserve":
+            parts = safe_line.split("Name:")
+            if len(parts) > 1: reserve_name = str(parts[-1]).strip()
+        if safe_line.startswith('Taxon ID'):
+            header_idx = i
+            break
+            
+    if header_idx == -1: return pd.DataFrame(), reserve_name
+
+    clean_lines = [str(line) for line in lines[header_idx:] if str(line).strip() and not str(line).startswith('Copyright')]
+    return pd.read_csv(io.StringIO("".join(clean_lines))), reserve_name
+
+def inject_inaturalist_data(species_dict):
+    print("   🌐 Fetching modern iNaturalist sightings...")
+    TARGET_TAXA = "3,40151,26036,20978"
+    
+    for reserve_name, coords in RESERVES.items():
+        lat_min, lat_max, lon_min, lon_max = coords
+        url = f"https://api.inaturalist.org/v1/observations/species_counts?swlat={lat_min}&swlng={lon_min}&nelat={lat_max}&nelng={lon_max}&quality_grade=research&taxon_id={TARGET_TAXA}"
+        
+        try:
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                for result in response.json().get('results', []):
+                    taxon = result.get('taxon', {})
+                    raw_name = taxon.get('preferred_common_name') or taxon.get('name')
+                    if not raw_name: continue
+                        
+                    name = normalize_species_name(raw_name)
+                    if any(bad in name.lower() for bad in EXCLUDE_LIST): continue
+                    
+                    if name not in species_dict:
+                        species_dict[name] = {
+                            "scientific_name": taxon.get('name', 'Unknown'),
+                            "threat_status": "Least Concern", 
+                            "status": "unrecorded",
+                            "reserves": [reserve_name]
+                        }
+                    elif reserve_name not in species_dict[name]["reserves"]:
+                        species_dict[name]["reserves"].append(reserve_name)
+            time.sleep(1) 
+        except Exception as e:
+            print(f"   ❌ iNat Error for {reserve_name}: {e}")
+    return species_dict
+
+def build_master_list():
+    print("🧬 Scanning VBA Summary Files...")
+    all_csvs = glob.glob(os.path.join(VBA_DIR, "*.csv"))
+    
+    if not all_csvs:
+        print("   ⚠️ No CSVs found in VBA_Raw_Data folder!")
+        return {}
+
+    master_df = pd.DataFrame()
+    for file in all_csvs:
+        try:
+            df, reserve_name = parse_vba_summary(file)
+            if not df.empty:
+                df['Reserve'] = reserve_name 
+                master_df = pd.concat([master_df, df], ignore_index=True)
+        except Exception as e:
+            pass # Silently skip bad files
+
+    if master_df.empty: return {}
+
+    master_df['Normalized Name'] = master_df['Common Name'].apply(normalize_species_name)
+    species_dict = {}
+    
+    for _, row in master_df.iterrows():
+        name = row['Normalized Name']
+        reserve = row['Reserve']
+        
+        if not name or str(name).lower() == "nan": continue
+        if any(bad in name.lower().replace("-", " ") for bad in EXCLUDE_LIST): continue
+
+        # Use the VBA CSV's FFG Status, but override it if it's in your custom list
+        final_status = str(row.get('FFG Status', 'Least Concern')).strip()
+        if final_status == "Not Listed": final_status = "Least Concern"
+        if name in STATUS_OVERRIDES: final_status = STATUS_OVERRIDES[name]
+
+        if name not in species_dict:
+            species_dict[name] = {
+                "scientific_name": row.get('Scientific Name', 'Unknown'),
+                "threat_status": final_status,
+                "status": "unrecorded",
+                "reserves": [reserve]
+            }
+        elif reserve not in species_dict[name]["reserves"]:
+            species_dict[name]["reserves"].append(reserve)
+
+    species_dict = inject_inaturalist_data(species_dict)
+    print(f"✅ Success! Extracted {len(species_dict)} expected species.")
+    return species_dic
+
+# OFFICIAL RESERVES
 RESERVES = {
     "The Pines Flora and Fauna Reserve": (-38.135, -38.115, 145.161, 145.189),
     "Frankston Nature Conservation Reserve": (-38.184, -38.166, 145.124, 145.136),
@@ -386,7 +636,9 @@ def run_radar_system():
     # ==========================================
     # --- 2. MASTER MERGE ---
     # ==========================================
-    print("   🧬 Merging with Expected Master List...")
+    print("   🧬 Building Expected Master List from VBA & iNat...")
+    
+    library_payload = build_master_list()
     
     with open('expected_species_master.json', 'r') as f:
         library_payload = json.load(f)
@@ -402,7 +654,7 @@ def run_radar_system():
             entry['liveHotspot'] = stats['hotspot']
             entry['liveTaxonomy'] = stats['taxonomy']
         else:
-            # Species was NOT on the expected list but we found it anyway!
+            # Species was NOT on the expected list but found it anyway!
             library_payload[sp_name] = {
                 "scientific_name": "Incipient Record",
                 "threat_status": "Recorded",
