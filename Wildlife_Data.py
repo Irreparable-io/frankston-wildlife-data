@@ -551,3 +551,6 @@ def run_radar_system():
     atomic_write(dashboard_payload, "dashboard_data.json")
     
     print("🚀 Pipeline Complete!")
+
+if __name__ == "__main__":
+    run_radar_system()
