@@ -122,7 +122,7 @@ SPECIES_MAP = {
 # 🚨 
 EXCLUDE_LIST = [
     "fur seal", "little penguin", "red junglefowl", 
-    "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", " and ", "possums", "unknown", "domestic", "×", " sp.", "birds", "cattle", "pardalotes", "black faced cuckoo shrike", "ferret", "common froglet", "european starling", "scarlet myzomela"
+    "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", " and ", "possums", "unknown", "domestic", "×", " sp.", "birds", "cattle", "pardalotes", "black faced cuckoo shrike", [...]
 ]
 
 # 🚨 Force specific conservation statuses (Overrides DEECA and iNat)
@@ -492,7 +492,7 @@ def run_radar_system():
                 lon = float(row.get('Longitude', 0))
                 
                 if lat == 0 or lon == 0 or pd.isna(lat): continue 
-                               
+                                   
                 if is_threatened:
                     clean_zone = "Obscured"
                     # Lock coordinates to generic Frankston center
@@ -718,17 +718,28 @@ def run_radar_system():
     # ==========================================
     print("   📦 Assembling and writing final JSON payloads...")
 
-    # 1. Helper function for safe, atomic file writing
+    # 1. Enhanced atomic_write function with verbose logging
     def atomic_write(payload_data, filename):
         final_path = os.path.join(OUTPUT_DIR, filename)
         temp_path = final_path + ".tmp"
+        print(f"   🔍 Writing to: {final_path}")
+        print(f"   📦 Payload size: {len(json.dumps(payload_data))} bytes")
+        
         try:
             with open(temp_path, 'w') as f:
                 json.dump(payload_data, f, separators=(',', ':'), default=str)
-            shutil.move(temp_path, final_path)
-            print(f"   ✅ {filename} Written Successfully.")
+            print(f"   ✓ Temp file created: {temp_path}")
+            
+            # Verify temp file was created
+            if os.path.exists(temp_path):
+                shutil.move(temp_path, final_path)
+                print(f"   ✅ {filename} Written Successfully.")
+            else:
+                print(f"   ❌ Temp file not found at {temp_path}")
         except Exception as e:
             print(f"   ❌ Error writing {filename}: {e}")
+            import traceback
+            traceback.print_exc()
 
     # 2. THE PERFECT MATCH ALGORITHM
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
@@ -815,11 +826,12 @@ def run_radar_system():
     }
 
     # 4. EXPORT EVERYTHING
+    print("\n   📝 Starting file exports...\n")
     atomic_write(library_payload, "library_stats.json")
     atomic_write(landing_payload, "landing_data.json")
     atomic_write(dashboard_payload, "dashboard_data.json")
     
-    print("🚀 Pipeline Complete!")
+    print("\n🚀 Pipeline Complete!")
 
 if __name__ == "__main__":
     run_radar_system()
