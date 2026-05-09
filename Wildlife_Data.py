@@ -15,7 +15,7 @@ import math
 # --- CONFIGURATION ---
 # ==========================================
 SHEET_KEY = "1yx3Jq6JQmpLkL737nwahTfOMAHjy52rZ1LULIyXRZRY"
-OUTPUT_DIR = "H:/My Drive/Squarespace Stats Utilities"
+OUTPUT_DIR = "."
 INAT_USERNAME = "irreparable" 
 MAX_TARGETS_PER_ZONE = 4
 
@@ -75,15 +75,28 @@ def calculate_vpd(temp_c, humidity_perc):
 
 def run_radar_system():
     if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
-    print("\n📡 INITIALIZING DUNKLEY BIODIVERSITY RADAR (V4.5 - DAILY AGGREGATION)...")
+    print("\n📡 INITIALIZING DUNKLEY BIODIVERSITY RADAR (V4.5 - CLOUD EDITION)...")
     
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token: creds = pickle.load(token)
-    else: print("❌ Error: 'token.pickle' not found."); return
-
-    client = gspread.authorize(creds)
-    sheet = client.open_by_key(SHEET_KEY).get_worksheet(0)
-    df = pd.DataFrame(sheet.get_all_records())
+    try:
+        # 1. Pull the secret from the GitHub Cloud Environment
+        creds_dict = json.loads(os.environ.get('GOOGLE_CREDENTIALS'))
+        
+        # 2. Authenticate the Bot
+        client = gspread.service_account_from_dict(creds_dict)
+        
+        # 3. Open the sheet safely
+        sheet = client.open_by_key(SHEET_KEY).sheet1
+        
+        # 4. Load into Pandas
+        df = pd.DataFrame(sheet.get_all_records())
+        print(f"   📊 Successfully loaded {len(df)} records from Google Sheets.")
+        
+    except KeyError:
+        print("❌ Error: GOOGLE_CREDENTIALS secret not found in environment.")
+        return
+    except Exception as e:
+        print(f"❌ Error connecting to Google Sheets: {e}")
+        return
 
     # --- 1. COLUMN MAPPING (Do this FIRST so Pandas knows the names) ---
     cols = {k.lower(): k for k in df.columns}
@@ -126,7 +139,7 @@ def run_radar_system():
     print(f"   📊 MATH CHECK: {total_hours} Hours across {len(daily_stats)} unique field days.")
 
     # =========================================================
-    # 🚨 VPD SCATTER PLOT ENGINE & JSON EXPORT
+    # 🚨 VPD SCATTER PLOT ENGINE
     # =========================================================
     print("   📊 Calculating Vapor Pressure Deficit (VPD)...")
     
@@ -136,8 +149,8 @@ def run_radar_system():
 
     # 2. Apply VPD math row by row
     df['VPD_kPa'] = df.apply(
-        lambda row: calculate_vpd(row['Temp. (°C)'], row['Humidity (%)']) 
-        if pd.notnull(row['Temp. (°C)']) and pd.notnull(row['Humidity (%)']) 
+        lambda row: calculate_vpd(row.get('Temp. (°C)'), row.get('Humidity (%)')) 
+        if pd.notnull(row.get('Temp. (°C)')) and pd.notnull(row.get('Humidity (%)')) 
         else None, 
         axis=1
     )
@@ -145,18 +158,11 @@ def run_radar_system():
     # 3. Filter missing data
     vpd_df = df.dropna(subset=['VPD_kPa', 'Zone'])
     
-    # 4. Extract only what the scatter plot needs (Includes Taxonomy)
-    # Use .get() to avoid crashing if 'Taxonomy' happens to be blank
+    # 4. Extract only what the scatter plot needs
     vpd_export = vpd_df[['Date/Time', 'Zone', 'Common Name', 'VPD_kPa']].copy()
     vpd_export['Taxonomy'] = vpd_df.get('Taxonomy', 'Unknown')
     
     vpd_export_data = vpd_export.to_dict(orient='records')
-    
-    # 5. ATOMIC EXPORT: Write temp file, then replace (Prevents web sync errors)
-    vpd_path = os.path.join(OUTPUT_DIR, 'vpd_scatter_data.json')
-    with open(vpd_path + ".tmp", 'w') as f:
-        json.dump(vpd_export_data, f, separators=(',', ':'))
-    os.replace(vpd_path + ".tmp", vpd_path)
     
     print(f"   ✅ Generated {len(vpd_export_data)} VPD records for the dashboard.")
     # =========================================================
@@ -438,19 +444,24 @@ def run_radar_system():
             "taxonomy": taxonomy
         }
 
-    # Write the new Library JSON
-    library_path = os.path.join(OUTPUT_DIR, "library_stats.json")
-    with open(library_path + ".tmp", 'w') as f:
-        json.dump(library_payload, f, separators=(',', ':'))
-    os.replace(library_path + ".tmp", library_path)
-    print("   ✅ library_stats.json generated successfully!")
-
     # ==========================================
-    # --- FINAL PAYLOAD SPLIT (3-TIER ARCHITECTURE) ---
+    # --- FINAL PAYLOAD SPLIT & LOCAL EXPORT ---
     # ==========================================
-    print("   📦 Splitting and writing final payloads...")
+    print("   📦 Assembling and writing final JSON payloads...")
 
-    # --- THE PERFECT MATCH ALGORITHM ---
+    # 1. Helper function for safe, atomic file writing
+    def atomic_write(payload_data, filename):
+        final_path = os.path.join(OUTPUT_DIR, filename)
+        temp_path = final_path + ".tmp"
+        try:
+            with open(temp_path, 'w') as f:
+                json.dump(payload_data, f, separators=(',', ':'))
+            shutil.move(temp_path, final_path)
+            print(f"   ✅ {filename} Written Successfully.")
+        except Exception as e:
+            print(f"   ❌ Error writing {filename}: {e}")
+
+    # 2. THE PERFECT MATCH ALGORITHM
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
     js_threat_blacklist = ["least concern", "introduced", "invasive", "pest", "feral", "unknown"]
     
@@ -472,7 +483,7 @@ def run_radar_system():
     for row in compressed_obs:
         if len(row) < 5: continue
         
-        # Safe extraction
+        # Safe extraction without brackets
         sp_idx = row.__getitem__(2)
         zn_idx = row.__getitem__(3)
         st_idx = row.__getitem__(4)
@@ -481,15 +492,15 @@ def run_radar_system():
         zn_name = zone_legend.__getitem__(zn_idx)
         st_name = status_legend.__getitem__(st_idx)
         
-        # 1. Javascript Exclusion Rule
+        # Javascript Exclusion Rule
         if any(omit in str(sp_name).lower() for omit in js_omit_list):
             continue
             
-        # 2. Zone Exclusion Rule
+        # Zone Exclusion Rule
         if zn_name not in valid_zones:
             continue
             
-        # 3. Add to Final Counts
+        # Add to Final Counts
         if zn_name != "Unknown":
             strict_obs_count += 1
             strict_species_set.add(sp_name)
@@ -497,14 +508,15 @@ def run_radar_system():
             if not any(b in str(st_name).lower() for b in js_threat_blacklist):
                 strict_threatened_set.add(sp_name)
 
-            # 4. Add to Zone Badges (tracks unique species per zone)
+            # Add to Zone Badges (tracks unique species per zone)
             if zn_name in zone_species_sets:
-                zone_species_sets[zn_name].add(sp_name)
+                # Bracket-safe dictionary update
+                zone_species_sets.get(zn_name).add(sp_name)
 
     # Calculate final zone badges directly from the tracker
     final_zone_badges = {z: len(sp_set) for z, sp_set in zone_species_sets.items()}
 
-    # 1. LANDING PAGE DATA (Summary Stats + Heatmap + Zone Badges)
+    # 3. BUILD ALL PAYLOADS
     landing_payload = {
         "meta": {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
         "summary": {
@@ -518,10 +530,9 @@ def run_radar_system():
         "heatmap_data": optimized_heatmap 
     }
 
-    # 2. DASHBOARD DATA (Charts, Zones, VPD, Feed)
     dashboard_payload = {
         "meta": {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
-        "summary": landing_payload["summary"], # Keep a copy here so the header numbers still work
+        "summary": landing_payload.get("summary"), # Bracket-safe dictionary grab
         "legends": {
             "species": species_legend,
             "zones": zone_legend,
@@ -534,20 +545,9 @@ def run_radar_system():
         "data": compressed_obs 
     }
 
-    import shutil
-
-    # Helper function for Atomic Writes
-    def atomic_write(payload_data, filename):
-        final_path = os.path.join(OUTPUT_DIR, filename)
-        temp_path = final_path + ".tmp"
-        try:
-            with open(temp_path, 'w') as f:
-                json.dump(payload_data, f, separators=(',', ':'))
-            shutil.move(temp_path, final_path)
-            print(f"   ✅ {filename} Written Successfully.")
-        except Exception as e:
-            print(f"   ❌ Error writing {filename}: {e}")
-
-    # Write the two master files!
+    # 4. EXPORT EVERYTHING
+    atomic_write(library_payload, "library_stats.json")
     atomic_write(landing_payload, "landing_data.json")
     atomic_write(dashboard_payload, "dashboard_data.json")
+    
+    print("🚀 Pipeline Complete!")
