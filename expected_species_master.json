@@ -1,0 +1,2335 @@
+{
+    "Jacky Dragon": {
+        "scientific_name": "Amphibolurus muricatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Swamp Skink": {
+        "scientific_name": "Lissolepis coventryi",
+        "threat_status": "Endangered",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "Pale-flecked Garden Sunskink": {
+        "scientific_name": "Lampropholis guichenoti",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Blotched Blue-tongued Lizard": {
+        "scientific_name": "Tiliqua nigrolutea",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Tiger Snake": {
+        "scientific_name": "Notechis scutatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Silver Gull": {
+        "scientific_name": "Chroicocephalus novaehollandiae",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Masked Lapwing": {
+        "scientific_name": "Vanellus miles",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "White-striped Free-tailed Bat": {
+        "scientific_name": "Austronomus australis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "Gould's Wattled Bat": {
+        "scientific_name": "Chalinolobus gouldii",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Chocolate Wattled Bat": {
+        "scientific_name": "Chalinolobus morio",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Southern Forest Bat": {
+        "scientific_name": "Vespadelus regulus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Little Forest Bat": {
+        "scientific_name": "Vespadelus vulturnus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Large Forest Bat": {
+        "scientific_name": "Vespadelus darlingtoni",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "South-eastern Free-tailed Bat": {
+        "scientific_name": "Ozimops planiceps",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "Welcome Swallow": {
+        "scientific_name": "Hirundo neoxena",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Tree Martin": {
+        "scientific_name": "Petrochelidon nigricans",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Fairy Martin": {
+        "scientific_name": "Petrochelidon ariel",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "Grey Fantail": {
+        "scientific_name": "Rhipidura albiscapa",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Willie Wagtail": {
+        "scientific_name": "Rhipidura leucophrys",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Scarlet Robin": {
+        "scientific_name": "Petroica boodang",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Flame Robin": {
+        "scientific_name": "Petroica phoenicea",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Hooded Robin": {
+        "scientific_name": "Melanodryas cucullata",
+        "threat_status": "Endangered",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Eastern Yellow Robin": {
+        "scientific_name": "Eopsaltria australis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Golden Whistler": {
+        "scientific_name": "Pachycephala pectoralis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Rufous Whistler": {
+        "scientific_name": "Pachycephala rufiventris",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Grey Shrikethrush": {
+        "scientific_name": "Colluricincla harmonica",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Magpie-lark": {
+        "scientific_name": "Grallina cyanoleuca",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Eastern Shriketit": {
+        "scientific_name": "Falcunculus frontatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "White-winged Triller": {
+        "scientific_name": "Lalage tricolor",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Striated Thornbill": {
+        "scientific_name": "Acanthiza lineata",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Brown Thornbill": {
+        "scientific_name": "Acanthiza pusilla",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Yellow-rumped Thornbill": {
+        "scientific_name": "Acanthiza chrysorrhoa",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "White-browed Scrubwren": {
+        "scientific_name": "Sericornis frontalis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Superb Fairywren": {
+        "scientific_name": "Malurus cyaneus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Dusky Woodswallow": {
+        "scientific_name": "Artamus cyanopterus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Varied Sittella": {
+        "scientific_name": "Daphoenositta chrysoptera",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Langwarrin FFR"
+        ]
+    },
+    "White-throated Treecreeper": {
+        "scientific_name": "Cormobates leucophaea",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Mistletoebird": {
+        "scientific_name": "Dicaeum hirundinaceum",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Spotted Pardalote": {
+        "scientific_name": "Pardalotus punctatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Silvereye": {
+        "scientific_name": "Zosterops lateralis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "White-naped Honeyeater": {
+        "scientific_name": "Melithreptus lunatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Brown-headed Honeyeater": {
+        "scientific_name": "Melithreptus brevirostris",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Langwarrin FFR"
+        ]
+    },
+    "Scarlet Honeyeater": {
+        "scientific_name": "Myzomela sanguinolenta",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Eastern Spinebill": {
+        "scientific_name": "Acanthorhynchus tenuirostris",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Yellow-faced Honeyeater": {
+        "scientific_name": "Caligavis chrysops",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "White-eared Honeyeater": {
+        "scientific_name": "Nesoptilotis leucotis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "White-plumed Honeyeater": {
+        "scientific_name": "Ptilotula penicillata",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "New Holland Honeyeater": {
+        "scientific_name": "Phylidonyris novaehollandiae",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Bell Miner": {
+        "scientific_name": "Manorina melanophrys",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Noisy Miner": {
+        "scientific_name": "Manorina melanocephala",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Little Wattlebird": {
+        "scientific_name": "Anthochaera chrysoptera",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Red Wattlebird": {
+        "scientific_name": "Anthochaera carunculata",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Red-browed Finch": {
+        "scientific_name": "Neochmia temporalis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Grey Currawong": {
+        "scientific_name": "Strepera versicolor",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Grey Butcherbird": {
+        "scientific_name": "Cracticus torquatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Australian Magpie": {
+        "scientific_name": "Gymnorhina tibicen",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Bassian Thrush": {
+        "scientific_name": "Zoothera lunulata",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Australian Raven": {
+        "scientific_name": "Corvus coronoides",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "Little Raven": {
+        "scientific_name": "Corvus mellori",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Striated Pardalote": {
+        "scientific_name": "Pardalotus striatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Common Blackbird": {
+        "scientific_name": "Turdus merula",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "House Sparrow": {
+        "scientific_name": "Passer domesticus",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Kananook Creek"
+        ]
+    },
+    "Common Myna": {
+        "scientific_name": "Acridotheres tristis",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Common Starling": {
+        "scientific_name": "Sturnus vulgaris",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "European Goldfinch": {
+        "scientific_name": "Carduelis carduelis",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Eastern Snake-necked Turtle": {
+        "scientific_name": "Chelodina longicollis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Weasel Skink": {
+        "scientific_name": "Saproscincus mustelinus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']"
+        ]
+    },
+    "Eastern Three-lined Skink": {
+        "scientific_name": "Acritoscincus duperreyi",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Lowland Copperhead": {
+        "scientific_name": "Austrelaps superbus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Striped Marsh Frog": {
+        "scientific_name": "Limnodynastes peronii",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Haswell's Froglet": {
+        "scientific_name": "Paracrinia haswelli",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Southern Toadlet": {
+        "scientific_name": "Pseudophryne semimarmorata",
+        "threat_status": "Endangered",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "Southern Brown Tree Frog": {
+        "scientific_name": "Litoria ewingii",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Verreaux's Tree Frog": {
+        "scientific_name": "Litoria verreauxii verreauxii",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "Pink Robin": {
+        "scientific_name": "Petroica rodinogaster",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Crescent Honeyeater": {
+        "scientific_name": "Phylidonyris pyrrhopterus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Langwarrin FFR"
+        ]
+    },
+    "Eurasian Skylark": {
+        "scientific_name": "Alauda arvensis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "European Greenfinch": {
+        "scientific_name": "Chloris chloris",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Lesser Long-eared Bat": {
+        "scientific_name": "Nyctophilus geoffroyi",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Eastern Short-beaked Echidna": {
+        "scientific_name": "Tachyglossus aculeatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Agile Antechinus": {
+        "scientific_name": "Antechinus agilis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Langwarrin FFR"
+        ]
+    },
+    "White-footed Dunnart": {
+        "scientific_name": "Sminthopsis leucopus",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Common Brushtail Possum": {
+        "scientific_name": "Trichosurus vulpecula",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Common Ringtail Possum": {
+        "scientific_name": "Pseudocheirus peregrinus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Eastern Pygmy Possum": {
+        "scientific_name": "Cercartetus nanus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Koala": {
+        "scientific_name": "Phascolarctos cinereus",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Swamp Wallaby": {
+        "scientific_name": "Wallabia bicolor",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Swamp Rat": {
+        "scientific_name": "Rattus lutreolus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "House Mouse": {
+        "scientific_name": "Mus musculus",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "New Holland Mouse": {
+        "scientific_name": "Pseudomys novaehollandiae",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "European Rabbit": {
+        "scientific_name": "Oryctolagus cuniculus",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Southern Brown Bandicoot": {
+        "scientific_name": "Isoodon obesulus obesulus",
+        "threat_status": "Endangered",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "Red Fox": {
+        "scientific_name": "Vulpes vulpes",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Krefft's Glider": {
+        "scientific_name": "Petaurus notatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Bare-nosed Wombat": {
+        "scientific_name": "Vombatus ursinus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "Langwarrin FFR"
+        ]
+    },
+    "Black Rat": {
+        "scientific_name": "Rattus rattus",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Brown Rat": {
+        "scientific_name": "Rattus norvegicus",
+        "threat_status": "Introduced",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Brush Bronzewing": {
+        "scientific_name": "Phaps elegans",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Crested Pigeon": {
+        "scientific_name": "Ocyphaps lophotes",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Dusky Moorhen": {
+        "scientific_name": "Gallinula tenebrosa",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Eurasian Coot": {
+        "scientific_name": "Fulica atra",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Australasian Grebe": {
+        "scientific_name": "Tachybaptus novaehollandiae",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Latham's Snipe": {
+        "scientific_name": "Gallinago hardwickii",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "Australian White Ibis": {
+        "scientific_name": "Threskiornis molucca",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Straw-necked Ibis": {
+        "scientific_name": "Threskiornis spinicollis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "White-faced Heron": {
+        "scientific_name": "Egretta novaehollandiae",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Pacific Black Duck": {
+        "scientific_name": "Anas superciliosa",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Grey Teal": {
+        "scientific_name": "Anas gracilis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "Kananook Creek"
+        ]
+    },
+    "Hardhead": {
+        "scientific_name": "Aythya australis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Brown Goshawk": {
+        "scientific_name": "Accipiter fasciatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Brown Falcon": {
+        "scientific_name": "Falco berigora",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Eastern Rainbow Lorikeet": {
+        "scientific_name": "Trichoglossus moluccanus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Little Lorikeet": {
+        "scientific_name": "Parvipsitta pusilla",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Glossy Black-Cockatoo": {
+        "scientific_name": "Calyptorhynchus lathami",
+        "threat_status": "Critically Endangered",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "Yellow-tailed Black-Cockatoo": {
+        "scientific_name": "Calyptorhynchus funereus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Sulphur-crested Cockatoo": {
+        "scientific_name": "Cacatua galerita",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Galah": {
+        "scientific_name": "Eolophus roseicapilla",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Crimson Rosella": {
+        "scientific_name": "Platycercus elegans",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Eastern Rosella": {
+        "scientific_name": "Platycercus eximius",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Blue-winged Parrot": {
+        "scientific_name": "Neophema chrysostoma",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Tawny Frogmouth": {
+        "scientific_name": "Podargus strigoides",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Australian Owlet-nightjar": {
+        "scientific_name": "Aegotheles cristatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Laughing Kookaburra": {
+        "scientific_name": "Dacelo novaeguineae",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Fan-tailed Cuckoo": {
+        "scientific_name": "Cacomantis flabelliformis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Horsfield's Bronze Cuckoo": {
+        "scientific_name": "Chrysococcyx basalis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Spotted Dove": {
+        "scientific_name": "Spilopelia chinensis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Little Pied Cormorant": {
+        "scientific_name": "Microcarbo melanoleucos",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Common Bronzewing": {
+        "scientific_name": "Phaps chalcoptera",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Australasian Swamphen": {
+        "scientific_name": "Porphyrio melanotus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Great Crested Grebe": {
+        "scientific_name": "Podiceps cristatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Hoary-headed Grebe": {
+        "scientific_name": "Poliocephalus poliocephalus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Great Cormorant": {
+        "scientific_name": "Phalacrocorax carbo",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Little Black Cormorant": {
+        "scientific_name": "Phalacrocorax sulcirostris",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Pied Cormorant": {
+        "scientific_name": "Phalacrocorax varius",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Australian Pelican": {
+        "scientific_name": "Pelecanus conspicillatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Nankeen Night Heron": {
+        "scientific_name": "Nycticorax caledonicus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']"
+        ]
+    },
+    "Australian Wood Duck": {
+        "scientific_name": "Chenonetta jubata",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Black Swan": {
+        "scientific_name": "Cygnus atratus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Australian Shelduck": {
+        "scientific_name": "Tadorna tadornoides",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']"
+        ]
+    },
+    "Chestnut Teal": {
+        "scientific_name": "Anas castanea",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Freckled Duck": {
+        "scientific_name": "Stictonetta naevosa",
+        "threat_status": "Endangered",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']"
+        ]
+    },
+    "Blue-billed Duck": {
+        "scientific_name": "Oxyura australis",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Musk Duck": {
+        "scientific_name": "Biziura lobata",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Swamp Harrier": {
+        "scientific_name": "Circus approximans",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "Powerful Owl": {
+        "scientific_name": "Ninox strenua",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Scaly-breasted Lorikeet": {
+        "scientific_name": "Trichoglossus chlorolepidotus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']"
+        ]
+    },
+    "Musk Lorikeet": {
+        "scientific_name": "Glossopsitta concinna",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Swift Parrot": {
+        "scientific_name": "Lathamus discolor",
+        "threat_status": "Critically Endangered",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']"
+        ]
+    },
+    "Brown Quail": {
+        "scientific_name": "Synoicus ypsilophorus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Painted Buttonquail": {
+        "scientific_name": "Turnix varius",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Lewin's Rail": {
+        "scientific_name": "Lewinia pectoralis",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "White-necked Heron": {
+        "scientific_name": "Ardea pacifica",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Langwarrin FFR"
+        ]
+    },
+    "Collared Sparrowhawk": {
+        "scientific_name": "Accipiter cirrocephalus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Whistling Kite": {
+        "scientific_name": "Haliastur sphenurus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Langwarrin FFR"
+        ]
+    },
+    "Black-shouldered Kite": {
+        "scientific_name": "Elanus axillaris",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Australian Hobby": {
+        "scientific_name": "Falco longipennis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "Nankeen Kestrel": {
+        "scientific_name": "Falco cenchroides",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Southern Boobook": {
+        "scientific_name": "Ninox boobook",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Gang-gang Cockatoo": {
+        "scientific_name": "Callocephalon fimbriatum",
+        "threat_status": "Endangered",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Little Corella": {
+        "scientific_name": "Cacatua sanguinea",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Australian King Parrot": {
+        "scientific_name": "Alisterus scapularis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Sacred Kingfisher": {
+        "scientific_name": "Todiramphus sanctus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "White-throated Needletail": {
+        "scientific_name": "Hirundapus caudacutus",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Pallid Cuckoo": {
+        "scientific_name": "Cacomantis pallidus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "Shining Bronze Cuckoo": {
+        "scientific_name": "Chrysococcyx lucidus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Eastern Banjo Frog": {
+        "scientific_name": "Limnodynastes dumerilii dumerilii",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Rufous Fantail": {
+        "scientific_name": "Rhipidura rufifrons",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Langwarrin FFR"
+        ]
+    },
+    "Leaden Flycatcher": {
+        "scientific_name": "Myiagra rubecula",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Satin Flycatcher": {
+        "scientific_name": "Myiagra cyanoleuca",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Jacky Winter": {
+        "scientific_name": "Microeca fascinans",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Rose Robin": {
+        "scientific_name": "Petroica rosea",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "White-fronted Chat": {
+        "scientific_name": "Epthianura albifrons",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Weebill": {
+        "scientific_name": "Smicrornis brevirostris",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Langwarrin FFR"
+        ]
+    },
+    "Yellow Thornbill": {
+        "scientific_name": "Acanthiza nana",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Southern Emu-wren": {
+        "scientific_name": "Stipiturus malachurus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Painted Honeyeater": {
+        "scientific_name": "Grantiella picta",
+        "threat_status": "Vulnerable",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Australian Pipit": {
+        "scientific_name": "Anthus australis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Olive-backed Oriole": {
+        "scientific_name": "Oriolus sagittatus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Song Thrush": {
+        "scientific_name": "Turdus philomelos",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
+        ]
+    },
+    "Delicate Skink": {
+        "scientific_name": "Lampropholis delicata",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "Common Blue-tongued Lizard": {
+        "scientific_name": "Tiliqua scincoides",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Eastern Small Eyed Snake": {
+        "scientific_name": "Cryptophis nigrescens",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Eastern Brown Snake": {
+        "scientific_name": "Pseudonaja textilis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
+        ]
+    },
+    "White's Skink": {
+        "scientific_name": "Liopholis whitii GROUP",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "Kananook Creek"
+        ]
+    },
+    "Pied Currawong": {
+        "scientific_name": "Strepera graculina",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Black-faced Cuckooshrike": {
+        "scientific_name": "Coracina novaehollandiae",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Common Eastern Froglet": {
+        "scientific_name": "Crinia signifera",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Southern Marbled Gecko": {
+        "scientific_name": "Christinus marmoratus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Red-bellied Black Snake": {
+        "scientific_name": "Pseudechis porphyriacus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Buff-banded Rail": {
+        "scientific_name": "Gallirallus philippensis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Australasian Darter": {
+        "scientific_name": "Anhinga novaehollandiae",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "Australasian Bittern": {
+        "scientific_name": "Botaurus poiciloptilus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "Wedge-tailed Eagle": {
+        "scientific_name": "Aquila audax",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "White-winged Chough": {
+        "scientific_name": "Corcorax melanorhamphos",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "White-throated Nightjar": {
+        "scientific_name": "Eurostopodus mystacalis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
+    "Dark-flecked Garden Sunskink": {
+        "scientific_name": "Lampropholis delicata",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Grey-headed Flying-fox": {
+        "scientific_name": "Pteropus poliocephalus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Southeastern Slider": {
+        "scientific_name": "Lerista bougainvillii",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "The Pines Flora and Fauna Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Weasel Shadeskink": {
+        "scientific_name": "Saproscincus mustelinus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek",
+            "Langwarrin FFR"
+        ]
+    },
+    "Blue-faced Honeyeater": {
+        "scientific_name": "Entomyzon cyanotis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Rakali": {
+        "scientific_name": "Hydromys chrysogaster",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "White-lipped Snake": {
+        "scientific_name": "Drysdalia coronoides",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Great Egret": {
+        "scientific_name": "Ardea alba",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Frankston Nature Conservation Reserve",
+            "Kananook Creek"
+        ]
+    },
+    "Feral Pigeon": {
+        "scientific_name": "Columba livia",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Frankston Nature Conservation Reserve",
+            "Langwarrin FFR"
+        ]
+    },
+    "Eastern Short-necked Turtle": {
+        "scientific_name": "Emydura macquarii",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Peron's Tree Frog": {
+        "scientific_name": "Pengilleyia peronii",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Frankston Nature Conservation Reserve"
+        ]
+    },
+    "Southern Water Skink": {
+        "scientific_name": "Eulamprus tympanum",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Greater Crested Tern": {
+        "scientific_name": "Thalasseus bergii",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Royal Spoonbill": {
+        "scientific_name": "Platalea regia",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Pacific Gull": {
+        "scientific_name": "Larus pacificus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Australasian Gannet": {
+        "scientific_name": "Morus serrator",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Fluttering Shearwater": {
+        "scientific_name": "Puffinus gavia",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Mallard": {
+        "scientific_name": "Anas platyrhynchos",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Red-necked Avocet": {
+        "scientific_name": "Recurvirostra novaehollandiae",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Magpie Goose": {
+        "scientific_name": "Anseranas semipalmata",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Glossy Grass Skink": {
+        "scientific_name": "Pseudemoia rawlinsoni",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Eastern Barn Owl": {
+        "scientific_name": "Tyto javanica",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Short-tailed Shearwater": {
+        "scientific_name": "Ardenna tenuirostris",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Kananook Creek"
+        ]
+    },
+    "Southern Brood Frog": {
+        "scientific_name": "Pseudophryne semimarmorata",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Langwarrin FFR"
+        ]
+    },
+    "Long-billed Corella": {
+        "scientific_name": "Cacatua tenuirostris",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Langwarrin FFR"
+        ]
+    },
+    "Spotless Crake": {
+        "scientific_name": "Zapornia tabuensis",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "Langwarrin FFR"
+        ]
+    }
+}
