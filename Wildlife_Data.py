@@ -178,15 +178,27 @@ def parse_vba_summary(filepath):
         safe_line = str(line)
         if "Name:" in safe_line and reserve_name == "Unknown Reserve":
             parts = safe_line.split("Name:")
-            if len(parts) > 1: reserve_name = str(parts[-1]).strip()
+            if len(parts) > 1:
+                reserve_name = str(parts[-1]).strip()
+                
         if safe_line.startswith('Taxon ID'):
             header_idx = i
             break
             
-    if header_idx == -1: return pd.DataFrame(), reserve_name
+    if header_idx == -1:
+        print(f"   ⚠️ Could not find 'Taxon ID' header in {os.path.basename(filepath)}. Skipping.")
+        return pd.DataFrame(), reserve_name
 
-    clean_lines = [str(line) for line in lines[header_idx:] if str(line).strip() and not str(line).startswith('Copyright')]
-    return pd.read_csv(io.StringIO("".join(clean_lines))), reserve_name
+    clean_lines = []
+    for line in lines[header_idx:]:
+        safe_line = str(line)
+        if safe_line.startswith('"Copyright') or safe_line.startswith('Copyright'):
+            break 
+        if safe_line.strip(): 
+            clean_lines.append(safe_line)
+
+    csv_data = "".join(clean_lines)
+    return pd.read_csv(io.StringIO(csv_data)), reserve_name
 
 def inject_inaturalist_data(species_dict):
     print("   🌐 Fetching modern iNaturalist sightings...")
@@ -223,21 +235,25 @@ def inject_inaturalist_data(species_dict):
 
 def build_master_list():
     print("🧬 Scanning VBA Summary Files...")
-    all_csvs = glob.glob(os.path.join(VBA_DIR, "*.csv"))
+    
+    search_path_lower = os.path.join(VBA_DIR, "*.csv")
+    search_path_upper = os.path.join(VBA_DIR, "*.CSV")
+    all_csvs = glob.glob(search_path_lower) + glob.glob(search_path_upper)
     
     if not all_csvs:
-        print("   ⚠️ No CSVs found in VBA_Raw_Data folder!")
+        print("   ⚠️ No CSVs found! Check that the VBA_Raw_Data folder exists and contains files.")
         return {}
 
     master_df = pd.DataFrame()
     for file in all_csvs:
         try:
+            print(f"   📥 Parsing {os.path.basename(file)}...")
             df, reserve_name = parse_vba_summary(file)
             if not df.empty:
                 df['Reserve'] = reserve_name 
                 master_df = pd.concat([master_df, df], ignore_index=True)
         except Exception as e:
-            pass # Silently skip bad files
+            print(f"   ❌ Error reading {os.path.basename(file)}: {e}")
 
     if master_df.empty: return {}
 
@@ -251,7 +267,6 @@ def build_master_list():
         if not name or str(name).lower() == "nan": continue
         if any(bad in name.lower().replace("-", " ") for bad in EXCLUDE_LIST): continue
 
-        # Use the VBA CSV's FFG Status, but override it if it's in your custom list
         final_status = str(row.get('FFG Status', 'Least Concern')).strip()
         if final_status == "Not Listed": final_status = "Least Concern"
         if name in STATUS_OVERRIDES: final_status = STATUS_OVERRIDES[name]
@@ -268,7 +283,7 @@ def build_master_list():
 
     species_dict = inject_inaturalist_data(species_dict)
     print(f"✅ Success! Extracted {len(species_dict)} expected species.")
-    return species_dic
+    return species_dict
 
 # OFFICIAL RESERVES
 RESERVES = {
