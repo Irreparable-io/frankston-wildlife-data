@@ -31,7 +31,7 @@ jobs:
       - name: Run Wildlife Radar Script
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-        run: python Wildlife_Radar.py
+        run: python Wildlife_Data.py
 
       - name: Commit and Push JSON files
         run: |
