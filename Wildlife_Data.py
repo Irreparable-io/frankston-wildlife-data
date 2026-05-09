@@ -609,10 +609,26 @@ def run_radar_system():
         if any(bad in clean_species_name.lower() for bad in EXCLUDE_LIST):
             continue
             
-        # 2. Enforce strict taxonomy (Catches Insects)
+        # 2. Safely pull and normalize Taxonomy (Fixing Plurals & Brackets)
         taxonomy = "Unknown"
         if 'Taxonomy' in group.columns and not group['Taxonomy'].dropna().empty:
-            taxonomy = str(group['Taxonomy'].mode().iloc).strip().title()
+            raw_tax = str(group['Taxonomy'].mode().iloc).lower()
+            
+            if "bird" in raw_tax or "aves" in raw_tax: 
+                taxonomy = "Bird"
+            elif "mammal" in raw_tax: 
+                taxonomy = "Mammal"
+            elif "reptile" in raw_tax: 
+                taxonomy = "Reptile"
+            elif "amphibian" in raw_tax or "frog" in raw_tax: 
+                taxonomy = "Amphibian"
+            elif "insect" in raw_tax or "arachnid" in raw_tax: 
+                taxonomy = "Insect"
+            elif "fish" in raw_tax:
+                taxonomy = "Fish"
+            elif raw_tax != "nan":
+                # Fallback: Just capitalize whatever it is, removing any brackets
+                taxonomy = raw_tax.replace("[", "").replace("]", "").replace("'", "").title()
             
         tax_lower = taxonomy.lower()
         if tax_lower != "unknown" and tax_lower != "nan" and not any(allowed in tax_lower for allowed in ALLOWED_TAXA):
