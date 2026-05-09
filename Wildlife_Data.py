@@ -234,18 +234,20 @@ def inject_inaturalist_data(species_dict):
     return species_dict
 
 def build_master_list():
-    print("🧬 Scanning VBA Summary Files...")
+    print("🧬 Scanning repository for VBA Summary Files...")
     
-    search_path_lower = os.path.join(VBA_DIR, "*.csv")
-    search_path_upper = os.path.join(VBA_DIR, "*.CSV")
-    all_csvs = glob.glob(search_path_lower) + glob.glob(search_path_upper)
+    # 🚨 FOOLPROOF FIX: Recursively search the entire repository for CSV files
+    all_csvs = glob.glob("**/*.csv", recursive=True) + glob.glob("**/*.CSV", recursive=True)
     
-    if not all_csvs:
-        print("   ⚠️ No CSVs found! Check that the VBA_Raw_Data folder exists and contains files.")
+    # Filter to only grab your specific VBA reports
+    vba_files = [f for f in all_csvs if "report_" in str(f).lower()]
+    
+    if not vba_files:
+        print("   ⚠️ No VBA reports found! Make sure your CSVs are uploaded to GitHub.")
         return {}
 
     master_df = pd.DataFrame()
-    for file in all_csvs:
+    for file in vba_files:
         try:
             print(f"   📥 Parsing {os.path.basename(file)}...")
             df, reserve_name = parse_vba_summary(file)
@@ -622,8 +624,7 @@ def run_radar_system():
             detection = "Unknown"
 
         # C. Security & Hotspot Logic
-        # Hidden hotspots for sensitive/threatened species
-        threat_keywords = ["vulnerable", "endangered", "threatened"]
+        threat_keywords = ["vulnerable", "endangered", "threatened", "critically"]
         raw_status = str(group['Conservation Status'].to_list()).lower()
         
         is_sensitive = any(k in raw_status for k in threat_keywords) or \
@@ -632,9 +633,9 @@ def run_radar_system():
         if is_sensitive:
             hotspot = "Hidden"
         else:
-            # Find the most common zone for this species
             mode_zones = group['Zone'].mode()
-            hotspot = mode_zones.iloc if not mode_zones.empty else "Unknown"
+            # 🚨 FIX: Force the Pandas object into a plain string so JSON doesn't crash
+            hotspot = str(mode_zones.iloc) if not mode_zones.empty else "Unknown"
 
         # D. Taxonomy
         taxonomy = str(group['Taxonomy'].mode().iloc) if not group['Taxonomy'].dropna().empty else "Unknown"
