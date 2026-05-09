@@ -587,22 +587,39 @@ def run_radar_system():
         }
 
     # ==========================================
-    # --- 1. LIVE STATS ENGINE ---
+    # --- 1. LIVE STATS ENGINE (Pokedex Data) ---
     # ==========================================
     print("   📊 Crunching live statistics from spreadsheet...")
     
     pokedex_stats = {}
-    matrix_blacklist = ["Common Froglet", "Human", "Dog", "Short-finned Eel"]
+    ALLOWED_TAXA = ["bird", "mammal", "reptile", "amphibian", "frog"]
     
-    # Ensure date objects are ready for calculation
     df['DateObj'] = pd.to_datetime(df['Date/Time'], dayfirst=True, errors='coerce')
 
     for species, group in df.groupby('Common Name'):
-        clean_species_name = str(species).strip()
-        
-        # Skip blacklisted items
-        if clean_species_name in matrix_blacklist:
-            continue 
+        raw_name = str(species).strip()
+        clean_species_name = normalize_species_name(raw_name)
+
+        # 1. Apply the master Exclude List (Catches Cats, Dogs, etc.)
+        if any(bad in clean_species_name.lower() for bad in EXCLUDE_LIST):
+            continue
+            
+        # 2. Target the Notes column for "CONTENDED"
+        if 'Notes' in group.columns:
+            if group['Notes'].astype(str).str.lower().str.contains('contended').any():
+                continue
+        elif "contended" in str(group.values).lower():
+            # Fallback just in case the column name changes
+            continue
+
+        # 3. Enforce strict taxonomy (Catches Insects)
+        taxonomy = "Unknown"
+        if 'Taxonomy' in group.columns and not group['Taxonomy'].dropna().empty:
+            taxonomy = str(group['Taxonomy'].mode().iloc).strip().title()
+            
+        tax_lower = taxonomy.lower()
+        if tax_lower != "unknown" and tax_lower != "nan" and not any(allowed in tax_lower for allowed in ALLOWED_TAXA):
+            continue
 
         # A. Basic Counts & Dates
         encounters = int(len(group))
@@ -634,13 +651,9 @@ def run_radar_system():
             hotspot = "Hidden"
         else:
             mode_zones = group['Zone'].mode()
-            # 🚨 FIX: Force the Pandas object into a plain string so JSON doesn't crash
             hotspot = str(mode_zones.iloc) if not mode_zones.empty else "Unknown"
 
-        # D. Taxonomy
-        taxonomy = str(group['Taxonomy'].mode().iloc) if not group['Taxonomy'].dropna().empty else "Unknown"
-
-        # Store these results in our temporary dictionary
+        # Store results
         pokedex_stats[clean_species_name] = {
             "count": encounters,
             "latest_date": latest_str,
@@ -649,19 +662,16 @@ def run_radar_system():
             "taxonomy": taxonomy
         }
 
-    # ==========================================
+    # ========================
     # --- 2. MASTER MERGE ---
-    # ==========================================
+    # ========================
     print("   🧬 Building Expected Master List from VBA & iNat...")
     
     library_payload = build_master_list()
-    
-    with open('expected_species_master.json', 'r') as f:
-        library_payload = json.load(f)
 
+    print("   🔗 Merging Live Spreadsheet Data...")
     for sp_name, stats in pokedex_stats.items():
         if sp_name in library_payload:
-            # Species was expected and found! Update its card.
             entry = library_payload[sp_name]
             entry['status'] = "recorded"
             entry['liveCount'] = stats['count']
@@ -670,10 +680,10 @@ def run_radar_system():
             entry['liveHotspot'] = stats['hotspot']
             entry['liveTaxonomy'] = stats['taxonomy']
         else:
-            # Species was NOT on the expected list but found it anyway!
+            # Species found in your sheet but NOT on the Expected List
             library_payload[sp_name] = {
-                "scientific_name": "Incipient Record",
-                "threat_status": "Recorded",
+                "scientific_name": "Unknown (New Discovery)", 
+                "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
                 "status": "recorded",
                 "liveCount": stats['count'],
                 "liveLastSighted": stats['latest_date'],
