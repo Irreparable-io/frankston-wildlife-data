@@ -3,3 +3,4 @@ numpy
 simplekml
 requests
 gspread
+google-auth
