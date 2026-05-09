@@ -596,6 +596,9 @@ def run_radar_system():
     
     df['DateObj'] = pd.to_datetime(df['Date/Time'], dayfirst=True, errors='coerce')
 
+    if 'Notes' in df.columns:
+        df = df[~df['Notes'].astype(str).str.lower().str.contains('contended', na=False)]
+
     for species, group in df.groupby('Common Name'):
         raw_name = str(species).strip()
         clean_species_name = normalize_species_name(raw_name)
@@ -604,15 +607,7 @@ def run_radar_system():
         if any(bad in clean_species_name.lower() for bad in EXCLUDE_LIST):
             continue
             
-        # 2. Target the Notes column for "CONTENDED"
-        if 'Notes' in group.columns:
-            if group['Notes'].astype(str).str.lower().str.contains('contended').any():
-                continue
-        elif "contended" in str(group.values).lower():
-            # Fallback just in case the column name changes
-            continue
-
-        # 3. Enforce strict taxonomy (Catches Insects)
+        # 2. Enforce strict taxonomy (Catches Insects)
         taxonomy = "Unknown"
         if 'Taxonomy' in group.columns and not group['Taxonomy'].dropna().empty:
             taxonomy = str(group['Taxonomy'].mode().iloc).strip().title()
@@ -626,7 +621,7 @@ def run_radar_system():
         latest_date = group['DateObj'].max()
         latest_str = "Unknown" if pd.isna(latest_date) else latest_date.strftime('%d/%m/%y')
 
-        # B. Detection Profile (Audio vs Visual)
+        # B. Detection Profile
         media_counts = group['Media Type'].astype(str).str.lower().value_counts()
         audio_c, visual_c = 0, 0
         for val, count in media_counts.items():
@@ -642,16 +637,23 @@ def run_radar_system():
 
         # C. Security & Hotspot Logic
         threat_keywords = ["vulnerable", "endangered", "threatened", "critically"]
-        raw_status = str(group['Conservation Status'].to_list()).lower()
         
+        # Safely check Conservation Status
+        raw_status = "unknown"
+        if 'Conservation Status' in group.columns:
+            raw_status = str(group['Conservation Status'].to_list()).lower()
+            
         is_sensitive = any(k in raw_status for k in threat_keywords) or \
                        any(s in clean_species_name.lower() for s in ["glossy black-cockatoo", "powerful owl"])
 
         if is_sensitive:
             hotspot = "Hidden"
         else:
-            mode_zones = group['Zone'].mode()
-            hotspot = str(mode_zones.iloc) if not mode_zones.empty else "Unknown"
+            # Safely check Zone
+            hotspot = "Unknown"
+            if 'Zone' in group.columns:
+                mode_zones = group['Zone'].mode()
+                hotspot = str(mode_zones.iloc) if not mode_zones.empty else "Unknown"
 
         # Store results
         pokedex_stats[clean_species_name] = {
@@ -661,7 +663,6 @@ def run_radar_system():
             "hotspot": hotspot,
             "taxonomy": taxonomy
         }
-
     # ========================
     # --- 2. MASTER MERGE ---
     # ========================
@@ -680,7 +681,7 @@ def run_radar_system():
             entry['liveHotspot'] = stats['hotspot']
             entry['liveTaxonomy'] = stats['taxonomy']
         else:
-            # Species found in your sheet but NOT on the Expected List
+            # Species found but NOT on the Expected List
             library_payload[sp_name] = {
                 "scientific_name": "Unknown (New Discovery)", 
                 "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
