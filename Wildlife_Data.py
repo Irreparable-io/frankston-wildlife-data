@@ -687,7 +687,19 @@ def run_radar_system():
                 valid_zones = valid_zones[valid_zones.str.lower() != "nan"]
                 
                 if not valid_zones.empty:
-                    hotspot = str(valid_zones.mode().tolist())
+                    raw_hotspot = str(valid_zones.mode().tolist())
+                    clean_hotspot = raw_hotspot.replace("[", "").replace("]", "").replace("'", "").replace('"', "").strip()
+
+                    if "Frankston" in clean_hotspot and "Nature" in clean_hotspot:
+                        hotspot = "Frankston NCR"
+                    elif "Langwarrin" in clean_hotspot:
+                        hotspot = "Langwarrin FFR"
+                    elif "Pines" in clean_hotspot:
+                        hotspot = "The Pines FFR"
+                    elif "Kananook" in clean_hotspot:
+                        hotspot = "Kananook Creek"
+                    else:
+                        hotspot = clean_hotspot
 
         if "gull" in clean_species_name.lower() or "echidna" in clean_species_name.lower():
             print(f"      📍 Hotspot Calculated: '{hotspot}'")
