@@ -118,7 +118,6 @@ SPECIES_MAP = {
     "rock pigeon": "Feral Pigeon",
     "lowlands copperhead": "Lowland Copperhead",
     "buff banded rail": "Buff-banded Rail",
-    "blue spotted hawker": "Blue-spotted Hawker"
 }
 
 # 🚨 
@@ -126,7 +125,8 @@ EXCLUDE_LIST = [
     "fur seal", "little penguin", "red junglefowl", 
     "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", 
     " and ", "possums", "unknown", "×", " sp.", "birds", "cattle", 
-    "pardalotes", "black faced cuckoo shrike", "scarlet myzomela"
+    "pardalotes", "black faced cuckoo shrike", "scarlet myzomela",
+    "blue spotted hawker"
 ]
 
 # 🚨 Force specific conservation statuses (Overrides DEECA and iNat)
