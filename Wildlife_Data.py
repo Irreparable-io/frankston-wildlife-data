@@ -122,7 +122,9 @@ SPECIES_MAP = {
 # 🚨 
 EXCLUDE_LIST = [
     "fur seal", "little penguin", "red junglefowl", 
-    "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", " and ", "possums", "unknown", "domestic", "×", " sp.", "birds", "cattle", "pardalotes", "black faced cuckoo shrike",
+    "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", 
+    " and ", "possums", "unknown", "×", " sp.", "birds", "cattle", 
+    "pardalotes", "black faced cuckoo shrike", "scarlet myzomela"
 ]
 
 # 🚨 Force specific conservation statuses (Overrides DEECA and iNat)
@@ -587,17 +589,18 @@ def run_radar_system():
         }
 
     # ==========================================
-    # --- 1. LIVE STATS ENGINE (Pokedex Data) ---
+    # --- 1. LIVE STATS ENGINE ---
     # ==========================================
     print("   📊 Crunching live statistics from spreadsheet...")
     
     pokedex_stats = {}
-    ALLOWED_TAXA = ["bird", "mammal", "reptile", "amphibian", "frog"]
     
+    # Strip invisible spaces from Google Sheet headers
     df.columns = df.columns.str.strip()
     
     df['DateObj'] = pd.to_datetime(df['Date/Time'], dayfirst=True, errors='coerce')
 
+    # Drop the "CONTENDED" rows safely
     if 'Notes' in df.columns:
         df = df[~df['Notes'].astype(str).str.lower().str.contains('contended', na=False)]
 
@@ -605,11 +608,16 @@ def run_radar_system():
         raw_name = str(species).strip()
         clean_species_name = normalize_species_name(raw_name)
 
-        # 1. Apply the master Exclude List (Catches Cats, Dogs, etc.)
+        # 🚨 DIAGNOSTIC: Watch the Silver Gull in the logs
+        if "gull" in clean_species_name.lower():
+            print(f"   🔍 FOUND IN SHEET: '{clean_species_name}' | Count: {len(group)}")
+
+        # 1. Apply the master Exclude List
         if any(bad in clean_species_name.lower() for bad in EXCLUDE_LIST):
+            if "gull" in clean_species_name.lower(): print("      ❌ Dropped by EXCLUDE_LIST")
             continue
             
-        # 2. Safely pull and normalize Taxonomy (Fixing Plurals & Brackets)
+        # 2. Safely pull and normalize Taxonomy WITHOUT dropping anything
         taxonomy = "Unknown"
         if 'Taxonomy' in group.columns and not group['Taxonomy'].dropna().empty:
             raw_tax = str(group['Taxonomy'].mode().iloc).lower()
@@ -627,12 +635,8 @@ def run_radar_system():
             elif "fish" in raw_tax:
                 taxonomy = "Fish"
             elif raw_tax != "nan":
-                # Fallback: Just capitalize whatever it is, removing any brackets
+                # Fallback: Just capitalize whatever it is, removing brackets
                 taxonomy = raw_tax.replace("[", "").replace("]", "").replace("'", "").title()
-            
-        tax_lower = taxonomy.lower()
-        if tax_lower != "unknown" and tax_lower != "nan" and not any(allowed in tax_lower for allowed in ALLOWED_TAXA):
-            continue
 
         # A. Basic Counts & Dates
         encounters = int(len(group))
@@ -656,7 +660,6 @@ def run_radar_system():
         # C. Security & Hotspot Logic
         threat_keywords = ["vulnerable", "endangered", "threatened", "critically"]
         
-        # Safely check Conservation Status
         raw_status = "unknown"
         if 'Conservation Status' in group.columns:
             raw_status = str(group['Conservation Status'].to_list()).lower()
@@ -667,7 +670,6 @@ def run_radar_system():
         if is_sensitive:
             hotspot = "Hidden"
         else:
-            # Safely check Zone
             hotspot = "Unknown"
             if 'Zone' in group.columns:
                 mode_zones = group['Zone'].mode()
@@ -681,6 +683,9 @@ def run_radar_system():
             "hotspot": hotspot,
             "taxonomy": taxonomy
         }
+        
+        if "gull" in clean_species_name.lower():
+            print("      ✅ Added to Pokedex Stats successfully!")
     # ========================
     # --- 2. MASTER MERGE ---
     # ========================
