@@ -364,8 +364,25 @@ def run_radar_system():
         # 🚨 NEW: Download the Spatial Effort Matrix
         try:
             effort_sheet = client.open_by_key(SHEET_KEY).worksheet("Junk Drawer")
-            df_effort = pd.DataFrame(effort_sheet.get_all_records())
-            print(f"   🗺️ Successfully loaded {len(df_effort)} effort grid cells.")
+            
+            # Fetch ONLY columns CH through CM
+            matrix_data = effort_sheet.get("CH:CM")
+            
+            if len(matrix_data) > 1:
+                # Use the first row of that specific block as the headers
+                headers = matrix_data
+                df_effort = pd.DataFrame(matrix_data[1:], columns=headers)
+                
+                # Ensure the math columns are treated as numbers, not text
+                df_effort['Active_Seconds'] = pd.to_numeric(df_effort['Active_Seconds'], errors='coerce').fillna(0)
+                df_effort['Cell_Lat'] = pd.to_numeric(df_effort['Cell_Lat'], errors='coerce')
+                df_effort['Cell_Lon'] = pd.to_numeric(df_effort['Cell_Lon'], errors='coerce')
+                
+                print(f"   🗺️ Successfully loaded {len(df_effort)} effort grid cells.")
+            else:
+                print("   ⚠️ Junk Drawer matrix is empty.")
+                df_effort = pd.DataFrame()
+                
         except Exception as e:
             print(f"   ⚠️ Could not load Junk Drawer: {e}")
             df_effort = pd.DataFrame()
