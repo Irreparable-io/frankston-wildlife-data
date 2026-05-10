@@ -680,6 +680,9 @@ def run_radar_system():
                 mode_zones = group['Zone'].mode()
                 hotspot = str(mode_zones.iloc) if not mode_zones.empty else "Unknown"
 
+        if "gull" in clean_species_name.lower() or "echidna" in clean_species_name.lower():
+            print(f"      📍 Hotspot Calculated: '{hotspot}'")
+
         # Store results
         pokedex_stats[clean_species_name] = {
             "count": encounters,
