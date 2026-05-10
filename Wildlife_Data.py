@@ -356,13 +356,20 @@ def run_radar_system():
         # 2. Authenticate the Bot
         client = gspread.service_account_from_dict(creds_dict)
         
-        # 3. Open the sheet safely
+        # 3. Open the main sheet safely and load into Pandas
         sheet = client.open_by_key(SHEET_KEY).sheet1
-        
-        # 4. Load into Pandas
         df = pd.DataFrame(sheet.get_all_records())
-        print(f"   📊 Successfully loaded {len(df)} records from Google Sheets.")
-        
+        print(f"   📊 Successfully loaded {len(df)} observations from Google Sheets.")
+
+        # 🚨 NEW: Download the Spatial Effort Matrix
+        try:
+            effort_sheet = client.open_by_key(SHEET_KEY).worksheet("Junk Drawer")
+            df_effort = pd.DataFrame(effort_sheet.get_all_records())
+            print(f"   🗺️ Successfully loaded {len(df_effort)} effort grid cells.")
+        except Exception as e:
+            print(f"   ⚠️ Could not load Junk Drawer: {e}")
+            df_effort = pd.DataFrame()
+            
     except KeyError:
         print("❌ Error: GOOGLE_CREDENTIALS secret not found in environment.")
         return
@@ -872,6 +879,98 @@ def run_radar_system():
         "vpd_data": vpd_export_data,  
         "data": compressed_obs 
     }
+
+    # ==========================================
+    # 🚨 SPATIAL EFFORT & GEOJSON GENERATOR 🚨
+    # ==========================================
+    if not df_effort.empty:
+        print("\n   🗺️ Building Effort-Corrected GeoJSON Heatmap...")
+        try:
+            LAT_STEP = 0.000225  
+            LON_STEP = 0.000286  
+            
+            # 1. Aggregate historical effort per cell (Sum the seconds!)
+            effort_grouped = df_effort.groupby('Cell_ID').agg({
+                'Active_Seconds': 'sum',
+                'Cell_Lat': 'first',
+                'Cell_Lon': 'first',
+                'Zone': 'first'
+            }).reset_index()
+
+            # 2. Find Lat/Lon columns in your main observation dataframe
+            lat_col = next((c for c in df.columns if 'lat' in c.lower()), 'Latitude')
+            lon_col = next((c for c in df.columns if 'lon' in c.lower()), 'Longitude')
+            
+            # 3. Snap observations to the same 25x25m grid
+            df_geo = df.dropna(subset=[lat_col, lon_col]).copy()
+            
+            def get_cell_id(row):
+                try:
+                    c_lat = math.floor(float(row[lat_col]) / LAT_STEP) * LAT_STEP
+                    c_lon = math.floor(float(row[lon_col]) / LON_STEP) * LON_STEP
+                    return f"{c_lat:.6f}_{c_lon:.6f}"
+                except:
+                    return "Invalid"
+                    
+            df_geo['Cell_ID'] = df_geo.apply(get_cell_id, axis=1)
+            
+            # 4. Count sightings per cell
+            sighting_counts = df_geo[df_geo['Cell_ID'] != "Invalid"].groupby('Cell_ID').size().reset_index(name='Sightings')
+            
+            # 5. Merge Effort with Sightings and Calculate Density
+            matrix = pd.merge(effort_grouped, sighting_counts, on='Cell_ID', how='left')
+            matrix['Sightings'] = matrix['Sightings'].fillna(0)
+            
+            # Density Math: Sightings per Active Hour
+            matrix['Active_Hours'] = matrix['Active_Seconds'] / 3600.0
+            matrix['Density'] = matrix.apply(
+                lambda r: round(r['Sightings'] / r['Active_Hours'], 2) if r['Active_Hours'] > 0 else 0, axis=1
+            )
+            
+            # 6. Build the GeoJSON Polygons
+            features = []
+            for _, row in matrix.iterrows():
+                c_lat = float(row['Cell_Lat'])
+                c_lon = float(row['Cell_Lon'])
+                
+                # GeoJSON expects coordinates in [Longitude, Latitude] format
+                poly = [
+                    [c_lon, c_lat], 
+                    [c_lon + LON_STEP, c_lat], 
+                    [c_lon + LON_STEP, c_lat + LAT_STEP], 
+                    [c_lon, c_lat + LAT_STEP], 
+                    [c_lon, c_lat] # Close the loop
+                ]
+                
+                features.append({
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [poly]
+                    },
+                    "properties": {
+                        "cell_id": row['Cell_ID'],
+                        "zone": row['Zone'],
+                        "active_minutes": round(row['Active_Seconds'] / 60, 1),
+                        "sightings": int(row['Sightings']),
+                        "density": row['Density']  # <--- THIS is what Squarespace will use to color the map!
+                    }
+                })
+                
+            geojson_data = {
+                "type": "FeatureCollection",
+                "features": features
+            }
+            
+            # 7. Save it to your output folder
+            geojson_path = os.path.join(OUTPUT_DIR, "effort_heatmap.geojson")
+            with open(geojson_path, "w") as f:
+                json.dump(geojson_data, f)
+                
+            print(f"      [✅] GeoJSON Generated: {len(features)} spatial cells mapped.")
+
+        except Exception as e:
+            print(f"      [❌] GeoJSON Generation Error: {e}")
 
     # 4. EXPORT EVERYTHING
     print("\n   📝 Starting file exports...\n")
