@@ -708,7 +708,7 @@ def run_radar_system():
             # 2. 🚨 THE FIX: 90% Fuzzy Match for Hyphens & Typos
             close_matches = difflib.get_close_matches(sp_name, library_payload.keys(), n=1, cutoff=0.90)
             if close_matches:
-                matched_key = close_matches
+                matched_key = close_matches[0]
                 print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
             else:
                 matched_key = None
