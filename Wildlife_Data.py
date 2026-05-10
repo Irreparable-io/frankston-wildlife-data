@@ -1,3 +1,4 @@
+import difflib
 import pandas as pd
 import simplekml
 import json
@@ -13,7 +14,6 @@ import math
 import shutil
 import glob
 import io
-import difflib
 
 # ==========================================
 # --- CONFIGURATION ---
