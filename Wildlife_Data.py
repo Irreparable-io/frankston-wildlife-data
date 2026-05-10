@@ -662,12 +662,14 @@ def run_radar_system():
         else:
             detection = "Unknown"
 
-        # C. Security & Hotspot Logic
+       # C. Security & Hotspot Logic
         threat_keywords = ["vulnerable", "endangered", "threatened", "critically"]
         
         raw_status = "unknown"
-        if 'Conservation Status' in group.columns:
-            raw_status = str(group['Conservation Status'].to_list()).lower()
+        # Case-insensitive column search for Conservation Status
+        status_col = next((c for c in group.columns if str(c).strip().lower() == 'conservation status'), None)
+        if status_col:
+            raw_status = str(group[status_col].to_list()).lower()
             
         is_sensitive = any(k in raw_status for k in threat_keywords) or \
                        any(s in clean_species_name.lower() for s in ["glossy black-cockatoo", "powerful owl"])
@@ -676,9 +678,16 @@ def run_radar_system():
             hotspot = "Hidden"
         else:
             hotspot = "Unknown"
-            if 'Zone' in group.columns:
-                mode_zones = group['Zone'].mode()
-                hotspot = str(valid_zones.mode().tolist()) if not mode_zones.empty else "Unknown"
+            
+            zone_col = next((c for c in group.columns if str(c).strip().lower() == 'zone'), None)
+            
+            if zone_col:
+                valid_zones = group[zone_col].dropna().astype(str).str.strip()
+                valid_zones = valid_zones[valid_zones != ""]
+                valid_zones = valid_zones[valid_zones.str.lower() != "nan"]
+                
+                if not valid_zones.empty:
+                    hotspot = str(valid_zones.mode().tolist())
 
         if "gull" in clean_species_name.lower() or "echidna" in clean_species_name.lower():
             print(f"      📍 Hotspot Calculated: '{hotspot}'")
