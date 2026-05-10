@@ -4,4 +4,3 @@ simplekml
 requests
 gspread
 google-auth
-difflib
