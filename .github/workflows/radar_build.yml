@@ -37,6 +37,6 @@ jobs:
         run: |
           git config --global user.name "GitHub Action Bot"
           git config --global user.email "action@github.com"
-          git add landing_data.json dashboard_data.json library_stats.json
+          git add landing_data.json dashboard_data.json library_stats.json effort_heatmap.geojson
           git commit -m "Auto-generated JSON payloads from Google Sheets" || echo "No changes to commit"
           git push
