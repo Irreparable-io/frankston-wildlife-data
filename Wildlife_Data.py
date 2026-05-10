@@ -678,7 +678,7 @@ def run_radar_system():
             hotspot = "Unknown"
             if 'Zone' in group.columns:
                 mode_zones = group['Zone'].mode()
-                hotspot = str(mode_zones.iloc) if not mode_zones.empty else "Unknown"
+                hotspot = str(valid_zones.mode().tolist()) if not mode_zones.empty else "Unknown"
 
         if "gull" in clean_species_name.lower() or "echidna" in clean_species_name.lower():
             print(f"      📍 Hotspot Calculated: '{hotspot}'")
