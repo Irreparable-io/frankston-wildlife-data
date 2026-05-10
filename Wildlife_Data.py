@@ -600,6 +600,9 @@ def run_radar_system():
     
     df['DateObj'] = pd.to_datetime(df['Date/Time'], dayfirst=True, errors='coerce')
 
+    if 'Species' in df.columns:
+        df = df.rename(columns={'Species': 'Common Name'})
+        
     # Drop the "CONTENDED" rows safely
     if 'Notes' in df.columns:
         df = df[~df['Notes'].astype(str).str.lower().str.contains('contended', na=False)]
