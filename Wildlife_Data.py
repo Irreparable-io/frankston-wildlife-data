@@ -362,21 +362,28 @@ def run_radar_system():
         print(f"   📊 Successfully loaded {len(df)} observations from Google Sheets.")
 
         # 🚨 NEW: Download the Spatial Effort Matrix
-        try:
+       try:
             effort_sheet = client.open_by_key(SHEET_KEY).worksheet("Junk Drawer")
-            
-            # Fetch ONLY columns CH through CM
             matrix_data = effort_sheet.get("CH:CM")
             
-            if len(matrix_data) > 1:
-                # Use the first row of that specific block as the headers
-                headers = matrix_data
-                df_effort = pd.DataFrame(matrix_data[1:], columns=headers)
+            if len(matrix_data) > 0:
+                # 1. Load into Pandas
+                df_effort = pd.DataFrame(matrix_data)
                 
-                # Ensure the math columns are treated as numbers, not text
+                # 2. Force exactly 6 columns (pads short rows, trims long rows)
+                df_effort = df_effort.reindex(columns=range(6))
+                df_effort.columns = ['Session_Date', 'Zone', 'Cell_ID', 'Active_Seconds', 'Cell_Lat', 'Cell_Lon']
+                
+                # 3. Drop the text header row if it exists
+                df_effort = df_effort[df_effort['Active_Seconds'] != 'Active_Seconds']
+                
+                # 4. Convert math columns to pure numbers
                 df_effort['Active_Seconds'] = pd.to_numeric(df_effort['Active_Seconds'], errors='coerce').fillna(0)
                 df_effort['Cell_Lat'] = pd.to_numeric(df_effort['Cell_Lat'], errors='coerce')
                 df_effort['Cell_Lon'] = pd.to_numeric(df_effort['Cell_Lon'], errors='coerce')
+                
+                # 5. Drop any empty/corrupted rows
+                df_effort = df_effort.dropna(subset=['Active_Seconds', 'Cell_Lat', 'Cell_Lon'])
                 
                 print(f"   🗺️ Successfully loaded {len(df_effort)} effort grid cells.")
             else:
