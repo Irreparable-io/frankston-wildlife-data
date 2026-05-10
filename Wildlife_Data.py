@@ -361,8 +361,8 @@ def run_radar_system():
         df = pd.DataFrame(sheet.get_all_records())
         print(f"   📊 Successfully loaded {len(df)} observations from Google Sheets.")
 
-        # 🚨 NEW: Download the Spatial Effort Matrix
-       try:
+        # 🚨 NEW: Download the Spatial Effort Matrix (Targeted Columns Only)
+        try:
             effort_sheet = client.open_by_key(SHEET_KEY).worksheet("Junk Drawer")
             matrix_data = effort_sheet.get("CH:CM")
             
