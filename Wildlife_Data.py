@@ -13,6 +13,7 @@ import math
 import shutil
 import glob
 import io
+import difflib
 
 # ==========================================
 # --- CONFIGURATION ---
@@ -116,7 +117,8 @@ SPECIES_MAP = {
     "eurasian blackbird": "Common Blackbird",
     "rock pigeon": "Feral Pigeon",
     "lowlands copperhead": "Lowland Copperhead",
-    "buff banded rail": "Buff-banded Rail"
+    "buff banded rail": "Buff-banded Rail",
+    "blue spotted hawker": "Blue-spotted Hawker"
 }
 
 # 🚨 
@@ -162,7 +164,7 @@ def normalize_species_name(name):
         'tailed', 'rumped', 'eared', 'breasted', 'winged', 'naped', 
         'bellied', 'capped', 'crowned', 'throated', 'backed', 'billed', 
         'faced', 'headed', 'necked', 'eyed', 'legged', 'footed', 'browed',
-        'wren', 'shrike', 'cuckoo', 'quail', 'knee'
+        'wren', 'shrike', 'cuckoo', 'quail', 'knee', 'beaked'
     ]
     for suffix in lowercase_suffixes:
         title_name = title_name.replace(f"-{suffix.title()}", f"-{suffix}")
@@ -698,8 +700,22 @@ def run_radar_system():
 
     print("   🔗 Merging Live Spreadsheet Data...")
     for sp_name, stats in pokedex_stats.items():
+        
+        # 1. Try an exact match first
         if sp_name in library_payload:
-            entry = library_payload[sp_name]
+            matched_key = sp_name
+        else:
+            # 2. 🚨 THE FIX: 90% Fuzzy Match for Hyphens & Typos
+            close_matches = difflib.get_close_matches(sp_name, library_payload.keys(), n=1, cutoff=0.90)
+            if close_matches:
+                matched_key = close_matches
+                print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
+            else:
+                matched_key = None
+
+        # 3. Apply the Data
+        if matched_key:
+            entry = library_payload[matched_key]
             entry['status'] = "recorded"
             entry['liveCount'] = stats['count']
             entry['liveLastSighted'] = stats['latest_date']
@@ -707,7 +723,7 @@ def run_radar_system():
             entry['liveHotspot'] = stats['hotspot']
             entry['liveTaxonomy'] = stats['taxonomy']
         else:
-            # Species found but NOT on the Expected List
+            # 4. Genuine New Discovery (Did not match anything > 90%)
             library_payload[sp_name] = {
                 "scientific_name": "Unknown (New Discovery)", 
                 "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
