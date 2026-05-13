@@ -753,7 +753,8 @@ def run_radar_system():
     print("   🧬 Building Expected Master List from VBA & iNat...")
     library_payload = build_master_list()
 
-    # Taxonomy Exclusion Rule
+    rejection_log = []
+
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
 
     # 1. Scrub the historical VBA/iNat data
@@ -841,7 +842,6 @@ def run_radar_system():
     strict_species_set = set()
     strict_threatened_set = set()
     strict_obs_count = 0
-    rejection_log = []
     
     valid_zones = [
         "The Pines Flora and Fauna Reserve", 
