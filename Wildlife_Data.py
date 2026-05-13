@@ -241,7 +241,7 @@ def inject_inaturalist_data(species_dict):
 def build_master_list():
     print("🧬 Scanning repository for VBA Summary Files...")
     
-    # 🚨 FOOLPROOF FIX: Recursively search the entire repository for CSV files
+    # Recursively search the entire repository for CSV files
     all_csvs = glob.glob("**/*.csv", recursive=True) + glob.glob("**/*.CSV", recursive=True)
     
     # Filter to only grab your specific VBA reports
@@ -443,7 +443,7 @@ def run_radar_system():
     print(f"   📊 MATH CHECK: {total_hours} Hours across {len(daily_stats)} unique field days.")
 
     # =========================================================
-    # 🚨 VPD SCATTER PLOT ENGINE
+    # VPD SCATTER PLOT ENGINE
     # =========================================================
     print("   📊 Calculating Vapor Pressure Deficit (VPD)...")
     
@@ -776,7 +776,7 @@ def run_radar_system():
             # 4. 90% Fuzzy Match for Hyphens & Typos
             close_matches = difflib.get_close_matches(sp_name, library_payload.keys(), n=1, cutoff=0.90)
             if close_matches:
-                matched_key = close_matches
+                matched_key = close_matches[0]
                 print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
             else:
                 matched_key = None
