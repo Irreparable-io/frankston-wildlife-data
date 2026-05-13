@@ -759,6 +759,7 @@ def run_radar_system():
     # 1. Scrub the historical VBA/iNat data
     keys_to_delete = [sp for sp in library_payload.keys() if any(omit in str(sp).lower() for omit in js_omit_list)]
     for k in keys_to_delete:
+        rejection_log.append(f"Historical (VBA),{k},N/A,Taxonomy Exclusion")
         del library_payload[k]
 
     print("   🔗 Merging Live Spreadsheet Data...")
@@ -766,7 +767,7 @@ def run_radar_system():
         
         # 2. Scrub the live spreadsheet data
         if any(omit in str(sp_name).lower() for omit in js_omit_list):
-            # Skip this species completely; it does not get a badge.
+            rejection_log.append(f"Historical (Live),{sp_name},N/A,Taxonomy Exclusion")
             continue
 
         # 3. Try an exact match first
@@ -840,6 +841,7 @@ def run_radar_system():
     strict_species_set = set()
     strict_threatened_set = set()
     strict_obs_count = 0
+    rejection_log = []
     
     valid_zones = [
         "The Pines Flora and Fauna Reserve", 
@@ -866,10 +868,12 @@ def run_radar_system():
         
         # Javascript Exclusion Rule
         if any(omit in str(sp_name).lower() for omit in js_omit_list):
+            rejection_log.append(f"Live Data,{sp_name},{zn_name},Taxonomy Exclusion")
             continue
             
         # Zone Exclusion Rule
         if zn_name not in valid_zones:
+            rejection_log.append(f"Live Data,{sp_name},{zn_name},Out of Bounds Zone")
             continue
             
         # Add to Final Counts
@@ -1008,6 +1012,18 @@ def run_radar_system():
 
         except Exception as e:
             print(f"      [❌] GeoJSON Generation Error: {e}")
+
+    # ==========================================
+    # GENERATE REJECTION RECEIPT
+    # ==========================================
+    if rejection_log:
+        print(f"\n🗑️ Generating Rejection Log ({len(rejection_log)} items blocked)...")
+        log_path = "Rejection_Log.csv"
+        with open(log_path, "w", encoding="utf-8") as f:
+            f.write("Data Source,Species,Zone,Reason for Rejection\n")
+            for row in rejection_log:
+                f.write(row + "\n")
+        print(f"   [✅] Saved to {log_path}. Check this file to see what was filtered!")
 
     # 4. EXPORT EVERYTHING
     print("\n   📝 Starting file exports...\n")
