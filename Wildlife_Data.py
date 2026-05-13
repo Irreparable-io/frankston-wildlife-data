@@ -628,10 +628,10 @@ def run_radar_system():
     print("   📊 Crunching live statistics from spreadsheet...")
     
     pokedex_stats = {}
+    rejection_log = []
     
-    # Strip invisible spaces from Google Sheet headers
+    # Strip invisible spaces
     df.columns = df.columns.str.strip()
-    
     df['DateObj'] = pd.to_datetime(df['Date/Time'], dayfirst=True, errors='coerce')
 
     if 'Species' in df.columns:
@@ -641,18 +641,25 @@ def run_radar_system():
     if 'Notes' in df.columns:
         df = df[~df['Notes'].astype(str).str.lower().str.contains('contended', na=False)]
 
+    # Define the official boundaries once
+    valid_reserves = ["The Pines Flora and Fauna Reserve", "Langwarrin Flora and Fauna Reserve", "Kananook Creek", "Frankston Nature Conservation Reserve", "Obscured"]
+
     for species, group in df.groupby('Common Name'):
         raw_name = str(species).strip()
         clean_species_name = normalize_species_name(raw_name)
 
-        # 🚨 DIAGNOSTIC: Watch the Silver Gull in the logs
-        if "gull" in clean_species_name.lower():
-            print(f"   🔍 FOUND IN SHEET: '{clean_species_name}' | Count: {len(group)}")
-
         # 1. Apply the master Exclude List
         if any(bad in clean_species_name.lower() for bad in EXCLUDE_LIST):
-            if "gull" in clean_species_name.lower(): print("      ❌ Dropped by EXCLUDE_LIST")
             continue
+            
+        # 2. Zone Boundary Check
+        zone_col = next((c for c in group.columns if str(c).strip().lower() == 'zone'), None)
+        if zone_col:
+            group_zones = group[zone_col].dropna().astype(str).str.strip().tolist()
+            # If the animal was NEVER seen inside a valid reserve, block it from the Library
+            if not any(z in valid_reserves for z in group_zones):
+                rejection_log.append(f"Historical (Live),{clean_species_name},Outside Reserve,Out of Bounds Zone")
+                continue
             
         # 2. Safely pull and normalize Taxonomy WITHOUT dropping anything
         taxonomy = "Unknown"
@@ -752,8 +759,6 @@ def run_radar_system():
     # ========================
     print("   🧬 Building Expected Master List from VBA & iNat...")
     library_payload = build_master_list()
-
-    rejection_log = []
 
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
     safe_keywords = ['fantail', 'cormorant', 'kingfisher', 'antechinus', 'frogmouth', 'bee-eater', 'fly-catcher']
