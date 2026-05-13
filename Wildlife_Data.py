@@ -751,25 +751,37 @@ def run_radar_system():
     # --- 2. MASTER MERGE ---
     # ========================
     print("   🧬 Building Expected Master List from VBA & iNat...")
-    
     library_payload = build_master_list()
+
+    # Taxonomy Exclusion Rule
+    js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
+
+    # 1. Scrub the historical VBA/iNat data
+    keys_to_delete = [sp for sp in library_payload.keys() if any(omit in str(sp).lower() for omit in js_omit_list)]
+    for k in keys_to_delete:
+        del library_payload[k]
 
     print("   🔗 Merging Live Spreadsheet Data...")
     for sp_name, stats in pokedex_stats.items():
         
-        # 1. Try an exact match first
+        # 2. Scrub the live spreadsheet data
+        if any(omit in str(sp_name).lower() for omit in js_omit_list):
+            # Skip this species completely; it does not get a badge.
+            continue
+
+        # 3. Try an exact match first
         if sp_name in library_payload:
             matched_key = sp_name
         else:
-            # 2. 🚨 THE FIX: 90% Fuzzy Match for Hyphens & Typos
+            # 4. 90% Fuzzy Match for Hyphens & Typos
             close_matches = difflib.get_close_matches(sp_name, library_payload.keys(), n=1, cutoff=0.90)
             if close_matches:
-                matched_key = close_matches[0]
+                matched_key = close_matches
                 print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
             else:
                 matched_key = None
 
-        # 3. Apply the Data
+        # 5. Apply the Data
         if matched_key:
             entry = library_payload[matched_key]
             entry['status'] = "recorded"
@@ -779,7 +791,7 @@ def run_radar_system():
             entry['liveHotspot'] = stats['hotspot']
             entry['liveTaxonomy'] = stats['taxonomy']
         else:
-            # 4. Genuine New Discovery (Did not match anything > 90%)
+            # 6. Genuine New Discovery (Did not match anything > 90%)
             library_payload[sp_name] = {
                 "scientific_name": "Unknown (New Discovery)", 
                 "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
