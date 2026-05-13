@@ -1018,12 +1018,14 @@ def run_radar_system():
     # ==========================================
     if rejection_log:
         print(f"\n🗑️ Generating Rejection Log ({len(rejection_log)} items blocked)...")
-        log_path = "Rejection_Log.csv"
+        
+        log_path = os.path.join(OUTPUT_DIR, "Rejection_Log.csv")
+        
         with open(log_path, "w", encoding="utf-8") as f:
             f.write("Data Source,Species,Zone,Reason for Rejection\n")
             for row in rejection_log:
                 f.write(row + "\n")
-        print(f"   [✅] Saved to {log_path}. Check this file to see what was filtered!")
+        print(f"   [✅] Saved to {log_path}. Check GitHub repo for this file!")
 
     # 4. EXPORT EVERYTHING
     print("\n   📝 Starting file exports...\n")
