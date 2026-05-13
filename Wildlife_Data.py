@@ -756,9 +756,14 @@ def run_radar_system():
     rejection_log = []
 
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
+    safe_keywords = ['fantail', 'cormorant', 'kingfisher', 'antechinus', 'frogmouth', 'bee-eater', 'fly-catcher']
 
     # 1. Scrub the historical VBA/iNat data
-    keys_to_delete = [sp for sp in library_payload.keys() if any(omit in str(sp).lower() for omit in js_omit_list)]
+    keys_to_delete = [
+        sp for sp in library_payload.keys() 
+        if any(omit in str(sp).lower() for omit in js_omit_list) 
+        and not any(safe in str(sp).lower() for safe in safe_keywords)
+    ]
     for k in keys_to_delete:
         rejection_log.append(f"Historical (VBA),{k},N/A,Taxonomy Exclusion")
         del library_payload[k]
@@ -767,7 +772,8 @@ def run_radar_system():
     for sp_name, stats in pokedex_stats.items():
         
         # 2. Scrub the live spreadsheet data
-        if any(omit in str(sp_name).lower() for omit in js_omit_list):
+        name_lower = str(sp_name).lower()
+        if any(omit in name_lower for omit in js_omit_list) and not any(safe in name_lower for safe in safe_keywords):
             rejection_log.append(f"Historical (Live),{sp_name},N/A,Taxonomy Exclusion")
             continue
 
@@ -867,7 +873,8 @@ def run_radar_system():
         st_name = status_legend.__getitem__(st_idx)
         
         # Javascript Exclusion Rule
-        if any(omit in str(sp_name).lower() for omit in js_omit_list):
+        name_lower = str(sp_name).lower()
+        if any(omit in name_lower for omit in js_omit_list) and not any(safe in name_lower for safe in safe_keywords):
             rejection_log.append(f"Live Data,{sp_name},{zn_name},Taxonomy Exclusion")
             continue
             
