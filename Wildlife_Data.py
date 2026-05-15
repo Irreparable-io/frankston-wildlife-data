@@ -118,7 +118,8 @@ SPECIES_MAP = {
     "rock pigeon": "Feral Pigeon",
     "lowlands copperhead": "Lowland Copperhead",
     "buff banded rail": "Buff-banded Rail",
-    "eastern small eyed snake": "Eastern Small-eyed Snake"
+    "eastern small eyed snake": "Eastern Small-eyed Snake",
+    "pink eared duck": "Pink-eared Duck"
 }
 
 # 🚨 
