@@ -363,7 +363,7 @@ def run_radar_system():
         df = pd.DataFrame(sheet.get_all_records())
         print(f"   📊 Successfully loaded {len(df)} observations from Google Sheets.")
 
-        # 🚨 NEW: Download the Spatial Effort Matrix (Targeted Columns Only)
+        # Download the Spatial Effort Matrix (Targeted Columns Only)
         try:
             effort_sheet = client.open_by_key(SHEET_KEY).worksheet("Junk Drawer")
             matrix_data = effort_sheet.get("CH:CM")
@@ -412,6 +412,12 @@ def run_radar_system():
     zone_col = next((c for c in df.columns if 'zone' in c.lower()), 'Zone')
     notes_col = next((c for c in df.columns if 'note' in c.lower()), 'Notes')
     media_col = next((c for c in df.columns if 'media' in c.lower()), 'Media Type')
+    
+    # Ensure it doesn't mix up Regional vs Local columns
+    temp_col = next((c for c in df.columns if 'temp' in c.lower() and 'local' not in c.lower()), 'Temp. (°C)')
+    hum_col = next((c for c in df.columns if 'humid' in c.lower() and 'local' not in c.lower()), 'Humid. (%)')
+    loc_t_col = next((c for c in df.columns if 'local t' in c.lower()), 'Local T.')
+    loc_h_col = next((c for c in df.columns if 'local h' in c.lower()), 'Local H.')
 
     df.rename(columns={
         name_col: 'Common Name', 
@@ -420,7 +426,11 @@ def run_radar_system():
         date_col: 'Date/Time', 
         zone_col: 'Zone',
         notes_col: 'Notes',
-        media_col: 'Media Type'
+        media_col: 'Media Type',
+        temp_col: 'Temp. (°C)',
+        hum_col: 'Humid. (%)',
+        loc_t_col: 'Local T.',
+        loc_h_col: 'Local H.'
     }, inplace=True)
 
     # --- 2. PURGE UNVERIFIED RECORDS BEFORE DOING ANY MATH ---
@@ -443,17 +453,16 @@ def run_radar_system():
     
     print(f"   📊 MATH CHECK: {total_hours} Hours across {len(daily_stats)} unique field days.")
 
-    # =========================================================
+   # =========================================================
     # VPD SCATTER PLOT ENGINE (UPGRADED WITH LOCAL WEATHER)
     # =========================================================
     print("   📊 Calculating Vapor Pressure Deficit (VPD)...")
-    
+
     # 1. Ensure all potential weather columns are numeric
-    # We use df.get() so it doesn't crash if an older CSV is missing the new columns entirely
-    df['Temp. (°C)'] = pd.to_numeric(df.get('Temp. (°C)', pd.Series(dtype=float)), errors='coerce')
-    df['Humidity (%)'] = pd.to_numeric(df.get('Humidity (%)', pd.Series(dtype=float)), errors='coerce')
-    df['Local T.'] = pd.to_numeric(df.get('Local T.', pd.Series(dtype=float)), errors='coerce')
-    df['Local H.'] = pd.to_numeric(df.get('Local H.', pd.Series(dtype=float)), errors='coerce')
+    df['Temp. (°C)'] = pd.to_numeric(df.get('Temp. (°C)', np.nan), errors='coerce')
+    df['Humid. (%)'] = pd.to_numeric(df.get('Humid. (%)', np.nan), errors='coerce')
+    df['Local T.'] = pd.to_numeric(df.get('Local T.', np.nan), errors='coerce')
+    df['Local H.'] = pd.to_numeric(df.get('Local H.', np.nan), errors='coerce')
 
     # 2. Prioritize Local Weather, fallback to API Weather
     def compute_best_vpd(row):
@@ -464,14 +473,14 @@ def run_radar_system():
         # Fall back to the regional Visual Crossing data
         if pd.isnull(t) or pd.isnull(h):
             t = row.get('Temp. (°C)')
-            h = row.get('Humidity (%)')
+            h = row.get('Humid. (%)') # FIXED: Matches your CSV perfectly
             
         # Valid numbers from either source, calculate VPD
         if pd.notnull(t) and pd.notnull(h):
             return calculate_vpd(t, h)
         return None
 
-    # 3. Apply VPD math row by row using the smart helper
+    # 3. Apply VPD math row by row
     df['VPD_kPa'] = df.apply(compute_best_vpd, axis=1)
 
     # 4. Filter missing data
@@ -1021,7 +1030,7 @@ def run_radar_system():
                         "zone": row['Zone'],
                         "active_minutes": round(row['Active_Seconds'] / 60, 1),
                         "sightings": int(row['Sightings']),
-                        "density": row['Density']  # <--- THIS is what Squarespace will use to color the map!
+                        "density": row['Density']
                     }
                 })
                 
