@@ -444,26 +444,40 @@ def run_radar_system():
     print(f"   📊 MATH CHECK: {total_hours} Hours across {len(daily_stats)} unique field days.")
 
     # =========================================================
-    # VPD SCATTER PLOT ENGINE
+    # VPD SCATTER PLOT ENGINE (UPGRADED WITH LOCAL WEATHER)
     # =========================================================
     print("   📊 Calculating Vapor Pressure Deficit (VPD)...")
     
-    # 1. Ensure columns are numeric
-    df['Temp. (°C)'] = pd.to_numeric(df['Temp. (°C)'], errors='coerce')
-    df['Humidity (%)'] = pd.to_numeric(df['Humidity (%)'], errors='coerce')
+    # 1. Ensure all potential weather columns are numeric
+    # We use df.get() so it doesn't crash if an older CSV is missing the new columns entirely
+    df['Temp. (°C)'] = pd.to_numeric(df.get('Temp. (°C)', pd.Series(dtype=float)), errors='coerce')
+    df['Humidity (%)'] = pd.to_numeric(df.get('Humidity (%)', pd.Series(dtype=float)), errors='coerce')
+    df['Local T.'] = pd.to_numeric(df.get('Local T.', pd.Series(dtype=float)), errors='coerce')
+    df['Local H.'] = pd.to_numeric(df.get('Local H.', pd.Series(dtype=float)), errors='coerce')
 
-    # 2. Apply VPD math row by row
-    df['VPD_kPa'] = df.apply(
-        lambda row: calculate_vpd(row.get('Temp. (°C)'), row.get('Humidity (%)')) 
-        if pd.notnull(row.get('Temp. (°C)')) and pd.notnull(row.get('Humidity (%)')) 
-        else None, 
-        axis=1
-    )
+    # 2. Prioritize Local Weather, fallback to API Weather
+    def compute_best_vpd(row):
+        # Try Local Data First
+        t = row.get('Local T.')
+        h = row.get('Local H.')
+        
+        # Fall back to the regional Visual Crossing data
+        if pd.isnull(t) or pd.isnull(h):
+            t = row.get('Temp. (°C)')
+            h = row.get('Humidity (%)')
+            
+        # Valid numbers from either source, calculate VPD
+        if pd.notnull(t) and pd.notnull(h):
+            return calculate_vpd(t, h)
+        return None
 
-    # 3. Filter missing data
+    # 3. Apply VPD math row by row using the smart helper
+    df['VPD_kPa'] = df.apply(compute_best_vpd, axis=1)
+
+    # 4. Filter missing data
     vpd_df = df.dropna(subset=['VPD_kPa', 'Zone'])
     
-    # 4. Extract only what the scatter plot needs
+    # 5. Extract only what the scatter plot needs
     vpd_export = vpd_df[['Date/Time', 'Zone', 'Common Name', 'VPD_kPa']].copy()
     vpd_export['Taxonomy'] = vpd_df.get('Taxonomy', 'Unknown')
     
