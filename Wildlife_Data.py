@@ -35,6 +35,7 @@ SPECIES_MAP = {
     "peewee": "Magpie-lark",
     "magpie lark": "Magpie-lark",
     "willie wagtail": "Willie Wagtail",
+    "willie-wagtail": "Willie Wagtail",
     "rainbow lorikeet": "Eastern Rainbow Lorikeet",
     "echidna": "Eastern Short-beaked Echidna",
     "magpie": "Australian Magpie",
