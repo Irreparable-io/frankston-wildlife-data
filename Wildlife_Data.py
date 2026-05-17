@@ -1052,6 +1052,22 @@ def run_radar_system():
     # ==========================================
     # GENERATE REJECTION RECEIPT
     # ==========================================
+
+print("\n--- Species in landing_data.json (strict_species_set) ---")
+print(sorted(strict_species_set))
+print(f"Count: {len(strict_species_set)}")
+
+print("\n--- Species in library_stats.json (library_payload.keys()) ---")
+print(sorted(library_payload.keys()))
+print(f"Count: {len(library_payload)}")
+
+# Diff sets
+missing_from_library = set(strict_species_set) - set(library_payload.keys())
+print("\nSpecies in landing, but NOT in library:", sorted(missing_from_library))
+
+missing_from_landing = set(library_payload.keys()) - set(strict_species_set)
+print("\nSpecies in library, but NOT in landing:", sorted(missing_from_landing))
+    
     if rejection_log:
         print(f"\n🗑️ Generating Rejection Log ({len(rejection_log)} items blocked)...")
         
