@@ -128,7 +128,7 @@ EXCLUDE_LIST = [
     "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", 
     " and ", "possums", "unknown", "×", " sp.", "birds", "cattle", 
     "pardalotes", "black faced cuckoo shrike", "scarlet myzomela",
-    "blue spotted hawker", "ferret", "common froglet"
+    "blue spotted hawker", "ferret", "common froglet", "cat", "hawker"
 ]
 
 # 🚨 Force specific conservation statuses (Overrides DEECA and iNat)
