@@ -798,55 +798,58 @@ def run_radar_system():
         del library_payload[k]
 
     print("   🔗 Merging Live Spreadsheet Data...")
-    for sp_name, stats in pokedex_stats.items():
-    # Normalize incoming spreadsheet species name
-    obs_norm = normalize_species_name(sp_name).lower()
     
-    # 1. Exclusion check (use normalized name as well for consistency)
-    if any(omit in obs_norm for omit in js_omit_list) and not any(safe in obs_norm for safe in safe_keywords):
-        rejection_log.append(f"Historical (Live),{sp_name},N/A,Taxonomy Exclusion")
-        continue
-
-    # 2. Prepare normalized mapping of library keys -> original keys
     norm_library_keys = {normalize_species_name(lib_key).lower(): lib_key for lib_key in library_payload}
-    
-    # 3. Try exact normalized match
-    matched_key = norm_library_keys.get(obs_norm, None)
-    
-    # 4. Fuzzy match (normalized), if exact not found
-    if not matched_key:
-        close_matches = difflib.get_close_matches(
-            obs_norm,
-            norm_library_keys.keys(),
-            n=1, cutoff=0.85  # 0.85 = a little more forgiving
-        )
-        if close_matches:
-            matched_key = norm_library_keys[close_matches[0]]
-            print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
-    
-    # 5. Apply (still using original/unnormalized library key)
-    if matched_key:
-        entry = library_payload[matched_key]
-        entry['status'] = "recorded"
-        entry['liveCount'] = stats['count']
-        entry['liveLastSighted'] = stats['latest_date']
-        entry['liveDetection'] = stats['detection']
-        entry['liveHotspot'] = stats['hotspot']
-        entry['liveTaxonomy'] = stats['taxonomy']
-    else:
-        # 6. New discovery (store normalized name for consistency)
-        library_payload[normalize_species_name(sp_name)] = {
-            "scientific_name": "Unknown (New Discovery)", 
-            "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
-            "status": "recorded",
-            "liveCount": stats['count'],
-            "liveLastSighted": stats['latest_date'],
-            "liveDetection": stats['detection'],
-            "liveHotspot": stats['hotspot'],
-            "liveTaxonomy": stats['taxonomy']
-        }
-        print(f"      [NEW] Could not find a match for '{sp_name}', added as new discovery")
 
+    for sp_name, stats in pokedex_stats.items():
+        
+        # Normalize incoming spreadsheet species name
+        obs_norm = normalize_species_name(sp_name).lower()
+        
+        # 1. Exclusion check (use normalized name as well for consistency)
+        if any(omit in obs_norm for omit in js_omit_list) and not any(safe in obs_norm for safe in safe_keywords):
+            rejection_log.append(f"Historical (Live),{sp_name},N/A,Taxonomy Exclusion")
+            continue
+        
+        # 2. Try exact normalized match
+        matched_key = norm_library_keys.get(obs_norm, None)
+        
+        # 3. Fuzzy match (normalized), if exact not found
+        if not matched_key:
+            import difflib # Ensure this is imported!
+            close_matches = difflib.get_close_matches(
+                obs_norm,
+                norm_library_keys.keys(),
+                n=1, cutoff=0.85  # a little more forgiving
+            )
+            if close_matches:
+                matched_key = norm_library_keys[close_matches]
+                print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
+        
+        # 4. Apply (still using original/unnormalized library key)
+        if matched_key:
+            entry = library_payload[matched_key]
+            entry['status'] = "recorded"
+            entry['liveCount'] = stats['count']
+            entry['liveLastSighted'] = stats['latest_date']
+            entry['liveDetection'] = stats['detection']
+            entry['liveHotspot'] = stats['hotspot']
+            entry['liveTaxonomy'] = stats['taxonomy']
+        else:
+            # 5. New discovery (store normalized name for consistency)
+            clean_new_name = normalize_species_name(sp_name)
+            library_payload[clean_new_name] = {
+                "scientific_name": "Unknown (New Discovery)", 
+                "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
+                "status": "recorded",
+                "liveCount": stats['count'],
+                "liveLastSighted": stats['latest_date'],
+                "liveDetection": stats['detection'],
+                "liveHotspot": stats['hotspot'],
+                "liveTaxonomy": stats['taxonomy']
+            }
+            norm_library_keys[clean_new_name.lower()] = clean_new_name
+            print(f"      [NEW] Could not find a match for '{sp_name}', added as new discovery")
 
     print(f"   ✅ Library Complete: {len(library_payload)} total species cards ready.")
 
