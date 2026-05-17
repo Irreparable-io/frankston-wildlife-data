@@ -1053,26 +1053,24 @@ def run_radar_system():
     # GENERATE REJECTION RECEIPT
     # ==========================================
 
-print("\n--- Species in landing_data.json (strict_species_set) ---")
-print(sorted(strict_species_set))
-print(f"Count: {len(strict_species_set)}")
+    print("\n--- Species in landing_data.json (strict_species_set) ---")
+    print(sorted(strict_species_set))
+    print(f"Count: {len(strict_species_set)}")
 
-print("\n--- Species in library_stats.json (library_payload.keys()) ---")
-print(sorted(library_payload.keys()))
-print(f"Count: {len(library_payload)}")
+    print("\n--- Species in library_stats.json (library_payload.keys()) ---")
+    print(sorted(library_payload.keys()))
+    print(f"Count: {len(library_payload)}")
 
-# Diff sets
-missing_from_library = set(strict_species_set) - set(library_payload.keys())
-print("\nSpecies in landing, but NOT in library:", sorted(missing_from_library))
+    # Diff sets
+    missing_from_library = set(strict_species_set) - set(library_payload.keys())
+    print("\nSpecies in landing, but NOT in library:", sorted(missing_from_library))
 
-missing_from_landing = set(library_payload.keys()) - set(strict_species_set)
-print("\nSpecies in library, but NOT in landing:", sorted(missing_from_landing))
-    
+    missing_from_landing = set(library_payload.keys()) - set(strict_species_set)
+    print("\nSpecies in library, but NOT in landing:", sorted(missing_from_landing))
+
     if rejection_log:
         print(f"\n🗑️ Generating Rejection Log ({len(rejection_log)} items blocked)...")
-        
         log_path = os.path.join(OUTPUT_DIR, "Rejection_Log.csv")
-        
         with open(log_path, "w", encoding="utf-8") as f:
             f.write("Data Source,Species,Zone,Reason for Rejection\n")
             for row in rejection_log:
@@ -1084,7 +1082,6 @@ print("\nSpecies in library, but NOT in landing:", sorted(missing_from_landing))
     atomic_write(library_payload, "library_stats.json")
     atomic_write(landing_payload, "landing_data.json")
     atomic_write(dashboard_payload, "dashboard_data.json")
-    
     print("\n🚀 Pipeline Complete!")
 
 if __name__ == "__main__":
