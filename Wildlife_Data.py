@@ -350,8 +350,8 @@ def calculate_acoustic_prominence(observations):
     
     # 1. Tally audio records
     for obs in observations:
-        species = obs.get('Species', '').strip()
-        media_type = obs.get('Media Type', '').strip()
+        species = str(obs.get('Species', '')).strip()
+        media_type = str(obs.get('Media Type', '')).strip()
         
         if not species:
             continue
@@ -387,9 +387,9 @@ def calculate_sociality(observations):
     
     # 1. Gather all valid visual quantities
     for obs in observations:
-        species = obs.get('Species', '').strip()
-        media_type = obs.get('Media Type', '').strip()
-        qty_str = obs.get('Qty', '').strip()
+        species = str(obs.get('Species', '')).strip()
+        media_type = str(obs.get('Media Type', '')).strip()
+        qty_str = str(obs.get('Qty', '')).strip()
         
         if not species:
             continue
@@ -443,9 +443,9 @@ def calculate_moisture_affinity(observations):
     
     # 1. Calculate VPD for every valid row
     for obs in observations:
-        species = obs.get('Species', '').strip()
-        temp_str = obs.get('Temp. (°C)', '').strip()
-        humid_str = obs.get('Humid. (%)', '').strip()
+        species = str(obs.get('Species', '')).strip()
+        temp_str = str(obs.get('Temp. (°C)', '')).strip()
+        humid_str = str(obs.get('Humid. (%)', '')).strip()
         
         # Skip if missing core data
         if not species or not temp_str or not humid_str:
@@ -513,7 +513,7 @@ def generate_radar_payload(observations, traits_dict):
     moisture_data = calculate_moisture_affinity(observations)
     
     # 2. Get a unique list of all species recorded so far
-    recorded_species = set(obs.get('Species', '').strip() for obs in observations if obs.get('Species'))
+    recorded_species = set(str(obs.get('Species', '')).strip() for obs in observations if obs.get('Species'))
     
     radar_payload = {}
     
