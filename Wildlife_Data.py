@@ -1296,13 +1296,25 @@ def run_radar_system():
         with open(lut_path, "r", encoding="utf-8") as f:
             species_traits_lut = json.load(f)
             
-        # 2. Run the assembler, converting the 'df' DataFrame to records
+        # --- NEW SANITIZATION & DIAGNOSTIC CODE ---
+        # Wipe out Pandas NaNs and replace them with safe empty strings
+        df.fillna('', inplace=True)
+        
+        # Print the exact column headers to catch hidden spaces
+        print(f"   [🔍] DIAGNOSTIC - Columns Found: {df.columns.tolist()}")
+        
+        # 2. Run the assembler
         observations_list = df.to_dict('records')
         radar_payload = generate_radar_payload(observations_list, species_traits_lut)
-        print(f"   [✅] Radar Payload Generated for {len(radar_payload)} species.")
+        
+        # --- PREVENT EXPORTING EMPTY JSONS ---
+        if len(radar_payload) == 0:
+            print("   [⚠️] WARNING: Radar payload is empty! Check column names.")
+        else:
+            print(f"   [✅] Radar Payload Generated for {len(radar_payload)} species.")
         
     except FileNotFoundError:
-        print("   [❌] Radar Error: Could not find 'species_traits_reference.json'. Make sure it is in the repo!")
+        print("   [❌] Radar Error: Could not find 'species_traits_reference.json'.")
         radar_payload = {}
     except Exception as e:
         print(f"   [❌] Radar Generation Error: {e}")
