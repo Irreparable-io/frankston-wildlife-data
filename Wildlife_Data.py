@@ -345,40 +345,39 @@ def calculate_vpd(temp_c, humidity_perc):
         return None
 
 def calculate_acoustic_prominence(observations):
-    """Calculates the 0-100 Acoustic score based on the loudest species."""
-    audio_counts = {}
+    """Calculates Vocal Dependency: % of a species' own records that are audio."""
+    species_counts = {}
     
-    # 1. Tally audio records
     for obs in observations:
         species = str(obs.get('Common Name', '')).strip()
-        media_type = str(obs.get('Media Type', '')).strip()
+        # Make it lowercase for safe searching
+        media_type = str(obs.get('Media Type', '')).strip().lower() 
         
         if not species:
             continue
             
-        # Initialize species in the dictionary if not present
-        if species not in audio_counts:
-            audio_counts[species] = 0
+        if species not in species_counts:
+            species_counts[species] = {'audio_hits': 0, 'total_hits': 0}
             
-        # Catch any variation of audio recording (e.g., 'Audio', 'Audio-Visual')
-        if 'Audio' in media_type:
-            audio_counts[species] += 1
-
-    # 2. Find the baseline (Global Maximum)
-    if not audio_counts or max(audio_counts.values()) == 0:
-        print("No audio records found to establish a baseline.")
-        return {species: 0 for species in audio_counts}
+        # Add to total encounters
+        species_counts[species]['total_hits'] += 1
         
-    global_max_audio = max(audio_counts.values())
-    print(f"--- Acoustic Baseline Established ---")
-    print(f"Apex Vocalist Audio Hits: {global_max_audio}\n")
-
-    # 3. Calculate 0-100 Scores
+        # If the word 'audio' is anywhere in the Media Type column, count it!
+        if 'audio' in media_type:
+            species_counts[species]['audio_hits'] += 1
+            
+    # Calculate the 0-100 score for each species
     acoustic_scores = {}
-    for species, count in audio_counts.items():
-        score = (count / global_max_audio) * 100
-        acoustic_scores[species] = int(score)
+    for species, counts in species_counts.items():
+        total = counts['total_hits']
+        audio = counts['audio_hits']
         
+        if total > 0:
+            score = (audio / total) * 100
+            acoustic_scores[species] = int(score)
+        else:
+            acoustic_scores[species] = 0
+            
     return acoustic_scores
 
 def calculate_sociality(observations):
@@ -1296,18 +1295,20 @@ def run_radar_system():
         with open(lut_path, "r", encoding="utf-8") as f:
             species_traits_lut = json.load(f)
             
-        # --- NEW SANITIZATION & DIAGNOSTIC CODE ---
-        # Wipe out Pandas NaNs and replace them with safe empty strings
+        # 2. Sanitize and Filter the DataFrame
         df.fillna('', inplace=True)
         
-        # Print the exact column headers to catch hidden spaces
-        print(f"   [🔍] DIAGNOSTIC - Columns Found: {df.columns.tolist()}")
-        
-        # 2. Run the assembler
-        observations_list = df.to_dict('records')
+        # --- ENFORCE TAXONOMY BLACKLIST ---
+        if 'Taxonomy' in df.columns:
+            tax_blacklist = ["insect", "spider", "fish", "aquatic", "invertebrate", "crustacean"]
+            radar_df = df[~df['Taxonomy'].astype(str).str.lower().str.contains('|'.join(tax_blacklist))]
+        else:
+            radar_df = df # Fallback if column is missing
+            
+        # 3. Run the assembler on the FILTERED data
+        observations_list = radar_df.to_dict('records')
         radar_payload = generate_radar_payload(observations_list, species_traits_lut)
         
-        # --- PREVENT EXPORTING EMPTY JSONS ---
         if len(radar_payload) == 0:
             print("   [⚠️] WARNING: Radar payload is empty! Check column names.")
         else:
