@@ -504,6 +504,43 @@ def calculate_moisture_affinity(observations):
 
     return affinity_scores
 
+def generate_radar_payload(observations, traits_dict):
+    """Compiles empirical data and LUT traits into the final radar chart JSON."""
+    
+    # 1. Run the empirical calculators once
+    acoustic_data = calculate_acoustic_prominence(observations)
+    sociality_data = calculate_sociality(observations)
+    moisture_data = calculate_moisture_affinity(observations)
+    
+    # 2. Get a unique list of all species recorded so far
+    recorded_species = set(obs.get('Species', '').strip() for obs in observations if obs.get('Species'))
+    
+    radar_payload = {}
+    
+    # 3. Assemble the 5 stats per species
+    for species in recorded_species:
+        # A. Pull Empirical Scores (with safe defaults if missing)
+        ac_score = acoustic_data.get(species, 0)
+        soc_score = sociality_data.get(species, 20)
+        moist_score = moisture_data.get(species, 50) 
+        
+        # B. Pull Static Traits from the LUT
+        trait_info = traits_dict.get(species, {"habitats": [], "stratum": 50})
+        
+        # Calculate Habitat Breadth (4 is the total number of primary EVC buckets)
+        hab_score = (len(trait_info['habitats']) / 4.0) * 100
+        
+        # C. Build the final dictionary for this species
+        radar_payload[species] = {
+            "Acoustic_Prominence": ac_score,
+            "Sociality": soc_score,
+            "Moisture_Affinity": moist_score,
+            "Vertical_Stratum": trait_info['stratum'],
+            "Habitat_Breadth": int(min(100, hab_score)) # Cap at 100
+        }
+        
+    return radar_payload
+
 # ==========================================
 # --- MAIN RADAR SYSTEM ---
 # ==========================================
@@ -1249,11 +1286,35 @@ def run_radar_system():
                 f.write(row + "\n")
         print(f"   [✅] Saved to {log_path}. Check GitHub repo for this file!")
 
+    # ==========================================
+    # GENERATE RADAR CHARTS
+    # ==========================================
+    print("\n🕸️ Generating Radar Chart Payload...")
+    try:
+        # 1. Load the biological traits dictionary (LUT)
+        lut_path = os.path.join(os.path.dirname(__file__), "species_traits_reference.json")
+        with open(lut_path, "r", encoding="utf-8") as f:
+            species_traits_lut = json.load(f)
+            
+        # 2. Run the assembler, converting the 'df' DataFrame to records
+        observations_list = df.to_dict('records')
+        radar_payload = generate_radar_payload(observations_list, species_traits_lut)
+        print(f"   [✅] Radar Payload Generated for {len(radar_payload)} species.")
+        
+    except FileNotFoundError:
+        print("   [❌] Radar Error: Could not find 'species_traits_reference.json'. Make sure it is in the repo!")
+        radar_payload = {}
+    except Exception as e:
+        print(f"   [❌] Radar Generation Error: {e}")
+        radar_payload = {}
+
     # 4. EXPORT EVERYTHING
     print("\n   📝 Starting file exports...\n")
     atomic_write(library_payload, "library_stats.json")
     atomic_write(landing_payload, "landing_data.json")
     atomic_write(dashboard_payload, "dashboard_data.json")
+    if radar_payload:
+        atomic_write(radar_payload, "radar_stats.json")
     print("\n🚀 Pipeline Complete!")
 
 if __name__ == "__main__":
