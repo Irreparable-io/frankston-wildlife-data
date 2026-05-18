@@ -14,6 +14,7 @@ import math
 import shutil
 import glob
 import io
+import re
 
 # ==========================================
 # --- CONFIGURATION ---
@@ -559,6 +560,32 @@ def run_radar_system():
         sheet = client.open_by_key(SHEET_KEY).sheet1
         df = pd.DataFrame(sheet.get_all_records())
         print(f"   📊 Successfully loaded {len(df)} observations from Google Sheets.")
+
+        # ==========================================
+        # GLOBAL DATA SCRUBBER (Site-wide Exclusions)
+        # ==========================================
+        print("   🧹 Scrubbing excluded species and invalid artifacts...")
+        
+        EXCLUDE_LIST = [
+            "fur seal", "little penguin", "red junglefowl", 
+            "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", 
+            " and ", "unknown", "×", " sp.", "pardalotes", 
+            "black faced cuckoo shrike", "scarlet myzomela",
+            "blue spotted hawker", "ferret", "common froglet", "hawker"
+        ]
+        
+        if 'Common Name' in df.columns:
+            # 1. Escape special characters (so " sp." is treated as text, not a regex command)
+            escaped_excludes = [re.escape(word.lower()) for word in EXCLUDE_LIST]
+            
+            # 2. Join them into one massive OR statement (e.g., "dog|cat|ferret")
+            exclude_pattern = '|'.join(escaped_excludes)
+            
+            # 3. Filter the DataFrame: Keep rows where Common Name DOES NOT (~) contain the pattern
+            original_count = len(df)
+            df = df[~df['Common Name'].astype(str).str.lower().str.contains(exclude_pattern, regex=True, na=False)]
+            
+            print(f"   [✅] Scrubber removed {original_count - len(df)} invalid rows.")
 
         # Download the Spatial Effort Matrix (Targeted Columns Only)
         try:
