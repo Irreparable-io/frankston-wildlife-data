@@ -382,7 +382,7 @@ def calculate_acoustic_prominence(observations):
     return acoustic_scores
 
 def calculate_sociality(observations):
-    import re # Scoped directly here so it cannot possibly fail
+    import re 
     
     species_max_qty = {}
     
@@ -393,31 +393,21 @@ def calculate_sociality(observations):
         if not species:
             continue
             
-        # ==========================================
-        # THE INDESTRUCTIBLE PARSER
-        # ==========================================
         if isinstance(raw_qty, (int, float)):
-            # If Pandas already knows it's a number, just use it immediately!
+            # If Pandas already knows it's a number, use it!
             qty = int(raw_qty)
         else:
-            # If it's text (like "5+" or blank), safely extract the digit
+            # If it's text (like "5+"), safely extract it
             qty_str = str(raw_qty).strip()
             try:
                 numbers = re.findall(r'\d+', qty_str)
-                qty = int(numbers) if numbers else 1
+                # Using .pop(0) uses parentheses to completely avoid the markdown bug!
+                qty = int(numbers.pop(0)) if numbers else 1
             except Exception as e:
-                print(f"   [⚠️] Qty Parse Error for {species}: {e}")
                 qty = 1
                 
-        # You cannot observe 0 of an animal if it was logged
+        # You cannot observe zero of an animal if it was logged
         qty = max(1, qty)
-        
-        # ==========================================
-        # 🔎 THE WOODSWALLOW TRAP
-        # ==========================================
-        if "Woodswallow" in species:
-            print(f"🔎 WOODSWALLOW SPOTTED | Name: '{species}' | Raw Qty Cell: {repr(raw_qty)} | Parsed to: {qty}")
-        # ==========================================
         
         # Track the LARGEST group ever seen
         if species not in species_max_qty:
