@@ -382,42 +382,44 @@ def calculate_acoustic_prominence(observations):
     return acoustic_scores
 
 def calculate_sociality(observations):
-    print("\n--- 🎯 TARGETED COCKATOO DIAGNOSTIC ---")
+    import re # Scoped directly here so it cannot possibly fail
+    
     species_max_qty = {}
     
     for obs in observations:
         species = str(obs.get('Common Name', '')).strip()
+        raw_qty = obs.get('Qty')
         
-        # Grab the raw value exactly as Pandas sees it
-        raw_qty = obs.get('Qty') 
-        qty_str = str(raw_qty).strip()
-        
-        # 🚨 LASER FOCUS ON THE COCKATOO 🚨
-        if species == "Yellow-tailed Black-Cockatoo":
-            print(f"COCKATOO FOUND! -> Raw Qty Data: {repr(raw_qty)} | Data Type: {type(raw_qty)}")
-            
         if not species:
             continue
             
-        try:
-            numbers = re.findall(r'\d+', qty_str)
-            qty = int(numbers) if numbers else 1
-        except:
-            qty = 1
-            
+        # ==========================================
+        # THE INDESTRUCTIBLE PARSER
+        # ==========================================
+        if isinstance(raw_qty, (int, float)):
+            # If Pandas already knows it's a number, just use it immediately!
+            qty = int(raw_qty)
+        else:
+            # If it's text (like "5+" or blank), safely extract the digit
+            qty_str = str(raw_qty).strip()
+            try:
+                numbers = re.findall(r'\d+', qty_str)
+                qty = int(numbers) if numbers else 1
+            except Exception as e:
+                print(f"   [⚠️] Qty Parse Error for {species}: {e}")
+                qty = 1
+                
+        # You cannot observe 0 of an animal if it was logged
         qty = max(1, qty)
+        # ==========================================
         
-        if species == "Yellow-tailed Black-Cockatoo":
-            print(f"   -> Python parsed this into the number: {qty}")
-        
+        # Track the LARGEST group ever seen
         if species not in species_max_qty:
             species_max_qty[species] = 1
             
         if qty > species_max_qty[species]:
             species_max_qty[species] = qty
-            
-    print("----------------------------------------\n")
-            
+
     # Calculate the scores
     sociality_scores = {}
     SOCIAL_CAP = 5.0 
