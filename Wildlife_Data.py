@@ -382,8 +382,8 @@ def calculate_acoustic_prominence(observations):
     return acoustic_scores
 
 def calculate_sociality(observations):
-    """Calculates Sociality based on a species' own average group size."""
-    species_counts = {}
+    """Calculates Sociality based on the observer's maximum field capacity (Cap = 5)."""
+    species_max_qty = {}
     
     for obs in observations:
         species = str(obs.get('Common Name', '')).strip()
@@ -392,42 +392,34 @@ def calculate_sociality(observations):
         if not species:
             continue
             
-        # 1. Safely extract the number from the Qty column using regex
+        # 1. Safely extract the number (This turns "5+" into just 5)
         try:
             numbers = re.findall(r'\d+', qty_str)
-            if numbers:
-                qty = int(numbers)
-            else:
-                qty = 1 # If left blank or written as text ("several"), default to 1
+            qty = int(numbers) if numbers else 1
         except:
             qty = 1
             
-        # You can't see 0 of an animal if it was logged!
         qty = max(1, qty)
         
-        # 2. Add to the running total for this species
-        if species not in species_counts:
-            species_counts[species] = {'total_qty': 0, 'encounters': 0}
+        # 2. Track the LARGEST group ever seen for this species
+        if species not in species_max_qty:
+            species_max_qty[species] = 1
             
-        species_counts[species]['total_qty'] += qty
-        species_counts[species]['encounters'] += 1
-        
-    # 3. Calculate the 0-100 score for each species
+        if qty > species_max_qty[species]:
+            species_max_qty[species] = qty
+            
+    # 3. Map to 0-100 scale using the new field limit
     sociality_scores = {}
+    SOCIAL_CAP = 5.0 # The new methodology ceiling
     
-    # Set the ceiling for what constitutes a "Maximum Social" score (e.g., flocks of 11+)
-    SOCIAL_CAP = 11.0 
-    
-    for species, stats in species_counts.items():
-        avg_qty = stats['total_qty'] / stats['encounters']
-        
-        if avg_qty <= 1:
+    for species, max_qty in species_max_qty.items():
+        if max_qty <= 1:
             score = 0
-        elif avg_qty >= SOCIAL_CAP:
+        elif max_qty >= SOCIAL_CAP:
             score = 100
         else:
-            # Map the average to the 0-100 scale (e.g., avg of 6 = 50)
-            score = ((avg_qty - 1) / (SOCIAL_CAP - 1)) * 100
+            # Maps 1-5 linearly to 0-100 (1=0, 2=25, 3=50, 4=75, 5=100)
+            score = ((max_qty - 1) / (SOCIAL_CAP - 1)) * 100
             
         sociality_scores[species] = int(score)
         
