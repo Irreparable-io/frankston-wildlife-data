@@ -382,58 +382,55 @@ def calculate_acoustic_prominence(observations):
     return acoustic_scores
 
 def calculate_sociality(observations):
-    """Calculates the 0-100 Sociality score based on visual quantities."""
-    species_qty_tallies = {}
+    """Calculates Sociality based on a species' own average group size."""
+    species_counts = {}
     
-    # 1. Gather all valid visual quantities
     for obs in observations:
         species = str(obs.get('Common Name', '')).strip()
-        media_type = str(obs.get('Media Type', '')).strip()
         qty_str = str(obs.get('Qty', '')).strip()
         
         if not species:
             continue
             
-        # Initialize species in the dictionary
-        if species not in species_qty_tallies:
-            species_qty_tallies[species] = []
+        # 1. Safely extract the number from the Qty column using regex
+        try:
+            numbers = re.findall(r'\d+', qty_str)
+            if numbers:
+                qty = int(numbers)
+            else:
+                qty = 1 # If left blank or written as text ("several"), default to 1
+        except:
+            qty = 1
             
-        # Skip audio-only records to prevent detectability bias
-        if media_type == 'Audio':
-            continue
-            
-        # 2. Clean the Qty string and convert to integer
-        if qty_str:
-            # Remove the '+' sign if it exists
-            clean_qty_str = qty_str.replace('+', '')
-            try:
-                qty_int = int(clean_qty_str)
-                species_qty_tallies[species].append(qty_int)
-            except ValueError:
-                print(f"Warning: Could not parse quantity '{qty_str}' for {species}")
-
-    # 3. Calculate Averages and map to 0-100 scale
-    sociality_scores = {}
-    for species, quantities in species_qty_tallies.items():
-        if not quantities:
-            # If a species was ONLY ever heard (no visual records), default to Solitary
-            sociality_scores[species] = 20 
-            continue
-            
-        avg_qty = sum(quantities) / len(quantities)
+        # You can't see 0 of an animal if it was logged!
+        qty = max(1, qty)
         
-        # 4. The Biological Scale
-        if avg_qty <= 1.5:
-            score = 20  # Solitary
-        elif avg_qty <= 2.5:
-            score = 40  # Pairing
-        elif avg_qty <= 4.5:
-            score = 70  # Family Group / Small Party
-        else:
-            score = 100 # Flocking / Swarming
+        # 2. Add to the running total for this species
+        if species not in species_counts:
+            species_counts[species] = {'total_qty': 0, 'encounters': 0}
             
-        sociality_scores[species] = score
-
+        species_counts[species]['total_qty'] += qty
+        species_counts[species]['encounters'] += 1
+        
+    # 3. Calculate the 0-100 score for each species
+    sociality_scores = {}
+    
+    # Set the ceiling for what constitutes a "Maximum Social" score (e.g., flocks of 11+)
+    SOCIAL_CAP = 11.0 
+    
+    for species, stats in species_counts.items():
+        avg_qty = stats['total_qty'] / stats['encounters']
+        
+        if avg_qty <= 1:
+            score = 0
+        elif avg_qty >= SOCIAL_CAP:
+            score = 100
+        else:
+            # Map the average to the 0-100 scale (e.g., avg of 6 = 50)
+            score = ((avg_qty - 1) / (SOCIAL_CAP - 1)) * 100
+            
+        sociality_scores[species] = int(score)
+        
     return sociality_scores
 
 def calculate_moisture_affinity(observations):
