@@ -382,17 +382,20 @@ def calculate_acoustic_prominence(observations):
     return acoustic_scores
 
 def calculate_sociality(observations):
-    """Calculates Sociality based on the observer's maximum field capacity (Cap = 5)."""
+    print("\n--- 🕵️ SOCIALITY DIAGNOSTIC ---")
     species_max_qty = {}
     
     for obs in observations:
         species = str(obs.get('Common Name', '')).strip()
-        qty_str = str(obs.get('Qty', '')).strip()
+        
+        # We explicitly check what raw data is being passed
+        qty_raw = obs.get('Qty', 'COLUMN_NOT_FOUND')
+        qty_str = str(qty_raw).strip()
         
         if not species:
             continue
             
-        # 1. Safely extract the number (This turns "5+" into just 5)
+        # Safely extract the number
         try:
             numbers = re.findall(r'\d+', qty_str)
             qty = int(numbers) if numbers else 1
@@ -401,16 +404,22 @@ def calculate_sociality(observations):
             
         qty = max(1, qty)
         
-        # 2. Track the LARGEST group ever seen for this species
+        # Track the LARGEST group ever seen
         if species not in species_max_qty:
             species_max_qty[species] = 1
             
         if qty > species_max_qty[species]:
             species_max_qty[species] = qty
-            
-    # 3. Map to 0-100 scale using the new field limit
+
+    # 🚨 PRINT THE TRUTH TO THE GITHUB LOGS 🚨
+    print("Top 5 maximum group sizes found by Python:")
+    # Sort and print the top 5 highest numbers it found
+    for s, m in sorted(species_max_qty.items(), key=lambda x: x, reverse=True)[:5]:
+        print(f"  > {s}: {m} (Raw Data example: '{qty_raw}')")
+        
+    # Calculate the scores
     sociality_scores = {}
-    SOCIAL_CAP = 5.0 # The new methodology ceiling
+    SOCIAL_CAP = 5.0 
     
     for species, max_qty in species_max_qty.items():
         if max_qty <= 1:
@@ -418,11 +427,11 @@ def calculate_sociality(observations):
         elif max_qty >= SOCIAL_CAP:
             score = 100
         else:
-            # Maps 1-5 linearly to 0-100 (1=0, 2=25, 3=50, 4=75, 5=100)
             score = ((max_qty - 1) / (SOCIAL_CAP - 1)) * 100
             
         sociality_scores[species] = int(score)
         
+    print("--- END DIAGNOSTIC ---\n")
     return sociality_scores
 
 def calculate_moisture_affinity(observations):
