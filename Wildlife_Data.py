@@ -416,11 +416,7 @@ def calculate_sociality(observations):
         # 🔎 THE WOODSWALLOW TRAP
         # ==========================================
         if "Woodswallow" in species:
-            print(f"🔎 WOODSWALLOW SPOTTED | Name exactly as typed: '{species}' | Raw Qty Cell: {repr(raw_qty)} | Parsed to: {qty}")
-        # ==========================================
-        
-        # Track the LARGEST group ever seen
-        if species not in species_max_qty:
+            print(f"🔎 WOODSWALLOW SPOTTED | Name: '{species}' | Raw Qty Cell: {repr(raw_qty)} | Parsed to: {qty}")
         # ==========================================
         
         # Track the LARGEST group ever seen
