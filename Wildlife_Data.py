@@ -382,20 +382,23 @@ def calculate_acoustic_prominence(observations):
     return acoustic_scores
 
 def calculate_sociality(observations):
-    print("\n--- 🕵️ SOCIALITY DIAGNOSTIC ---")
+    print("\n--- 🎯 TARGETED COCKATOO DIAGNOSTIC ---")
     species_max_qty = {}
     
     for obs in observations:
         species = str(obs.get('Common Name', '')).strip()
         
-        # We explicitly check what raw data is being passed
-        qty_raw = obs.get('Qty', 'COLUMN_NOT_FOUND')
-        qty_str = str(qty_raw).strip()
+        # Grab the raw value exactly as Pandas sees it
+        raw_qty = obs.get('Qty') 
+        qty_str = str(raw_qty).strip()
         
+        # 🚨 LASER FOCUS ON THE COCKATOO 🚨
+        if species == "Yellow-tailed Black-Cockatoo":
+            print(f"COCKATOO FOUND! -> Raw Qty Data: {repr(raw_qty)} | Data Type: {type(raw_qty)}")
+            
         if not species:
             continue
             
-        # Safely extract the number
         try:
             numbers = re.findall(r'\d+', qty_str)
             qty = int(numbers) if numbers else 1
@@ -404,19 +407,17 @@ def calculate_sociality(observations):
             
         qty = max(1, qty)
         
-        # Track the LARGEST group ever seen
+        if species == "Yellow-tailed Black-Cockatoo":
+            print(f"   -> Python parsed this into the number: {qty}")
+        
         if species not in species_max_qty:
             species_max_qty[species] = 1
             
         if qty > species_max_qty[species]:
             species_max_qty[species] = qty
-
-    # 🚨 PRINT THE TRUTH TO THE GITHUB LOGS 🚨
-    print("Top 5 maximum group sizes found by Python:")
-    # Sort and print the top 5 highest numbers it found
-    for s, m in sorted(species_max_qty.items(), key=lambda x: x, reverse=True)[:5]:
-        print(f"  > {s}: {m} (Raw Data example: '{qty_raw}')")
-        
+            
+    print("----------------------------------------\n")
+            
     # Calculate the scores
     sociality_scores = {}
     SOCIAL_CAP = 5.0 
@@ -431,7 +432,6 @@ def calculate_sociality(observations):
             
         sociality_scores[species] = int(score)
         
-    print("--- END DIAGNOSTIC ---\n")
     return sociality_scores
 
 def calculate_moisture_affinity(observations):
