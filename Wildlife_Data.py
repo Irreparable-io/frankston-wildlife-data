@@ -1145,7 +1145,8 @@ def run_radar_system():
             traceback.print_exc()
 
     # 2. THE PERFECT MATCH ALGORITHM
-    # Add the global exclude list check down here too, to keep them out of the dashboard stats!
+    
+    js_threat_blacklist = ["least concern", "introduced", "invasive", "pest", "feral", "unknown"]
     
     strict_species_set = set()
     strict_threatened_set = set()
