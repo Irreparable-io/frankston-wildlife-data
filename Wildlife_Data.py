@@ -433,18 +433,39 @@ def calculate_sociality(observations):
     return sociality_scores
 
 def calculate_moisture_affinity(observations):
+    import math 
     """Calculates a 0-100 Moisture score based on VPD from Temp and Humidity."""
+    
+    # ==========================================
+    # 💧 THE OBLIGATE MOISTURE VIP LIST
+    # ==========================================
+    OBLIGATE_WATER_SPECIES = [
+        "Chestnut Teal", "Pacific Black Duck", "Domestic Mallard",
+        "Eurasian Coot", "Australasian Swamphen", "Dusky Moorhen",
+        "Little Pied Cormorant", "Great Cormorant",
+        "Hoary-headed Grebe", "Australasian Grebe",
+        "White-faced Heron", "Silver Gull",
+        "Short-finned Eel"
+    ]
+
     species_vpds = {}
     global_vpds = []
+    all_seen_species = set()
     
     # 1. Calculate VPD for every valid row
     for obs in observations:
         species = str(obs.get('Common Name', '')).strip()
+        if not species:
+            continue
+            
+        # Track everyone we see, even if weather data is missing
+        all_seen_species.add(species) 
+        
         temp_str = str(obs.get('Temp. (°C)', '')).strip()
         humid_str = str(obs.get('Humid. (%)', '')).strip()
         
-        # Skip if missing core data
-        if not species or not temp_str or not humid_str:
+        # Skip VPD math if missing core data
+        if not temp_str or not humid_str:
             continue
             
         try:
@@ -468,35 +489,43 @@ def calculate_moisture_affinity(observations):
             # Silently catch rows where weather data might be "N/A" or corrupted
             pass
 
-    # 2. Establish the Regional Baseline
-    if not global_vpds:
-        print("No valid temperature/humidity data found for VPD calculation.")
-        return {}
-        
-    global_min_vpd = min(global_vpds) # The wettest condition recorded
-    global_max_vpd = max(global_vpds) # The driest condition recorded
-    
-    print(f"\n--- Moisture Baseline Established ---")
-    print(f"Wettest (Max Affinity): {global_min_vpd:.2f} kPa")
-    print(f"Driest (Min Affinity): {global_max_vpd:.2f} kPa")
-
-    # 3. Calculate Averages and map to 0-100 scale
     affinity_scores = {}
-    for species, vpds in species_vpds.items():
-        avg_vpd = sum(vpds) / len(vpds)
+
+    # 2. Establish the Regional Baseline & Run Terrestrial Math
+    if global_vpds:
+        global_min_vpd = min(global_vpds) # The wettest condition recorded
+        global_max_vpd = max(global_vpds) # The driest condition recorded
         
-        # Prevent division by zero if all data comes from a single weather moment
-        if global_max_vpd == global_min_vpd:
-            affinity_scores[species] = 50 
-            continue
+        print(f"\n--- Moisture Baseline Established ---")
+        print(f"Wettest (Max Affinity): {global_min_vpd:.2f} kPa")
+        print(f"Driest (Min Affinity): {global_max_vpd:.2f} kPa")
+
+        for species, vpds in species_vpds.items():
+            avg_vpd = sum(vpds) / len(vpds)
             
-        # Calculate percentage along the scale
-        scale_pos = (avg_vpd - global_min_vpd) / (global_max_vpd - global_min_vpd)
+            # Prevent division by zero if all data comes from a single weather moment
+            if global_max_vpd == global_min_vpd:
+                affinity_scores[species] = 50 
+                continue
+                
+            # Calculate percentage along the scale
+            scale_pos = (avg_vpd - global_min_vpd) / (global_max_vpd - global_min_vpd)
+            
+            # Invert the scale: 100 = Wet (Min VPD), 0 = Dry (Max VPD)
+            score = (1.0 - scale_pos) * 100
+            
+            affinity_scores[species] = int(max(0, min(100, score))) # Clamp between 0 and 100
+
+    for species in all_seen_species:
+        species_lower = species.lower()
         
-        # Invert the scale: 100 = Wet (Min VPD), 0 = Dry (Max VPD)
-        score = (1.0 - scale_pos) * 100
-        
-        affinity_scores[species] = int(max(0, min(100, score))) # Clamp between 0 and 100
+        # If it's a waterbird or amphibian, bypass the math and force it to 100
+        if species in OBLIGATE_WATER_SPECIES or "frog" in species_lower or "toad" in species_lower:
+            affinity_scores[species] = 100
+            
+        # Safety net: If a terrestrial bird had NO weather data logged at all, give it a neutral 50
+        elif species not in affinity_scores:
+            affinity_scores[species] = 50
 
     return affinity_scores
 
@@ -523,7 +552,6 @@ def generate_radar_payload(observations, traits_dict):
         # B. Pull Static Traits from the LUT
         trait_info = traits_dict.get(species, {"habitats": [], "stratum": 50})
         
-        # Calculate Habitat Breadth (4 is the total number of primary EVC buckets)
         hab_score = (len(trait_info['habitats']) / 4.0) * 100
         
         # C. Build the final dictionary for this species
