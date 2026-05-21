@@ -586,7 +586,39 @@ def run_radar_system():
         print(f"   📊 Successfully loaded {len(df)} observations from Google Sheets.")
 
         # ==========================================
-        # GLOBAL DATA SCRUBBER (Site-wide Exclusions)
+        # 1. COLUMN MAPPING (Do this FIRST so Pandas knows the names!)
+        # ==========================================
+        cols = {k.lower(): k for k in df.columns}
+        name_col = cols.get('common name', cols.get('species', 'Common Name'))
+        dist_col = next((c for c in df.columns if 'distance' in c.lower()), 'Distance')
+        dur_col = next((c for c in df.columns if 'duration' in c.lower()), 'Duration')
+        date_col = next((c for c in df.columns if 'date' in c.lower()), 'Date/Time')
+        zone_col = next((c for c in df.columns if 'zone' in c.lower()), 'Zone')
+        notes_col = next((c for c in df.columns if 'note' in c.lower()), 'Notes')
+        media_col = next((c for c in df.columns if 'media' in c.lower()), 'Media Type')
+        
+        # Ensure it doesn't mix up Regional vs Local columns
+        temp_col = next((c for c in df.columns if 'temp' in c.lower() and 'local' not in c.lower()), 'Temp. (°C)')
+        hum_col = next((c for c in df.columns if 'humid' in c.lower() and 'local' not in c.lower()), 'Humid. (%)')
+        loc_t_col = next((c for c in df.columns if 'local t' in c.lower()), 'Local T.')
+        loc_h_col = next((c for c in df.columns if 'local h' in c.lower()), 'Local H.')
+
+        df.rename(columns={
+            name_col: 'Common Name', 
+            dist_col: 'Distance', 
+            dur_col: 'Duration', 
+            date_col: 'Date/Time', 
+            zone_col: 'Zone',
+            notes_col: 'Notes',
+            media_col: 'Media Type',
+            temp_col: 'Temp. (°C)',
+            hum_col: 'Humid. (%)',
+            loc_t_col: 'Local T.',
+            loc_h_col: 'Local H.'
+        }, inplace=True)
+
+        # ==========================================
+        # 2. GLOBAL DATA SCRUBBER (Site-wide Exclusions)
         # ==========================================
         print("   🧹 Scrubbing excluded species and invalid artifacts...")
         
@@ -599,7 +631,8 @@ def run_radar_system():
         ]
         
         if 'Common Name' in df.columns:
-            # 1. Escape special characters (so " sp." is treated as text, not a regex command)
+            # 1. Escape special characters (so " sp." is treated as text)
+            import re # Ensure regex is imported
             escaped_excludes = [re.escape(word.lower()) for word in EXCLUDE_LIST]
             
             # 2. Join them into one massive OR statement (e.g., "dog|cat|ferret")
@@ -610,8 +643,12 @@ def run_radar_system():
             df = df[~df['Common Name'].astype(str).str.lower().str.contains(exclude_pattern, regex=True, na=False)]
             
             print(f"   [✅] Scrubber removed {original_count - len(df)} invalid rows.")
+        else:
+            print("   [⚠️] 'Common Name' column still not found. Scrubber skipped.")
 
-        # Download the Spatial Effort Matrix (Targeted Columns Only)
+        # ==========================================
+        # 3. DOWNLOAD EFFORT MATRIX
+        # ==========================================
         try:
             effort_sheet = client.open_by_key(SHEET_KEY).worksheet("Junk Drawer")
             matrix_data = effort_sheet.get("CH:CM")
@@ -650,36 +687,6 @@ def run_radar_system():
     except Exception as e:
         print(f"❌ Error connecting to Google Sheets: {e}")
         return
-
-    # --- 1. COLUMN MAPPING (Do this FIRST so Pandas knows the names) ---
-    cols = {k.lower(): k for k in df.columns}
-    name_col = cols.get('common name', cols.get('species', 'Common Name'))
-    dist_col = next((c for c in df.columns if 'distance' in c.lower()), 'Distance')
-    dur_col = next((c for c in df.columns if 'duration' in c.lower()), 'Duration')
-    date_col = next((c for c in df.columns if 'date' in c.lower()), 'Date/Time')
-    zone_col = next((c for c in df.columns if 'zone' in c.lower()), 'Zone')
-    notes_col = next((c for c in df.columns if 'note' in c.lower()), 'Notes')
-    media_col = next((c for c in df.columns if 'media' in c.lower()), 'Media Type')
-    
-    # Ensure it doesn't mix up Regional vs Local columns
-    temp_col = next((c for c in df.columns if 'temp' in c.lower() and 'local' not in c.lower()), 'Temp. (°C)')
-    hum_col = next((c for c in df.columns if 'humid' in c.lower() and 'local' not in c.lower()), 'Humid. (%)')
-    loc_t_col = next((c for c in df.columns if 'local t' in c.lower()), 'Local T.')
-    loc_h_col = next((c for c in df.columns if 'local h' in c.lower()), 'Local H.')
-
-    df.rename(columns={
-        name_col: 'Common Name', 
-        dist_col: 'Distance', 
-        dur_col: 'Duration', 
-        date_col: 'Date/Time', 
-        zone_col: 'Zone',
-        notes_col: 'Notes',
-        media_col: 'Media Type',
-        temp_col: 'Temp. (°C)',
-        hum_col: 'Humid. (%)',
-        loc_t_col: 'Local T.',
-        loc_h_col: 'Local H.'
-    }, inplace=True)
 
     # --- 2. PURGE UNVERIFIED RECORDS BEFORE DOING ANY MATH ---
     df = df[~df['Notes'].astype(str).str.upper().str.contains(r'\[CONTENDED\]')]
