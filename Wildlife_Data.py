@@ -897,7 +897,9 @@ def run_radar_system():
     # ==========================================
     # --- 1. LIVE STATS ENGINE ---
     # ==========================================
-    print("   📊 Crunching live statistics from spreadsheet...")
+                                                                                                                                   
+    GLOBAL_EXCLUDES = ["domestic cat", "blue-spotted hawker"]
+    EXCLUDE_LIST = ["domestic cat", "blue-spotted hawker"] # Added as fallback just in case
     
     pokedex_stats = {}
     rejection_log = []
@@ -1194,36 +1196,11 @@ def run_radar_system():
             if zn_name in zone_species_sets:
                 # Bracket-safe dictionary update
                 zone_species_sets.get(zn_name).add(sp_name)
-    # Add to Final Counts
-        if zn_name != "Unknown":
-            strict_obs_count += 1
-            strict_species_set.add(sp_name)
-            
-            if not any(b in str(st_name).lower() for b in js_threat_blacklist):
-                strict_threatened_set.add(sp_name)
-
-            # Add to Zone Badges (tracks unique species per zone)
-            if zn_name in zone_species_sets:
-                # Bracket-safe dictionary update
-                zone_species_sets.get(zn_name).add(sp_name)
 
     # Calculate final zone badges directly from the tracker
     final_zone_badges = {z: len(sp_set) for z, sp_set in zone_species_sets.items()}
 
     # 3. BUILD ALL PAYLOADS
-    landing_payload = {
-        "meta": {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
-        "summary": {
-            "total_observations": strict_obs_count, 
-            "total_species": len(strict_species_set), 
-            "total_km": total_km, 
-            "total_hours": total_hours,
-            "threatened_count": len(strict_threatened_set)
-        },
-        "zone_badges": final_zone_badges,
-        "heatmap_data": optimized_heatmap 
-    }
-
     dashboard_payload = {
         "meta": {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
         "summary": landing_payload.get("summary"), # Bracket-safe dictionary grab
