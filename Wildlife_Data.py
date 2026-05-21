@@ -1149,6 +1149,12 @@ def run_radar_system():
     # Tracker for the Zone Badges
     zone_species_sets = {z: set() for z in valid_zones if z != "Obscured"}
     
+    # ==========================================
+    # 🚫 BACKEND FILTERS & LISTS (Define these BEFORE the loop)
+    # ==========================================
+    GLOBAL_EXCLUDES = ["domestic cat", "blue-spotted hawker"]
+    js_threat_blacklist = ["least concern", "introduced", "invasive", "pest", "feral", "unknown"]
+
     for row in compressed_obs:
         if len(row) < 5: continue
         
@@ -1161,6 +1167,10 @@ def run_radar_system():
         zn_name = zone_legend.__getitem__(zn_idx)
         st_name = status_legend.__getitem__(st_idx)
         
+        # 1. APPLY MUTE SWITCH (Instantly skip the Cat and Hawker)
+        if str(sp_name).strip().lower() in GLOBAL_EXCLUDES:
+            continue
+            
         # Javascript Exclusion Rule
         name_lower = str(sp_name).lower()
         if any(omit in name_lower for omit in js_omit_list) and not any(safe in name_lower for safe in safe_keywords):
@@ -1172,20 +1182,18 @@ def run_radar_system():
             rejection_log.append(f"Live Data,{sp_name},{zn_name},Out of Bounds Zone")
             continue
             
-    # ==========================================
-    # 🚫 BACKEND FILTERS & LISTS (Define these BEFORE the loop)
-    # ==========================================
-    GLOBAL_EXCLUDES = ["domestic cat", "blue-spotted hawker"]
-    js_threat_blacklist = ["least concern", "introduced", "invasive", "pest", "feral", "unknown"]
+        # Add to Final Counts
+        if zn_name != "Unknown":
+            strict_obs_count += 1
+            strict_species_set.add(sp_name)
+            
+            if not any(b in str(st_name).lower() for b in js_threat_blacklist):
+                strict_threatened_set.add(sp_name)
 
-    # (Assuming you are inside a loop iterating over species or rows here...)
-    
-    # 1. APPLY MUTE SWITCH (Instantly skip the Cat and Hawker)
-    if str(sp_name).strip().lower() in GLOBAL_EXCLUDES:
-        # NOTE: Use 'continue' if you are inside a for-loop. 
-        # If this is inside a function processing one row, use 'return'
-        continue 
-    
+            # Add to Zone Badges (tracks unique species per zone)
+            if zn_name in zone_species_sets:
+                # Bracket-safe dictionary update
+                zone_species_sets.get(zn_name).add(sp_name)
     # Add to Final Counts
         if zn_name != "Unknown":
             strict_obs_count += 1
