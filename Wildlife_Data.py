@@ -916,12 +916,16 @@ def run_radar_system():
     # Define the official boundaries once
     valid_reserves = ["The Pines Flora and Fauna Reserve", "Langwarrin Flora and Fauna Reserve", "Kananook Creek", "Frankston Nature Conservation Reserve", "Obscured"]
 
+    GLOBAL_EXCLUDES = ["domestic cat", "blue-spotted hawker"]
+
     for species, group in df.groupby('Common Name'):
         raw_name = str(species).strip()
         clean_species_name = normalize_species_name(raw_name)
+        species_lower = clean_species_name.lower()
 
-        # 1. Apply the master Exclude List
-        if any(bad in clean_species_name.lower() for bad in EXCLUDE_LIST):
+        # 1. Apply the master Exclude List & Mute Switch
+        # This checks both your new GLOBAL_EXCLUDES and whatever was in your old EXCLUDE_LIST
+        if species_lower in GLOBAL_EXCLUDES or any(bad in species_lower for bad in EXCLUDE_LIST):
             continue
             
         # 2. Zone Boundary Check
@@ -1032,7 +1036,7 @@ def run_radar_system():
     print("   🧬 Building Expected Master List from VBA & iNat...")
     library_payload = build_master_list()
 
-    js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
+    js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate',]
     safe_keywords = ['fantail', 'cormorant', 'kingfisher', 'antechinus', 'frogmouth', 'bee-eater', 'fly-catcher']
 
     # 1. Scrub the historical VBA/iNat data
@@ -1071,6 +1075,7 @@ def run_radar_system():
                 n=1, cutoff=0.85  # a little more forgiving
             )
             if close_matches:
+                # ADDED HERE: This extracts the string from the list
                 matched_key = norm_library_keys[close_matches]
                 print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
         
@@ -1130,8 +1135,6 @@ def run_radar_system():
             traceback.print_exc()
 
     # 2. THE PERFECT MATCH ALGORITHM
-    js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
-    js_threat_blacklist = ["least concern", "introduced", "invasive", "pest", "feral", "unknown"]
     
     strict_species_set = set()
     strict_threatened_set = set()
