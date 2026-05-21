@@ -124,7 +124,7 @@ SPECIES_MAP = {
     "pink eared duck": "Pink-eared Duck"
 }
 
-# 🚨 
+# 
 EXCLUDE_LIST = [
     "fur seal", "little penguin", "red junglefowl", 
     "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", 
@@ -133,7 +133,7 @@ EXCLUDE_LIST = [
     "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker"
 ]
 
-# 🚨 Force specific conservation statuses (Overrides DEECA and iNat)
+# Force specific conservation statuses (Overrides DEECA and iNat)
 STATUS_OVERRIDES = {
     "Glossy Black-Cockatoo": "Critically Endangered",
     "Swamp Wallaby": "Least Concern",
@@ -897,9 +897,7 @@ def run_radar_system():
     # ==========================================
     # --- 1. LIVE STATS ENGINE ---
     # ==========================================
-                                                                                                                                   
-    GLOBAL_EXCLUDES = ["domestic cat", "blue-spotted hawker"]
-    EXCLUDE_LIST = ["domestic cat", "blue-spotted hawker"] # Added as fallback just in case
+    print("   📊 Crunching live statistics from spreadsheet...")
     
     pokedex_stats = {}
     rejection_log = []
@@ -921,11 +919,9 @@ def run_radar_system():
     for species, group in df.groupby('Common Name'):
         raw_name = str(species).strip()
         clean_species_name = normalize_species_name(raw_name)
-        species_lower = clean_species_name.lower()
 
-        # 1. Apply the master Exclude List & Mute Switch
-        # This checks both your new GLOBAL_EXCLUDES and whatever was in your old EXCLUDE_LIST
-        if species_lower in GLOBAL_EXCLUDES or any(bad in species_lower for bad in EXCLUDE_LIST):
+        # 1. Apply the master Exclude List
+        if any(bad in clean_species_name.lower() for bad in EXCLUDE_LIST):
             continue
             
         # 2. Zone Boundary Check
@@ -1033,23 +1029,26 @@ def run_radar_system():
     # ========================
     # --- 2. MASTER MERGE ---
     # ========================
-    print("   🧬 Building Expected Master List from VBA & iNat...")
+    print("    🧬 Building Expected Master List from VBA & iNat...")
     library_payload = build_master_list()
 
-    js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate',]
+    js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
     safe_keywords = ['fantail', 'cormorant', 'kingfisher', 'antechinus', 'frogmouth', 'bee-eater', 'fly-catcher']
+    
+    # 🚨 THE HARD EXCLUDE LIST (Add any other specific names here)
+    global_exclude_list = ["blue spotted hawker", "domestic cat", "ferret", "domestic dog", "cattle"]
 
     # 1. Scrub the historical VBA/iNat data
     keys_to_delete = [
         sp for sp in library_payload.keys() 
-        if any(omit in str(sp).lower() for omit in js_omit_list) 
-        and not any(safe in str(sp).lower() for safe in safe_keywords)
+        if (any(omit in str(sp).lower() for omit in js_omit_list) and not any(safe in str(sp).lower() for safe in safe_keywords))
+        or any(banned in str(sp).lower() for banned in global_exclude_list) # Added global exclude check
     ]
     for k in keys_to_delete:
         rejection_log.append(f"Historical (VBA),{k},N/A,Taxonomy Exclusion")
         del library_payload[k]
 
-    print("   🔗 Merging Live Spreadsheet Data...")
+    print("    🔗 Merging Live Spreadsheet Data...")
     
     norm_library_keys = {normalize_species_name(lib_key).lower(): lib_key for lib_key in library_payload}
 
@@ -1057,6 +1056,11 @@ def run_radar_system():
         
         # Normalize incoming spreadsheet species name
         obs_norm = normalize_species_name(sp_name).lower()
+        
+        # 🚨 THE INTERCEPTOR: Kills the row if it's on the global exclude list
+        if any(banned in obs_norm for banned in global_exclude_list):
+            rejection_log.append(f"Historical (Live),{sp_name},N/A,Hard Exclusion")
+            continue
         
         # 1. Exclusion check (use normalized name as well for consistency)
         if any(omit in obs_norm for omit in js_omit_list) and not any(safe in obs_norm for safe in safe_keywords):
@@ -1075,8 +1079,7 @@ def run_radar_system():
                 n=1, cutoff=0.85  # a little more forgiving
             )
             if close_matches:
-                # ADDED HERE: This extracts the string from the list
-                matched_key = norm_library_keys[close_matches]
+                matched_key = norm_library_keys[close_matches] # Fixed: Added to extract the string from the list
                 print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
         
         # 4. Apply (still using original/unnormalized library key)
@@ -1104,37 +1107,38 @@ def run_radar_system():
             norm_library_keys[clean_new_name.lower()] = clean_new_name
             print(f"      [NEW] Could not find a match for '{sp_name}', added as new discovery")
 
-    print(f"   ✅ Library Complete: {len(library_payload)} total species cards ready.")
+    print(f"    ✅ Library Complete: {len(library_payload)} total species cards ready.")
 
     # ==========================================
     # --- FINAL PAYLOAD SPLIT & LOCAL EXPORT ---
     # ==========================================
-    print("   📦 Assembling and writing final JSON payloads...")
+    print("    📦 Assembling and writing final JSON payloads...")
 
     # 1. Enhanced atomic_write function with verbose logging
     def atomic_write(payload_data, filename):
         final_path = os.path.join(OUTPUT_DIR, filename)
         temp_path = final_path + ".tmp"
-        print(f"   🔍 Writing to: {final_path}")
-        print(f"   📦 Payload size: {len(json.dumps(payload_data))} bytes")
+        print(f"    🔍 Writing to: {final_path}")
+        print(f"    📦 Payload size: {len(json.dumps(payload_data))} bytes")
         
         try:
             with open(temp_path, 'w') as f:
                 json.dump(payload_data, f, separators=(',', ':'), default=str)
-            print(f"   ✓ Temp file created: {temp_path}")
+            print(f"    ✓ Temp file created: {temp_path}")
             
             # Verify temp file was created
             if os.path.exists(temp_path):
                 shutil.move(temp_path, final_path)
-                print(f"   ✅ {filename} Written Successfully.")
+                print(f"    ✅ {filename} Written Successfully.")
             else:
-                print(f"   ❌ Temp file not found at {temp_path}")
+                print(f"    ❌ Temp file not found at {temp_path}")
         except Exception as e:
-            print(f"   ❌ Error writing {filename}: {e}")
+            print(f"    ❌ Error writing {filename}: {e}")
             import traceback
             traceback.print_exc()
 
     # 2. THE PERFECT MATCH ALGORITHM
+    # Add the global exclude list check down here too, to keep them out of the dashboard stats!
     
     strict_species_set = set()
     strict_threatened_set = set()
@@ -1151,12 +1155,6 @@ def run_radar_system():
     # Tracker for the Zone Badges
     zone_species_sets = {z: set() for z in valid_zones if z != "Obscured"}
     
-    # ==========================================
-    # 🚫 BACKEND FILTERS & LISTS (Define these BEFORE the loop)
-    # ==========================================
-    GLOBAL_EXCLUDES = ["domestic cat", "blue-spotted hawker"]
-    js_threat_blacklist = ["least concern", "introduced", "invasive", "pest", "feral", "unknown"]
-
     for row in compressed_obs:
         if len(row) < 5: continue
         
@@ -1169,12 +1167,13 @@ def run_radar_system():
         zn_name = zone_legend.__getitem__(zn_idx)
         st_name = status_legend.__getitem__(st_idx)
         
-        # 1. APPLY MUTE SWITCH (Instantly skip the Cat and Hawker)
-        if str(sp_name).strip().lower() in GLOBAL_EXCLUDES:
-            continue
-            
-        # Javascript Exclusion Rule
+        # Javascript Exclusion Rule & Global Exclude List
         name_lower = str(sp_name).lower()
+        
+        if any(banned in name_lower for banned in global_exclude_list):
+            rejection_log.append(f"Live Data,{sp_name},{zn_name},Hard Exclusion")
+            continue
+
         if any(omit in name_lower for omit in js_omit_list) and not any(safe in name_lower for safe in safe_keywords):
             rejection_log.append(f"Live Data,{sp_name},{zn_name},Taxonomy Exclusion")
             continue
@@ -1201,6 +1200,19 @@ def run_radar_system():
     final_zone_badges = {z: len(sp_set) for z, sp_set in zone_species_sets.items()}
 
     # 3. BUILD ALL PAYLOADS
+    landing_payload = {
+        "meta": {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+        "summary": {
+            "total_observations": strict_obs_count, 
+            "total_species": len(strict_species_set), 
+            "total_km": total_km, 
+            "total_hours": total_hours,
+            "threatened_count": len(strict_threatened_set)
+        },
+        "zone_badges": final_zone_badges,
+        "heatmap_data": optimized_heatmap 
+    }
+
     dashboard_payload = {
         "meta": {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
         "summary": landing_payload.get("summary"), # Bracket-safe dictionary grab
