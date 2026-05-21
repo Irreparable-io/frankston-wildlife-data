@@ -916,8 +916,6 @@ def run_radar_system():
     # Define the official boundaries once
     valid_reserves = ["The Pines Flora and Fauna Reserve", "Langwarrin Flora and Fauna Reserve", "Kananook Creek", "Frankston Nature Conservation Reserve", "Obscured"]
 
-    GLOBAL_EXCLUDES = ["domestic cat", "blue-spotted hawker"]
-
     for species, group in df.groupby('Common Name'):
         raw_name = str(species).strip()
         clean_species_name = normalize_species_name(raw_name)
@@ -1174,7 +1172,21 @@ def run_radar_system():
             rejection_log.append(f"Live Data,{sp_name},{zn_name},Out of Bounds Zone")
             continue
             
-        # Add to Final Counts
+    # ==========================================
+    # 🚫 BACKEND FILTERS & LISTS (Define these BEFORE the loop)
+    # ==========================================
+    GLOBAL_EXCLUDES = ["domestic cat", "blue-spotted hawker"]
+    js_threat_blacklist = ["least concern", "introduced", "invasive", "pest", "feral", "unknown"]
+
+    # (Assuming you are inside a loop iterating over species or rows here...)
+    
+    # 1. APPLY MUTE SWITCH (Instantly skip the Cat and Hawker)
+    if str(sp_name).strip().lower() in GLOBAL_EXCLUDES:
+        # NOTE: Use 'continue' if you are inside a for-loop. 
+        # If this is inside a function processing one row, use 'return'
+        continue 
+    
+    # Add to Final Counts
         if zn_name != "Unknown":
             strict_obs_count += 1
             strict_species_set.add(sp_name)
