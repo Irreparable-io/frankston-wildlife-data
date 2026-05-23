@@ -1098,7 +1098,7 @@ def run_radar_system():
                 n=1, cutoff=0.85  # a little more forgiving
             )
             if close_matches:
-                matched_key = norm_library_keys[close_matches] # Fixed: Added to extract the string from the list
+                matched_key = norm_library_keys[close_matches[0]] 
                 print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
         
         # 4. Apply (still using original/unnormalized library key)
