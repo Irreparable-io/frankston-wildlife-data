@@ -632,7 +632,13 @@ def run_radar_system():
         # ==========================================
         # 2. GLOBAL DATA SCRUBBER (Site-wide Exclusions)
         # ==========================================
-        print("   🧹 Scrubbing excluded species and invalid artifacts...")
+        print("   🧹 Scrubbing excluded species...")
+
+        tier_col_name = df.columns 
+        initial_count = len(df)
+        df = df[~df[tier_col_name].astype(str).str.lower().str.contains('historical', na=False)]
+        
+        print(f"   🧹 Purged {initial_count - len(df)} Historical observations. {len(df)} Active Audit records remain.")
         
         EXCLUDE_LIST = [
             "fur seal", "little penguin", "red junglefowl", 
@@ -715,9 +721,8 @@ def run_radar_system():
     df['DateOnly'] = pd.to_datetime(df['Date/Time'], format="%d/%m/%Y %H:%M", errors='coerce').dt.date
     daily_stats = df.groupby('DateOnly')[['Distance', 'Duration']].max()
 
-    total_km = float(daily_stats['Distance'].sum())
+    total_km = round(float(daily_stats['Distance'].sum()), 1)
     total_hours = float(round(daily_stats['Duration'].sum() / 60, 1))
-    
     print(f"   📊 MATH CHECK: {total_hours} Hours across {len(daily_stats)} unique field days.")
 
    # =========================================================
