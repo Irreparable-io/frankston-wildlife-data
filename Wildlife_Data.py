@@ -330,7 +330,6 @@ def obfuscate_location(lat, lon, status):
     return lat + random.uniform(-offset, offset), lon + random.uniform(-offset, offset)
 
 def fetch_inat_hunt_targets():
-    # ... (Standard API Logic) ...
     return []
 
 def calculate_vpd(temp_c, humidity_perc):
@@ -597,11 +596,18 @@ def run_radar_system():
         notes_col = next((c for c in df.columns if 'note' in c.lower()), 'Notes')
         media_col = next((c for c in df.columns if 'media' in c.lower()), 'Media Type')
         
-        # Ensure it doesn't mix up Regional vs Local columns
+        # Original Weather columns
         temp_col = next((c for c in df.columns if 'temp' in c.lower() and 'local' not in c.lower()), 'Temp. (°C)')
         hum_col = next((c for c in df.columns if 'humid' in c.lower() and 'local' not in c.lower()), 'Humid. (%)')
         loc_t_col = next((c for c in df.columns if 'local t' in c.lower()), 'Local T.')
         loc_h_col = next((c for c in df.columns if 'local h' in c.lower()), 'Local H.')
+
+        # 🚨 NEW: Map the 5 new covariates
+        wspd_col = next((c for c in df.columns if 'speed' in c.lower()), 'W. Speed (Km/h)')
+        wgust_col = next((c for c in df.columns if 'gust' in c.lower()), 'W. Gust (Km/h)')
+        precip_col = next((c for c in df.columns if 'precip' in c.lower()), 'Precip.')
+        press_col = next((c for c in df.columns if 'press' in c.lower()), 'Press.')
+        cloud_col = next((c for c in df.columns if 'cloud' in c.lower()), 'Cloud')
 
         df.rename(columns={
             name_col: 'Common Name', 
@@ -613,6 +619,12 @@ def run_radar_system():
             media_col: 'Media Type',
             temp_col: 'Temp. (°C)',
             hum_col: 'Humid. (%)',
+            # 🚨 NEW: Add to standard renaming dictionary
+            wspd_col: 'W. Speed (Km/h)',
+            wgust_col: 'W. Gust (Km/h)',
+            precip_col: 'Precip.',
+            press_col: 'Press.',
+            cloud_col: 'Cloud',
             loc_t_col: 'Local T.',
             loc_h_col: 'Local H.'
         }, inplace=True)
