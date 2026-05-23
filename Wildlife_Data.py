@@ -157,7 +157,7 @@ STATUS_OVERRIDES = {
     "Grey-headed Flying-fox": "Vulnerable"
 }
 
-def normalize_species_name(name):
+def normalise_species_name(name):
     safe_name = str(name).replace("-", " ") 
     clean_name = safe_name.strip().lower()
     if clean_name in SPECIES_MAP: 
@@ -224,7 +224,7 @@ def inject_inaturalist_data(species_dict):
                     raw_name = taxon.get('preferred_common_name') or taxon.get('name')
                     if not raw_name: continue
                         
-                    name = normalize_species_name(raw_name)
+                    name = normalise_species_name(raw_name)
                     if any(bad in name.lower() for bad in EXCLUDE_LIST): continue
                     
                     if name not in species_dict:
@@ -267,11 +267,11 @@ def build_master_list():
 
     if master_df.empty: return {}
 
-    master_df['Normalized Name'] = master_df['Common Name'].apply(normalize_species_name)
+    master_df['Normalised Name'] = master_df['Common Name'].apply(normalise_species_name)
     species_dict = {}
     
     for _, row in master_df.iterrows():
-        name = row['Normalized Name']
+        name = row['Normalised Name']
         reserve = row['Reserve']
         
         if not name or str(name).lower() == "nan": continue
@@ -314,7 +314,7 @@ GHOST_SPECIES = [
 # --- HELPER FUNCTIONS ---
 # ==========================================
 
-def normalize_zone_name(zone_raw):
+def normalise_zone_name(zone_raw):
     z = str(zone_raw).lower().strip()
     if "pines" in z: return "The Pines Flora and Fauna Reserve"
     if "frankston" in z: return "Frankston Nature Conservation Reserve"
@@ -570,7 +570,7 @@ def generate_radar_payload(observations, traits_dict):
 
 def run_radar_system():
     if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
-    print("\n📡 INITIALIZING DUNKLEY BIODIVERSITY RADAR (V4.5 - CLOUD EDITION)...")
+    print("\n📡 INITIALISING DUNKLEY BIODIVERSITY RADAR (V4.5 - CLOUD EDITION)...")
     
     try:
         # 1. Pull the secret from the GitHub Cloud Environment
@@ -731,7 +731,7 @@ def run_radar_system():
     df['Local T.'] = pd.to_numeric(df.get('Local T.', np.nan), errors='coerce')
     df['Local H.'] = pd.to_numeric(df.get('Local H.', np.nan), errors='coerce')
 
-    # 2. Prioritize Local Weather, fallback to API Weather
+    # 2. Prioritise Local Weather, fallback to API Weather
     def compute_best_vpd(row):
         # Try Local Data First
         t = row.get('Local T.')
@@ -776,7 +776,7 @@ def run_radar_system():
         return legend_list.index(val)
 
     compressed_obs = []     # For the map markers
-    optimized_heatmap = []  # For the heatmap layer
+    optimised_heatmap = []  # For the heatmap layer
 
     for _, row in df.iterrows():
         # --- INTEGRITY BYPASS ---
@@ -788,7 +788,7 @@ def run_radar_system():
         # Clean Inputs
         species_name = str(row.get('Common Name', 'Unknown')).strip()
         raw_zone = str(row.get('Zone', ''))
-        clean_zone = normalize_zone_name(raw_zone)
+        clean_zone = normalise_zone_name(raw_zone)
         status = str(row.get('Conservation Status', 'Least Concern')).strip()
         st_lower = status.lower()
         media_val = str(row.get('Media Type', 'Unknown')).strip()
@@ -848,7 +848,7 @@ def run_radar_system():
                 
                 # 5. HEATMAP (EXCLUDE THREATENED)
                 if not is_threatened:
-                    optimized_heatmap.append([s_lat, s_lon, 0.5])
+                    optimised_heatmap.append([s_lat, s_lon, 0.5])
             except: continue
 
     # --- 3.5. DYNAMIC SEASONAL SPUE ENGINE ---
@@ -880,7 +880,7 @@ def run_radar_system():
         "Frankston Nature Conservation Reserve"
     ]
     
-    # Initialize everything with None (translates to null in JSON)
+    # Initialise everything with None (translates to null in JSON)
     temporal_rates = {s: {z: [None] * 24 for z in core_reserves} for s in seasons_list}
 
     # 4. Calculate Effort-Corrected Rates
@@ -937,7 +937,7 @@ def run_radar_system():
 
     for species, group in df.groupby('Common Name'):
         raw_name = str(species).strip()
-        clean_species_name = normalize_species_name(raw_name)
+        clean_species_name = normalise_species_name(raw_name)
 
         # 1. Apply the master Exclude List
         if any(bad in clean_species_name.lower() for bad in EXCLUDE_LIST):
@@ -952,7 +952,7 @@ def run_radar_system():
                 rejection_log.append(f"Historical (Live),{clean_species_name},Outside Reserve,Out of Bounds Zone")
                 continue
             
-        # 2. Safely pull and normalize Taxonomy WITHOUT dropping anything
+        # 2. Safely pull and normalise Taxonomy WITHOUT dropping anything
         taxonomy = "Unknown"
         if 'Taxonomy' in group.columns and not group['Taxonomy'].dropna().empty:
             raw_tax = str(group['Taxonomy'].mode().iloc).lower()
@@ -970,7 +970,7 @@ def run_radar_system():
             elif "fish" in raw_tax:
                 taxonomy = "Fish"
             elif raw_tax != "nan":
-                # Fallback: Just capitalize whatever it is, removing brackets
+                # Fallback: Just capitalise whatever it is, removing brackets
                 taxonomy = raw_tax.replace("[", "").replace("]", "").replace("'", "").title()
 
         # A. Basic Counts & Dates
@@ -1069,27 +1069,27 @@ def run_radar_system():
 
     print("    🔗 Merging Live Spreadsheet Data...")
     
-    norm_library_keys = {normalize_species_name(lib_key).lower(): lib_key for lib_key in library_payload}
+    norm_library_keys = {normalise_species_name(lib_key).lower(): lib_key for lib_key in library_payload}
 
     for sp_name, stats in pokedex_stats.items():
         
-        # Normalize incoming spreadsheet species name
-        obs_norm = normalize_species_name(sp_name).lower()
+        # Normalise incoming spreadsheet species name
+        obs_norm = normalise_species_name(sp_name).lower()
         
         # 🚨 THE INTERCEPTOR: Kills the row if it's on the global exclude list
         if any(banned in obs_norm for banned in global_exclude_list):
             rejection_log.append(f"Historical (Live),{sp_name},N/A,Hard Exclusion")
             continue
         
-        # 1. Exclusion check (use normalized name as well for consistency)
+        # 1. Exclusion check (use normalised name as well for consistency)
         if any(omit in obs_norm for omit in js_omit_list) and not any(safe in obs_norm for safe in safe_keywords):
             rejection_log.append(f"Historical (Live),{sp_name},N/A,Taxonomy Exclusion")
             continue
         
-        # 2. Try exact normalized match
+        # 2. Try exact normalised match
         matched_key = norm_library_keys.get(obs_norm, None)
         
-        # 3. Fuzzy match (normalized), if exact not found
+        # 3. Fuzzy match (normalised), if exact not found
         if not matched_key:
             import difflib # Ensure this is imported!
             close_matches = difflib.get_close_matches(
@@ -1100,19 +1100,28 @@ def run_radar_system():
             if close_matches:
                 matched_key = norm_library_keys[close_matches[0]] 
                 print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
-        
-        # 4. Apply (still using original/unnormalized library key)
+                
+                df.loc[df['Common Name'] == sp_name, 'Common Name'] = matched_key
+
+        # 4. Apply (still using original/unnormalised library key)
         if matched_key:
             entry = library_payload[matched_key]
             entry['status'] = "recorded"
-            entry['liveCount'] = stats['count']
-            entry['liveLastSighted'] = stats['latest_date']
+            
+            entry['liveCount'] = entry.get('liveCount', 0) + stats['count']
+            
+            # Safely grab the most recent date between the correct spelling and the typo
+            current_latest = entry.get('liveLastSighted', "")
+            new_latest = stats['latest_date']
+            if new_latest > current_latest:
+                entry['liveLastSighted'] = new_latest
+                
             entry['liveDetection'] = stats['detection']
             entry['liveHotspot'] = stats['hotspot']
             entry['liveTaxonomy'] = stats['taxonomy']
         else:
-            # 5. New discovery (store normalized name for consistency)
-            clean_new_name = normalize_species_name(sp_name)
+            # 5. New discovery (store normalised name for consistency)
+            clean_new_name = normalise_species_name(sp_name)
             library_payload[clean_new_name] = {
                 "scientific_name": "Unknown (New Discovery)", 
                 "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
@@ -1230,7 +1239,7 @@ def run_radar_system():
             "threatened_count": len(strict_threatened_set)
         },
         "zone_badges": final_zone_badges,
-        "heatmap_data": optimized_heatmap 
+        "heatmap_data": optimised_heatmap 
     }
 
     dashboard_payload = {
@@ -1378,7 +1387,7 @@ def run_radar_system():
         with open(lut_path, "r", encoding="utf-8") as f:
             species_traits_lut = json.load(f)
             
-        # 2. Sanitize and Filter the DataFrame
+        # 2. Sanitise and Filter the DataFrame
         df.fillna('', inplace=True)
         
         # --- ENFORCE TAXONOMY BLACKLIST ---
