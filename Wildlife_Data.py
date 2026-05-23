@@ -636,8 +636,7 @@ def run_radar_system():
 
         tier_col_name = df.columns 
         initial_count = len(df)
-        df = df[~df[tier_col_name].astype(str).str.lower().str.contains('historical', na=False)]
-        
+        df = df[~df.iloc[:, 1].astype(str).str.lower().str.contains('historical', na=False)]
         print(f"   🧹 Purged {initial_count - len(df)} Historical observations. {len(df)} Active Audit records remain.")
         
         EXCLUDE_LIST = [
