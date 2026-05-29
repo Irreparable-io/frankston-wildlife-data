@@ -683,6 +683,25 @@ def run_radar_system():
                 # 5. Drop any empty/corrupted rows
                 df_effort = df_effort.dropna(subset=['Active_Seconds', 'Cell_Lat', 'Cell_Lon'])
                 
+                # ==========================================
+                # 6. 25m -> 50m TILES
+                # ==========================================
+                lat_step = 0.000450
+                lon_step = 0.000572
+                
+                # Snap the micro-coordinates to the new macro-grid
+                df_effort['Cell_Lat'] = (df_effort['Cell_Lat'] // lat_step) * lat_step
+                df_effort['Cell_Lon'] = (df_effort['Cell_Lon'] // lon_step) * lon_step
+                
+                # Overwrite the Cell_ID so the 4 grouped tiles now share the exact same ID
+                df_effort['Cell_ID'] = df_effort['Cell_Lat'].round(6).astype(str) + "_" + df_effort['Cell_Lon'].round(6).astype(str)
+                
+                # Squash the dataframe: Sum the Active Seconds for the new, larger Macro-Tiles
+                df_effort = df_effort.groupby(['Session_Date', 'Zone', 'Cell_ID', 'Cell_Lat', 'Cell_Lon'])['Active_Seconds'].sum().reset_index()
+                # ==========================================
+
+                print(f"   🗺️ Successfully loaded and grouped into {len(df_effort)} macro effort grid cells.")
+                
                 print(f"   🗺️ Successfully loaded {len(df_effort)} effort grid cells.")
             else:
                 print("   ⚠️ Junk Drawer matrix is empty.")
@@ -1260,8 +1279,9 @@ def run_radar_system():
     if not df_effort.empty:
         print("\n   🗺️ Building Effort-Corrected GeoJSON Heatmap...")
         try:
-            LAT_STEP = 0.000225  
-            LON_STEP = 0.000286  
+            # 🚨 THE FIX: Doubled the step sizes to match the 50x50m (2x2) Macro-Tiles
+            LAT_STEP = 0.000450  
+            LON_STEP = 0.000572  
             
             # 1. Aggregate historical effort per cell (Sum the seconds!)
             effort_grouped = df_effort.groupby('Cell_ID').agg({
@@ -1275,14 +1295,15 @@ def run_radar_system():
             lat_col = next((c for c in df.columns if 'lat' in c.lower()), 'Latitude')
             lon_col = next((c for c in df.columns if 'lon' in c.lower()), 'Longitude')
             
-            # 3. Snap observations to the same 25x25m grid
+            # 3. Snap observations to the NEW 50x50m grid
             df_geo = df.dropna(subset=[lat_col, lon_col]).copy()
             
             def get_cell_id(row):
                 try:
                     c_lat = math.floor(float(row[lat_col]) / LAT_STEP) * LAT_STEP
                     c_lon = math.floor(float(row[lon_col]) / LON_STEP) * LON_STEP
-                    return f"{c_lat:.6f}_{c_lon:.6f}"
+                    # 🚨 THE FIX: Ensured the rounding matches the 6-decimal string format from df_effort
+                    return f"{round(c_lat, 6)}_{round(c_lon, 6)}"
                 except:
                     return "Invalid"
                     
@@ -1301,7 +1322,7 @@ def run_radar_system():
                 lambda r: round(r['Sightings'] / r['Active_Hours'], 2) if r['Active_Hours'] > 0 else 0, axis=1
             )
             
-            # 6. Build the GeoJSON Polygons
+            # 6. Build the GeoJSON Polygons (using the new 50m steps)
             features = []
             for _, row in matrix.iterrows():
                 c_lat = float(row['Cell_Lat'])
@@ -1341,7 +1362,7 @@ def run_radar_system():
             with open(geojson_path, "w") as f:
                 json.dump(geojson_data, f)
                 
-            print(f"      [✅] GeoJSON Generated: {len(features)} spatial cells mapped.")
+            print(f"      [✅] GeoJSON Generated: {len(features)} spatial macro-cells mapped.")
 
         except Exception as e:
             print(f"      [❌] GeoJSON Generation Error: {e}")
