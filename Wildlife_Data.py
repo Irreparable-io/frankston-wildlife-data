@@ -393,19 +393,15 @@ def calculate_sociality(observations):
             continue
             
         if isinstance(raw_qty, (int, float)):
-            # If Pandas already knows it's a number, use it!
             qty = int(raw_qty)
         else:
-            # If it's text (like "5+"), safely extract it
             qty_str = str(raw_qty).strip()
             try:
                 numbers = re.findall(r'\d+', qty_str)
-                # Using .pop(0) uses parentheses to completely avoid the markdown bug!
                 qty = int(numbers.pop(0)) if numbers else 1
             except Exception as e:
                 qty = 1
                 
-        # You cannot observe zero of an animal if it was logged
         qty = max(1, qty)
         
         # Track the LARGEST group ever seen
@@ -444,7 +440,7 @@ def calculate_moisture_affinity(observations):
         "Little Pied Cormorant", "Great Cormorant",
         "Hoary-headed Grebe", "Australasian Grebe",
         "White-faced Heron", "Silver Gull",
-        "Short-finned Eel"
+        "Short-finned Eel", "Australian Wood Duck"
     ]
 
     species_vpds = {}
@@ -457,7 +453,6 @@ def calculate_moisture_affinity(observations):
         if not species:
             continue
             
-        # Track everyone we see, even if weather data is missing
         all_seen_species.add(species) 
         
         temp_str = str(obs.get('Temp. (°C)', '')).strip()
@@ -602,7 +597,7 @@ def run_radar_system():
         loc_t_col = next((c for c in df.columns if 'local t' in c.lower()), 'Local T.')
         loc_h_col = next((c for c in df.columns if 'local h' in c.lower()), 'Local H.')
 
-        # 🚨 NEW: Map the 5 new covariates
+        # NEW: Map the 5 new covariates
         wspd_col = next((c for c in df.columns if 'speed' in c.lower()), 'W. Speed (Km/h)')
         wgust_col = next((c for c in df.columns if 'gust' in c.lower()), 'W. Gust (Km/h)')
         precip_col = next((c for c in df.columns if 'precip' in c.lower()), 'Precip.')
@@ -619,7 +614,6 @@ def run_radar_system():
             media_col: 'Media Type',
             temp_col: 'Temp. (°C)',
             hum_col: 'Humid. (%)',
-            # 🚨 NEW: Add to standard renaming dictionary
             wspd_col: 'W. Speed (Km/h)',
             wgust_col: 'W. Gust (Km/h)',
             precip_col: 'Precip.',
@@ -1058,7 +1052,6 @@ def run_radar_system():
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
     safe_keywords = ['fantail', 'cormorant', 'kingfisher', 'antechinus', 'frogmouth', 'bee-eater', 'fly-catcher']
     
-    # 🚨 THE HARD EXCLUDE LIST (Add any other specific names here)
     global_exclude_list = ["blue spotted hawker", "domestic cat", "ferret", "domestic dog", "cattle"]
 
     # 1. Scrub the historical VBA/iNat data
