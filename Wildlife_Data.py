@@ -130,7 +130,11 @@ EXCLUDE_LIST = [
     "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", 
     " and ", "possums", "unknown", "×", " sp.", "birds", "cattle", 
     "pardalotes", "black faced cuckoo shrike", "scarlet myzomela",
-    "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker"
+    "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker",
+    "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
+    "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
+    "swift parrot" "latham s snipe", "blue winged parrot", "white footed dunnart"
+    "eastern pygmy possum"
 ]
 
 # Force specific conservation statuses (Overrides DEECA and iNat)
@@ -152,6 +156,7 @@ STATUS_OVERRIDES = {
     "Black Rat": "Introduced",
     "Brown Rat": "Introduced",
     "Feral Pigeon": "Introduced",
+    "Freckled Duck": "Vulnerable",
     "Domestic Mallard": "Introduced",
     "Magpie Goose": "Vulnerable",
     "Grey-headed Flying-fox": "Vulnerable"
@@ -639,6 +644,18 @@ def run_radar_system():
             " and ", "unknown", "×", " sp.", "pardalotes", 
             "black faced cuckoo shrike", "scarlet myzomela",
             "blue spotted hawker", "ferret", "common froglet", "hawker"
+        ]
+
+        EXCLUDE_LIST = [
+            "fur seal", "little penguin", "red junglefowl", 
+            "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", 
+            " and ", "possums", "unknown", "×", " sp.", "birds", "cattle", 
+            "pardalotes", "black faced cuckoo shrike", "scarlet myzomela",
+            "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker",
+            "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
+            "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
+            "swift parrot" "latham s snipe", "blue winged parrot", "white footed dunnart"
+            "eastern pygmy possum"
         ]
         
         if 'Common Name' in df.columns:
