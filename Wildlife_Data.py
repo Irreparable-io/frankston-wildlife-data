@@ -137,7 +137,7 @@ EXCLUDE_LIST = [
     "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
     "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
     "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
-    "southern forest bat", "european starling"
+    "southern forest bat", "european starling", "swamp skink", "glossy grass skink"
     
 ]
 
@@ -163,7 +163,8 @@ STATUS_OVERRIDES = {
     "Domestic Mallard": "Introduced",
     "Magpie Goose": "Vulnerable",
     "Grey headed Flying fox": "Vulnerable",
-    "Australasian Bittern": "Critically Endangered"
+    "Australasian Bittern": "Critically Endangered",
+    "Eastern Short necked Turtle": "Critically Endangered"
 }
 
 def normalise_species_name(name):
@@ -654,7 +655,7 @@ def run_radar_system():
             "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
             "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
             "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
-            "southern forest bat", "european starling"
+            "southern forest bat", "european starling", "swamp skink", "glossy grass skink"
 
         ]
          
