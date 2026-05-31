@@ -137,7 +137,7 @@ EXCLUDE_LIST = [
     "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
     "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
     "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
-    "southern forest bat"
+    "southern forest bat", "european starling"
     
 ]
 
@@ -654,10 +654,10 @@ def run_radar_system():
             "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
             "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
             "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
-            "southern forest bat"
-    
+            "southern forest bat", "european starling"
+
         ]
-        
+         
         if 'Common Name' in df.columns:
             # 1. Escape special characters (so " sp." is treated as text)
             import re # Ensure regex is imported
