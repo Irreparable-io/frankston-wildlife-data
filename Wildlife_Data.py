@@ -124,7 +124,6 @@ SPECIES_MAP = {
     "pink eared duck": "Pink-eared Duck"
 }
 
-# 
 EXCLUDE_LIST = [
     "fur seal", "little penguin", "red junglefowl", 
     "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", 
@@ -134,7 +133,11 @@ EXCLUDE_LIST = [
     "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
     "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
     "swift parrot" "latham s snipe", "blue winged parrot", "white footed dunnart"
-    "eastern pygmy possum"
+    "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
+    "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
+    "south-eastern free-tailed bat", "hooded robin", "chocolate wattled bat",
+    "southern forest bat"
+    
 ]
 
 # Force specific conservation statuses (Overrides DEECA and iNat)
@@ -637,14 +640,6 @@ def run_radar_system():
         initial_count = len(df)
         df = df[~df.iloc[:, 1].astype(str).str.lower().str.contains('historical', na=False)]
         print(f"   🧹 Purged {initial_count - len(df)} Historical observations. {len(df)} Active Audit records remain.")
-        
-        EXCLUDE_LIST = [
-            "fur seal", "little penguin", "red junglefowl", 
-            "undetermined", "dingo", "dog", "domestic", "unidentified", "kangaroo", 
-            " and ", "unknown", "×", " sp.", "pardalotes", 
-            "black faced cuckoo shrike", "scarlet myzomela",
-            "blue spotted hawker", "ferret", "common froglet", "hawker"
-        ]
 
         EXCLUDE_LIST = [
             "fur seal", "little penguin", "red junglefowl", 
@@ -655,7 +650,11 @@ def run_radar_system():
             "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
             "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
             "swift parrot" "latham s snipe", "blue winged parrot", "white footed dunnart"
-            "eastern pygmy possum"
+            "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
+            "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
+            "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
+            "southern forest bat"
+    
         ]
         
         if 'Common Name' in df.columns:
