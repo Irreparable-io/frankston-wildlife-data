@@ -1385,6 +1385,30 @@ def run_radar_system():
             print(f"      [❌] GeoJSON Generation Error: {e}")
 
     # ==========================================
+    # 🚨 FINAL STATUS OVERRIDE ENFORCER
+    # ==========================================
+    print("\n   🛡️ Enforcing manual conservation statuses...")
+    
+    # 1. Create a "bulletproof" version of your override list (lowercase, no hyphens)
+    safe_overrides = {
+        k.lower().replace('-', ' ').replace('  ', ' '): v 
+        for k, v in STATUS_OVERRIDES.items()
+    }
+
+    # 2. Scan every single animal going to the website
+    override_count = 0
+    for sp_name, data in library_payload.items():
+        # Strip the incoming database name down to the same bulletproof format
+        safe_db_name = sp_name.lower().replace('-', ' ').replace('  ', ' ')
+        
+        # If it matches, ruthlessly overwrite whatever DEECA/iNat said
+        if safe_db_name in safe_overrides:
+            data['threat_status'] = safe_overrides[safe_db_name]
+            override_count += 1
+            
+    print(f"      [✅] Successfully forced {override_count} custom conservation statuses.")
+    
+    # ==========================================
     # GENERATE REJECTION RECEIPT
     # ==========================================
 
