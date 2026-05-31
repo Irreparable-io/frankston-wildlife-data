@@ -121,7 +121,8 @@ SPECIES_MAP = {
     "lowlands copperhead": "Lowland Copperhead",
     "buff banded rail": "Buff-banded Rail",
     "eastern small eyed snake": "Eastern Small-eyed Snake",
-    "pink eared duck": "Pink-eared Duck"
+    "pink eared duck": "Pink-eared Duck",
+    "european starling": "Common Starling"
 }
 
 EXCLUDE_LIST = [
@@ -132,10 +133,10 @@ EXCLUDE_LIST = [
     "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker",
     "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
     "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
-    "swift parrot" "latham s snipe", "blue winged parrot", "white footed dunnart"
+    "swift parrot" "lathams snipe", "blue winged parrot", "white footed dunnart"
     "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
     "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
-    "south-eastern free-tailed bat", "hooded robin", "chocolate wattled bat",
+    "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
     "southern forest bat"
     
 ]
@@ -144,7 +145,6 @@ EXCLUDE_LIST = [
 STATUS_OVERRIDES = {
     "Glossy Black-Cockatoo": "Critically Endangered",
     "Swamp Wallaby": "Least Concern",
-    "Grey-headed Flying-fox": "Vulnerable",
     "Red Fox": "Introduced", 
     "Koala": "Vulnerable",
     "European Rabbit": "Introduced",
@@ -162,7 +162,8 @@ STATUS_OVERRIDES = {
     "Freckled Duck": "Vulnerable",
     "Domestic Mallard": "Introduced",
     "Magpie Goose": "Vulnerable",
-    "Grey-headed Flying-fox": "Vulnerable"
+    "Grey headed Flying fox": "Vulnerable",
+    "Australasian Bittern": "Critically Endangered"
 }
 
 def normalise_species_name(name):
@@ -649,7 +650,7 @@ def run_radar_system():
             "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker",
             "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
             "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
-            "swift parrot" "latham s snipe", "blue winged parrot", "white footed dunnart"
+            "swift parrot" "lathams snipe", "blue winged parrot", "white footed dunnart"
             "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
             "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
             "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
