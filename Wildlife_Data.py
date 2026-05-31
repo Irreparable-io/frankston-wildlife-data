@@ -133,7 +133,7 @@ EXCLUDE_LIST = [
     "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker",
     "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
     "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
-    "swift parrot" "lathams snipe", "blue winged parrot", "white footed dunnart"
+    "swift parrot" "lathams snipe", "blue winged parrot", "white footed dunnart",
     "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
     "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
     "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
@@ -651,7 +651,7 @@ def run_radar_system():
             "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker",
             "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
             "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
-            "swift parrot" "lathams snipe", "blue winged parrot", "white footed dunnart"
+            "swift parrot" "lathams snipe", "blue winged parrot", "white footed dunnart",
             "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
             "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
             "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
