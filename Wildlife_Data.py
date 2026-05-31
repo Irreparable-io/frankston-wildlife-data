@@ -132,8 +132,8 @@ EXCLUDE_LIST = [
     "pardalotes", "black faced cuckoo shrike", "scarlet myzomela",
     "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker",
     "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
-    "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
-    "swift parrot" "lathams snipe", "blue winged parrot", "white footed dunnart",
+    "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter",
+    "swift parrot", "lathams snipe", "blue winged parrot", "white footed dunnart",
     "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
     "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
     "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
@@ -650,13 +650,12 @@ def run_radar_system():
             "pardalotes", "black faced cuckoo shrike", "scarlet myzomela",
             "blue spotted hawker", "ferret", "common froglet", "domestic cat", "hawker",
             "eastern brown snake", "song thrush", "australian pipit", "painted honeyeater",
-            "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter"
-            "swift parrot" "lathams snipe", "blue winged parrot", "white footed dunnart",
+            "southern emu wren", "weebill", "white fronted chat", "rose robin", "jacky winter",
+            "swift parrot", "lathams snipe", "blue winged parrot", "white footed dunnart", 
             "eastern pygmy possum", "new holland mouse", "southern brown bandicoot", 
             "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
             "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
             "southern forest bat", "european starling", "swamp skink", "glossy grass skink"
-
         ]
          
         if 'Common Name' in df.columns:
@@ -667,9 +666,9 @@ def run_radar_system():
             # 2. Join them into one massive OR statement (e.g., "dog|cat|ferret")
             exclude_pattern = '|'.join(escaped_excludes)
             
-            # 3. Filter the DataFrame: Keep rows where Common Name DOES NOT (~) contain the pattern
+            # 3. Filter the DataFrame: Strip hyphens, then keep rows that DO NOT (~) contain the pattern
             original_count = len(df)
-            df = df[~df['Common Name'].astype(str).str.lower().str.contains(exclude_pattern, regex=True, na=False)]
+            df = df[~df['Common Name'].astype(str).str.lower().str.replace('-', ' ').str.replace('  ', ' ').str.contains(exclude_pattern, regex=True, na=False)]
             
             print(f"   [✅] Scrubber removed {original_count - len(df)} invalid rows.")
         else:
