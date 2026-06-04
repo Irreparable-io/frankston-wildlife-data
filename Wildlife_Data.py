@@ -915,7 +915,7 @@ def run_radar_system():
         "Frankston Nature Conservation Reserve"
     ]
 
-def get_bookended_rates(df_slice):
+    def get_bookended_rates(df_slice):
         """Calculates SPUE using session bookending for true zero-effort gaps."""
         rates = [None] * 24
         if df_slice.empty: return rates
