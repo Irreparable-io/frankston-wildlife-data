@@ -719,8 +719,6 @@ def run_radar_system():
                 # Squash the dataframe: Sum the Active Seconds for the new, larger Macro-Tiles
                 df_effort = df_effort.groupby(['Session_Date', 'Zone', 'Cell_ID', 'Cell_Lat', 'Cell_Lon'])['Active_Seconds'].sum().reset_index()
                 # ==========================================
-
-                print(f"   🗺️ Successfully loaded and grouped into {len(df_effort)} macro effort grid cells.")
                 
                 print(f"   🗺️ Successfully loaded {len(df_effort)} effort grid cells.")
             else:
@@ -777,7 +775,7 @@ def run_radar_system():
         # Fall back to the regional Visual Crossing data
         if pd.isnull(t) or pd.isnull(h):
             t = row.get('Temp. (°C)')
-            h = row.get('Humid. (%)') # FIXED: Matches your CSV perfectly
+            h = row.get('Humid. (%)')
             
         # Valid numbers from either source, calculate VPD
         if pd.notnull(t) and pd.notnull(h):
@@ -1336,10 +1334,12 @@ def run_radar_system():
             matrix = pd.merge(effort_grouped, sighting_counts, on='Cell_ID', how='left')
             matrix['Sightings'] = matrix['Sightings'].fillna(0)
             
-            # Density Math: Sightings per Active Hour
+            SMOOTHING_ANCHOR_HOURS = 0.16 
+            
             matrix['Active_Hours'] = matrix['Active_Seconds'] / 3600.0
+            
             matrix['Density'] = matrix.apply(
-                lambda r: round(r['Sightings'] / r['Active_Hours'], 2) if r['Active_Hours'] > 0 else 0, axis=1
+                lambda r: round(r['Sightings'] / (r['Active_Hours'] + SMOOTHING_ANCHOR_HOURS), 2) if r['Active_Hours'] > 0 else 0, axis=1
             )
             
             # 6. Build the GeoJSON Polygons (using the new 50m steps)
