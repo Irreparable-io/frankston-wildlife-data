@@ -920,8 +920,12 @@ def get_bookended_rates(df_slice):
         rates = [None] * 24
         if df_slice.empty: return rates
 
+        # Drop records without a valid Date or Hour (e.g., Redacted Threatened Species)
+        valid_df = df_slice.dropna(subset=['DateOnly', 'Hour']).copy()
+        if valid_df.empty: return rates
+
         # 1. Find the active span (min and max hour) for every individual field day
-        session_spans = df_slice.groupby('DateOnly')['Hour'].agg(['min', 'max']).reset_index()
+        session_spans = valid_df.groupby('DateOnly')['Hour'].agg(['min', 'max']).reset_index()
 
         # 2. Tally 'Active Effort Days' per hour (filling in the gaps)
         effort_counts = {h: 0 for h in range(24)}
@@ -931,7 +935,7 @@ def get_bookended_rates(df_slice):
                 effort_counts[h] += 1
 
         # 3. Tally actual sightings per hour
-        sighting_counts = df_slice.groupby('Hour').size().to_dict()
+        sighting_counts = valid_df.groupby('Hour').size().to_dict()
 
         # 4. Calculate the final rates
         for h in range(24):
@@ -941,10 +945,13 @@ def get_bookended_rates(df_slice):
                 
         return rates
     
-    # Initialise everything with None (translates to null in JSON)
+    # ==========================================
+    # 4. Calculate Effort-Corrected Rates
+    # ==========================================
+    # Make sure seasons_list explicitly includes "All Year" so the dictionary builds correctly!
+    seasons_list = ["All Year", "Summer", "Autumn", "Winter", "Spring"]
     temporal_rates = {s: {z: [None] * 24 for z in core_reserves} for s in seasons_list}
 
-    # 4. Calculate Effort-Corrected Rates
     for z in core_reserves:
         zone_df = df[df['Zone'] == z].copy()
         if zone_df.empty: continue
@@ -964,7 +971,7 @@ def get_bookended_rates(df_slice):
             "total_obs": int(v["total_obs"]),
             "species": int(len(v["species"])),
             "taxonomy_split": v["tax_split"]
-        }  
+        }
 
     # ==========================================
     # --- 1. LIVE STATS ENGINE ---
