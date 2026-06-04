@@ -966,15 +966,6 @@ def get_bookended_rates(df_slice):
             "taxonomy_split": v["tax_split"]
         }  
 
-    # Package clean zones and other metadata...
-    clean_zones = {}
-    for k, v in zone_stats.items():
-        clean_zones[k] = {
-            "total_obs": int(v["total_obs"]),
-            "species": int(len(v["species"])),
-            "taxonomy_split": v["tax_split"]
-        }
-
     # ==========================================
     # --- 1. LIVE STATS ENGINE ---
     # ==========================================
