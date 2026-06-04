@@ -914,30 +914,57 @@ def run_radar_system():
         "Kananook Creek", 
         "Frankston Nature Conservation Reserve"
     ]
+
+def get_bookended_rates(df_slice):
+        """Calculates SPUE using session bookending for true zero-effort gaps."""
+        rates = [None] * 24
+        if df_slice.empty: return rates
+
+        # 1. Find the active span (min and max hour) for every individual field day
+        session_spans = df_slice.groupby('DateOnly')['Hour'].agg(['min', 'max']).reset_index()
+
+        # 2. Tally 'Active Effort Days' per hour (filling in the gaps)
+        effort_counts = {h: 0 for h in range(24)}
+        for _, row in session_spans.iterrows():
+            # If min is 11 and max is 13, it adds effort to 11, 12, and 13
+            for h in range(int(row['min']), int(row['max']) + 1):
+                effort_counts[h] += 1
+
+        # 3. Tally actual sightings per hour
+        sighting_counts = df_slice.groupby('Hour').size().to_dict()
+
+        # 4. Calculate the final rates
+        for h in range(24):
+            if effort_counts[h] > 0:
+                total_sightings = sighting_counts.get(h, 0)
+                rates[h] = round(total_sightings / effort_counts[h], 2)
+                
+        return rates
     
     # Initialise everything with None (translates to null in JSON)
     temporal_rates = {s: {z: [None] * 24 for z in core_reserves} for s in seasons_list}
 
     # 4. Calculate Effort-Corrected Rates
     for z in core_reserves:
-        zone_df = df[df['Zone'] == z]
+        zone_df = df[df['Zone'] == z].copy()
         if zone_df.empty: continue
         
-        for h in range(24):
-            # Get all observations for this specific hour in this zone
-            hr_all_df = zone_df[zone_df['Hour'] == h]
-            
-            if not hr_all_df.empty:
-                # Effort Correction: Divide total sightings by number of unique days surveyed at this hour
-                days_all = hr_all_df['DateOnly'].nunique()
-                temporal_rates["All Year"][z][h] = round(len(hr_all_df) / days_all, 2)
-                
-            # Break it down further by Season
-            for s in ["Summer", "Autumn", "Winter", "Spring"]:
-                hr_season_df = hr_all_df[hr_all_df['Season'] == s]
-                if not hr_season_df.empty:
-                    days_season = hr_season_df['DateOnly'].nunique()
-                    temporal_rates[s][z][h] = round(len(hr_season_df) / days_season, 2)     
+        # Calculate the bookended rates for the entire year
+        temporal_rates["All Year"][z] = get_bookended_rates(zone_df)
+        
+        # Break it down further by Season
+        for s in ["Summer", "Autumn", "Winter", "Spring"]:
+            season_df = zone_df[zone_df['Season'] == s]
+            temporal_rates[s][z] = get_bookended_rates(season_df)
+
+    # Package clean zones and other metadata...
+    clean_zones = {}
+    for k, v in zone_stats.items():
+        clean_zones[k] = {
+            "total_obs": int(v["total_obs"]),
+            "species": int(len(v["species"])),
+            "taxonomy_split": v["tax_split"]
+        }  
 
     # Package clean zones and other metadata...
     clean_zones = {}
