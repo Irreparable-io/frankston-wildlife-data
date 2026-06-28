@@ -772,6 +772,12 @@ def run_radar_system():
     df['Precip.'] = pd.to_numeric(df.get('Precip.', np.nan), errors='coerce')
     df['Press.'] = pd.to_numeric(df.get('Press.', np.nan), errors='coerce')
     df['Cloud'] = pd.to_numeric(df.get('Cloud', np.nan), errors='coerce')
+    
+    # Safely coerce Duration (checking both possible column names)
+    if 'Duration (min)' in df.columns:
+        df['Duration (min)'] = pd.to_numeric(df['Duration (min)'], errors='coerce')
+    elif 'Duration' in df.columns:
+        df['Duration'] = pd.to_numeric(df['Duration'], errors='coerce')
 
     # 2. Calculate Independent VPDs
     def compute_api_vpd(row):
@@ -804,6 +810,14 @@ def run_radar_system():
     # 5. Extract the FAT payload
     vpd_export_data = []
     for _, row in vpd_df.iterrows():
+        
+        # Safely extract duration regardless of column name
+        dur = None
+        if 'Duration (min)' in df.columns and pd.notna(row['Duration (min)']):
+            dur = round(float(row['Duration (min)']), 1)
+        elif 'Duration' in df.columns and pd.notna(row['Duration']):
+            dur = round(float(row['Duration']), 1)
+
         vpd_export_data.append({
             "Date/Time": row.get('Date/Time'),
             "Common Name": row.get('Common Name'),
@@ -829,6 +843,9 @@ def run_radar_system():
             "Precip_mm": round(float(row['Precip.']), 2) if pd.notna(row.get('Precip.')) else None,
             "Press_hPa": round(float(row['Press.']), 1) if pd.notna(row.get('Press.')) else None,
             "Cloud_Pct": round(float(row['Cloud']), 1) if pd.notna(row.get('Cloud')) else None,
+            
+            # --- EFFORT TRACKING ---
+            "Duration (min)": dur
         })
     
     print(f"   ✅ Generated {len(vpd_export_data)} Fully Separated Microclimate/VPD records.")
