@@ -755,46 +755,83 @@ def run_radar_system():
     total_hours = float(round(daily_stats['Duration'].sum() / 60, 1))
     print(f"   📊 MATH CHECK: {total_hours} Hours across {len(daily_stats)} unique field days.")
 
-   # =========================================================
-    # VPD SCATTER PLOT ENGINE (UPGRADED WITH LOCAL WEATHER)
     # =========================================================
-    print("   📊 Calculating Vapor Pressure Deficit (VPD)...")
+    # VPD & MICROCLIMATE PAYLOAD (FULLY SEPARATED SOURCES)
+    # =========================================================
+    print("   📊 Calculating Independent VPDs & extracting Microclimate data...")
 
     # 1. Ensure all potential weather columns are numeric
     df['Temp. (°C)'] = pd.to_numeric(df.get('Temp. (°C)', np.nan), errors='coerce')
     df['Humid. (%)'] = pd.to_numeric(df.get('Humid. (%)', np.nan), errors='coerce')
     df['Local T.'] = pd.to_numeric(df.get('Local T.', np.nan), errors='coerce')
     df['Local H.'] = pd.to_numeric(df.get('Local H.', np.nan), errors='coerce')
+    
+    # Coerce the new covariates
+    df['W. Speed (Km/h)'] = pd.to_numeric(df.get('W. Speed (Km/h)', np.nan), errors='coerce')
+    df['W. Gust (Km/h)'] = pd.to_numeric(df.get('W. Gust (Km/h)', np.nan), errors='coerce')
+    df['Precip.'] = pd.to_numeric(df.get('Precip.', np.nan), errors='coerce')
+    df['Press.'] = pd.to_numeric(df.get('Press.', np.nan), errors='coerce')
+    df['Cloud'] = pd.to_numeric(df.get('Cloud', np.nan), errors='coerce')
 
-    # 2. Prioritise Local Weather, fallback to API Weather
-    def compute_best_vpd(row):
-        # Try Local Data First
-        t = row.get('Local T.')
-        h = row.get('Local H.')
-        
-        # Fall back to the regional Visual Crossing data
-        if pd.isnull(t) or pd.isnull(h):
-            t = row.get('Temp. (°C)')
-            h = row.get('Humid. (%)')
-            
-        # Valid numbers from either source, calculate VPD
-        if pd.notnull(t) and pd.notnull(h):
-            return calculate_vpd(t, h)
+    # 2. Calculate Independent VPDs
+    def compute_api_vpd(row):
+        t = row.get('Temp. (°C)')
+        h = row.get('Humid. (%)')
+        if pd.notnull(t) and pd.notnull(h): return calculate_vpd(t, h)
         return None
 
-    # 3. Apply VPD math row by row
-    df['VPD_kPa'] = df.apply(compute_best_vpd, axis=1)
+    def compute_local_vpd(row):
+        t = row.get('Local T.')
+        h = row.get('Local H.')
+        if pd.notnull(t) and pd.notnull(h): return calculate_vpd(t, h)
+        return None
 
-    # 4. Filter missing data
-    vpd_df = df.dropna(subset=['VPD_kPa', 'Zone'])
+    # Legacy fallback for the live dashboard (so it doesn't break!)
+    def compute_legacy_vpd(row):
+        local_v = compute_local_vpd(row)
+        if local_v is not None: return local_v
+        return compute_api_vpd(row)
+
+    # 3. Apply math row by row
+    df['API_VPD_kPa'] = df.apply(compute_api_vpd, axis=1)
+    df['Local_VPD_kPa'] = df.apply(compute_local_vpd, axis=1)
+    df['VPD_kPa'] = df.apply(compute_legacy_vpd, axis=1) 
+
+    # 4. Filter missing data (Keep row if it has AT LEAST ONE valid VPD source)
+    vpd_df = df.dropna(subset=['VPD_kPa', 'Zone']).copy()
+    vpd_df['Taxonomy'] = vpd_df.get('Taxonomy', 'Unknown')
     
-    # 5. Extract only what the scatter plot needs
-    vpd_export = vpd_df[['Date/Time', 'Zone', 'Common Name', 'VPD_kPa']].copy()
-    vpd_export['Taxonomy'] = vpd_df.get('Taxonomy', 'Unknown')
+    # 5. Extract the FAT payload
+    vpd_export_data = []
+    for _, row in vpd_df.iterrows():
+        vpd_export_data.append({
+            "Date/Time": row.get('Date/Time'),
+            "Common Name": row.get('Common Name'),
+            "Zone": row.get('Zone'),
+            "Taxonomy": row.get('Taxonomy'),
+            
+            # --- LEGACY KEY (Keeps current live site working) ---
+            "VPD_kPa": round(float(row['VPD_kPa']), 2) if pd.notna(row.get('VPD_kPa')) else None,
+            
+            # --- FULLY SEPARATED VPDs ---
+            "API_VPD_kPa": round(float(row['API_VPD_kPa']), 2) if pd.notna(row.get('API_VPD_kPa')) else None,
+            "Local_VPD_kPa": round(float(row['Local_VPD_kPa']), 2) if pd.notna(row.get('Local_VPD_kPa')) else None,
+            
+            # --- FULLY SEPARATED RAW SENSORS ---
+            "API_Temp_C": round(float(row['Temp. (°C)']), 1) if pd.notna(row.get('Temp. (°C)')) else None,
+            "API_Humid_Pct": round(float(row['Humid. (%)']), 1) if pd.notna(row.get('Humid. (%)')) else None,
+            "Local_Temp_C": round(float(row['Local T.']), 1) if pd.notna(row.get('Local T.')) else None,
+            "Local_Humid_Pct": round(float(row['Local H.']), 1) if pd.notna(row.get('Local H.')) else None,
+            
+            # --- EXPANDED WEATHER DATA ---
+            "Wind_kmh": round(float(row['W. Speed (Km/h)']), 1) if pd.notna(row.get('W. Speed (Km/h)')) else None,
+            "Gust_kmh": round(float(row['W. Gust (Km/h)']), 1) if pd.notna(row.get('W. Gust (Km/h)')) else None,
+            "Precip_mm": round(float(row['Precip.']), 2) if pd.notna(row.get('Precip.')) else None,
+            "Press_hPa": round(float(row['Press.']), 1) if pd.notna(row.get('Press.')) else None,
+            "Cloud_Pct": round(float(row['Cloud']), 1) if pd.notna(row.get('Cloud')) else None,
+        })
     
-    vpd_export_data = vpd_export.to_dict(orient='records')
-    
-    print(f"   ✅ Generated {len(vpd_export_data)} VPD records for the dashboard.")
+    print(f"   ✅ Generated {len(vpd_export_data)} Fully Separated Microclimate/VPD records.")
     # =========================================================
 
     # --- 3. ZONE STATS & MAP PROCESSING (COMPRESSED) ---
