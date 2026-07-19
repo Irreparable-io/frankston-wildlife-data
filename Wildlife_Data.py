@@ -122,7 +122,8 @@ SPECIES_MAP = {
     "buff banded rail": "Buff-banded Rail",
     "eastern small eyed snake": "Eastern Small-eyed Snake",
     "pink eared duck": "Pink-eared Duck",
-    "european starling": "Common Starling"
+    "european starling": "Common Starling",
+    "delicate skink": "Dark-flecked Garden Sunskink"
 }
 
 EXCLUDE_LIST = [
