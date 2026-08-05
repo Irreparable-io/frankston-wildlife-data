@@ -167,7 +167,8 @@ STATUS_OVERRIDES = {
     "Grey headed Flying fox": "Vulnerable",
     "Australasian Bittern": "Critically Endangered",
     "Eastern Short necked Turtle": "Critically Endangered",
-    "Southern Toadlet": "Vulnerable"
+    "Southern Toadlet": "Vulnerable",
+    "Spotted Dove": "Introduced"
 }
 
 def normalise_species_name(name):
