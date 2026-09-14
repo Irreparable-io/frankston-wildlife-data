@@ -1258,12 +1258,6 @@ def run_radar_system():
     # ==========================================
     print("    📦 Assembling and writing final JSON payloads...")
 
-    # 1. Identify custom discoveries and temporarily pop them off the bottom of the list
-    new_discoveries_data = {}
-    for custom_name in custom_species_db.keys():
-        if custom_name in library_payload:
-            new_discoveries_data[custom_name] = library_payload.pop(custom_name)
-
     # 2. Rebuild the master list using the perfect, original CSV order
     final_payload = {}
     for sp_key, sp_data in library_payload.items():
