@@ -1258,33 +1258,6 @@ def run_radar_system():
     # ==========================================
     print("    📦 Assembling and writing final JSON payloads...")
 
-    # 2. Rebuild the master list using the perfect, original CSV order
-    final_payload = {}
-    for sp_key, sp_data in library_payload.items():
-        # Add the normal historical species
-        final_payload[sp_key] = sp_data
-        
-        # If this species is an anchor, instantly inject the new discovery right after it
-        for new_name, new_data in new_discoveries_data.items():
-            anchor_species = custom_species_db.get(new_name, {}).get("anchor")
-            if anchor_species and anchor_species.lower() == sp_key.lower():
-                final_payload[new_name] = new_data
-                print(f"      📍 Anchored '{new_name}' directly after '{sp_key}'")
-
-    # 3. Catch-all: If the anchor was missing or misspelled, put it at the end so data isn't lost
-    for new_name, new_data in new_discoveries_data.items():
-        if new_name not in final_payload:
-            final_payload[new_name] = new_data
-            
-    library_payload = final_payload
-
-    print(f"    ✅ Library Complete: {len(library_payload)} total species cards ready.")
-
-    # ==========================================
-    # --- FINAL PAYLOAD SPLIT & LOCAL EXPORT ---
-    # ==========================================
-    print("    📦 Assembling and writing final JSON payloads...")
-
     # 1. Enhanced atomic_write function with verbose logging
     def atomic_write(payload_data, filename):
         final_path = os.path.join(OUTPUT_DIR, filename)
