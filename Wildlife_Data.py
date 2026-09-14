@@ -1173,6 +1173,15 @@ def run_radar_system():
     
     global_exclude_list = ["blue spotted hawker", "domestic cat", "ferret", "domestic dog", "cattle"]
 
+    # --- CUSTOM SPECIES OVERRIDES ---
+    # Add new field discoveries here so they get proper scientific names and threat statuses
+    custom_species_db = {
+        "Eastern Striped Skink": {
+            "scientific_name": "Ctenotus robustus",
+            "threat_status": "Least Concern"
+        }
+    }
+
     # 1. Scrub the historical VBA/iNat data
     keys_to_delete = [
         sp for sp in library_payload.keys() 
@@ -1238,9 +1247,18 @@ def run_radar_system():
         else:
             # 5. New discovery (store normalised name for consistency)
             clean_new_name = normalise_species_name(sp_name)
+            
+            # --- CHECK CUSTOM OVERRIDES ---
+            if clean_new_name in custom_species_db:
+                sci_name = custom_species_db[clean_new_name]["scientific_name"]
+                t_status = custom_species_db[clean_new_name]["threat_status"]
+            else:
+                sci_name = "Unknown (New Discovery)"
+                t_status = STATUS_OVERRIDES.get(sp_name, "Unknown")
+            
             library_payload[clean_new_name] = {
-                "scientific_name": "Unknown (New Discovery)", 
-                "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
+                "scientific_name": sci_name, 
+                "threat_status": t_status, 
                 "status": "recorded",
                 "liveCount": stats['count'],
                 "liveLastSighted": stats['latest_date'],
