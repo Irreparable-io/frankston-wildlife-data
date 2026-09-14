@@ -1174,15 +1174,6 @@ def run_radar_system():
     
     global_exclude_list = ["blue spotted hawker", "domestic cat", "ferret", "domestic dog", "cattle"]
 
-    # --- CUSTOM SPECIES OVERRIDES ---
-    custom_species_db = {
-        "Eastern Striped Skink": {
-            "scientific_name": "Ctenotus robustus",
-            "threat_status": "Least Concern",
-            "anchor": "Swamp Skink" 
-        }
-    }
-
     # 1. Scrub the historical VBA/iNat data
     keys_to_delete = [
         sp for sp in library_payload.keys() 
