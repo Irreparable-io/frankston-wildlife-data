@@ -1169,11 +1169,6 @@ def run_radar_system():
     print("    🧬 Building Expected Master List from VBA & iNat...")
     library_payload = build_master_list()
 
-    # --- CUSTOM SPECIES OVERRIDES ---
-    custom_species_db = {
-        }
-    }
-
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
     safe_keywords = ['fantail', 'cormorant', 'kingfisher', 'antechinus', 'frogmouth', 'bee-eater', 'fly-catcher']
     
@@ -1183,7 +1178,7 @@ def run_radar_system():
     keys_to_delete = [
         sp for sp in library_payload.keys() 
         if (any(omit in str(sp).lower() for omit in js_omit_list) and not any(safe in str(sp).lower() for safe in safe_keywords))
-        or any(banned in str(sp).lower() for banned in global_exclude_list) # Added global exclude check
+        or any(banned in str(sp).lower() for banned in global_exclude_list)
     ]
     for k in keys_to_delete:
         rejection_log.append(f"Historical (VBA),{k},N/A,Taxonomy Exclusion")
@@ -1192,11 +1187,9 @@ def run_radar_system():
     print("    🔗 Merging Live Spreadsheet Data...")
 
     # --- ALIAS RENAMING (Preserves Natural Order) ---
-    # Renames VBA official names to match your preferred spreadsheet names
     temp_payload = {}
     for k, v in library_payload.items():
         if k == "Robust Ctenotus":
-            # Swap the name, but keep all the historical habitat/taxonomy data
             temp_payload["Eastern Striped Skink"] = v
         else:
             temp_payload[k] = v
@@ -1206,44 +1199,35 @@ def run_radar_system():
 
     for sp_name, stats in pokedex_stats.items():
         
-        # Normalise incoming spreadsheet species name
         obs_norm = normalise_species_name(sp_name).lower()
         
-        # 🚨 THE INTERCEPTOR: Kills the row if it's on the global exclude list
         if any(banned in obs_norm for banned in global_exclude_list):
             rejection_log.append(f"Historical (Live),{sp_name},N/A,Hard Exclusion")
             continue
         
-        # 1. Exclusion check (use normalised name as well for consistency)
         if any(omit in obs_norm for omit in js_omit_list) and not any(safe in obs_norm for safe in safe_keywords):
             rejection_log.append(f"Historical (Live),{sp_name},N/A,Taxonomy Exclusion")
             continue
         
-        # 2. Try exact normalised match
         matched_key = norm_library_keys.get(obs_norm, None)
         
-        # 3. Fuzzy match (normalised), if exact not found
         if not matched_key:
-            import difflib # Ensure this is imported!
+            import difflib
             close_matches = difflib.get_close_matches(
                 obs_norm,
                 norm_library_keys.keys(),
-                n=1, cutoff=0.85  # a little more forgiving
+                n=1, cutoff=0.85
             )
             if close_matches:
                 matched_key = norm_library_keys[close_matches[0]] 
                 print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
-                
                 df.loc[df['Common Name'] == sp_name, 'Common Name'] = matched_key
 
-        # 4. Apply (still using original/unnormalised library key)
         if matched_key:
             entry = library_payload[matched_key]
             entry['status'] = "recorded"
-            
             entry['liveCount'] = entry.get('liveCount', 0) + stats['count']
             
-            # Safely grab the most recent date between the correct spelling and the typo
             current_latest = entry.get('liveLastSighted', "")
             new_latest = stats['latest_date']
             if new_latest > current_latest:
@@ -1253,20 +1237,10 @@ def run_radar_system():
             entry['liveHotspot'] = stats['hotspot']
             entry['liveTaxonomy'] = stats['taxonomy']
         else:
-            # 5. New discovery (store normalised name for consistency)
             clean_new_name = normalise_species_name(sp_name)
-            
-            # --- CHECK CUSTOM OVERRIDES ---
-            if clean_new_name in custom_species_db:
-                sci_name = custom_species_db[clean_new_name]["scientific_name"]
-                t_status = custom_species_db[clean_new_name]["threat_status"]
-            else:
-                sci_name = "Unknown (New Discovery)"
-                t_status = STATUS_OVERRIDES.get(sp_name, "Unknown")
-            
             library_payload[clean_new_name] = {
-                "scientific_name": sci_name, 
-                "threat_status": t_status, 
+                "scientific_name": "Unknown (New Discovery)", 
+                "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
                 "status": "recorded",
                 "liveCount": stats['count'],
                 "liveLastSighted": stats['latest_date'],
@@ -1277,10 +1251,12 @@ def run_radar_system():
             norm_library_keys[clean_new_name.lower()] = clean_new_name
             print(f"      [NEW] Could not find a match for '{sp_name}', added as new discovery")
 
+    print(f"    ✅ Library Complete: {len(library_payload)} total species cards ready.")
+
     # ==========================================
-    # --- NATURAL ORDER INJECTION ---
+    # --- FINAL PAYLOAD SPLIT & LOCAL EXPORT ---
     # ==========================================
-    print("    🧹 Restoring natural taxonomy and injecting new discoveries...")
+    print("    📦 Assembling and writing final JSON payloads...")
 
     # 1. Identify custom discoveries and temporarily pop them off the bottom of the list
     new_discoveries_data = {}
