@@ -10,6 +10,15 @@
             "Langwarrin FFR"
         ]
     },
+    "Eastern Striped Skink": {
+        "scientific_name": "Ctenotus robustus",
+        "threat_status": "Least Concern",
+        "status": "unrecorded",
+        "reserves": [
+            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
+            "The Pines Flora and Fauna Reserve"
+        ]
+    },
     "Swamp Skink": {
         "scientific_name": "Lissolepis coventryi",
         "threat_status": "Endangered",
