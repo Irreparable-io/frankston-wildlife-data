@@ -1169,6 +1169,11 @@ def run_radar_system():
     print("    🧬 Building Expected Master List from VBA & iNat...")
     library_payload = build_master_list()
 
+    # --- CUSTOM SPECIES OVERRIDES ---
+    custom_species_db = {
+        }
+    }
+
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
     safe_keywords = ['fantail', 'cormorant', 'kingfisher', 'antechinus', 'frogmouth', 'bee-eater', 'fly-catcher']
     
