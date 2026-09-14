@@ -1194,6 +1194,17 @@ def run_radar_system():
         del library_payload[k]
 
     print("    🔗 Merging Live Spreadsheet Data...")
+
+    # --- ALIAS RENAMING (Preserves Natural Order) ---
+    # Renames VBA official names to match your preferred spreadsheet names
+    temp_payload = {}
+    for k, v in library_payload.items():
+        if k == "Robust Ctenotus":
+            # Swap the name, but keep all the historical habitat/taxonomy data
+            temp_payload["Eastern Striped Skink"] = v
+        else:
+            temp_payload[k] = v
+    library_payload = temp_payload
     
     norm_library_keys = {normalise_species_name(lib_key).lower(): lib_key for lib_key in library_payload}
 
