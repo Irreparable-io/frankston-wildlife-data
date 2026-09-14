@@ -1269,6 +1269,20 @@ def run_radar_system():
             norm_library_keys[clean_new_name.lower()] = clean_new_name
             print(f"      [NEW] Could not find a match for '{sp_name}', added as new discovery")
 
+    # ==========================================
+    # --- FINAL SORT ---
+    # ==========================================
+    print("    🧹 Sorting master list by Taxonomy...")
+    
+    # Sorts by Taxonomy (Reptiles, Birds, etc.) first, then Alphabetically by name
+    library_payload = dict(sorted(
+        library_payload.items(), 
+        key=lambda item: (
+            item[1].get('liveTaxonomy') or item[1].get('Taxonomy') or 'Z_Unknown', 
+            item[0]
+        )
+    ))
+
     print(f"    ✅ Library Complete: {len(library_payload)} total species cards ready.")
 
     # ==========================================
