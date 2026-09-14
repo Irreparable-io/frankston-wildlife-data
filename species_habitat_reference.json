@@ -1,5 +1,6 @@
 {
     "Jacky Dragon": { "habitats": ["Heathy Woodland", "Grassy Woodland"], "notes": "Prefers open woodlands with ground debris." },
+    "Eastern Striped Skink": { "habitats": ["Heathy Woodland", "Grassy Woodland"], "notes": "Large, fast-moving diurnal skink that prefers open woodlands with grassy ground cover and rocky debris." },
     "Swamp Skink": { "habitats": ["Swamp Scrub"], "notes": "Highly restricted to dense riparian vegetation and wet heaths." },
     "Pale-flecked Garden Sunskink": { "habitats": ["Urban/Disturbed", "Heathy Woodland", "Grassy Woodland"], "notes": "" },
     "Blotched Blue-tongued Lizard": { "habitats": ["Urban/Disturbed", "Heathy Woodland", "Grassy Woodland", "Swamp Scrub"], "notes": "Broad generalist across all understory types." },
