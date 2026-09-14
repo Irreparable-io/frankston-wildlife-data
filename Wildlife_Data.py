@@ -1174,11 +1174,11 @@ def run_radar_system():
     global_exclude_list = ["blue spotted hawker", "domestic cat", "ferret", "domestic dog", "cattle"]
 
     # --- CUSTOM SPECIES OVERRIDES ---
-    # Add new field discoveries here so they get proper scientific names and threat statuses
     custom_species_db = {
         "Eastern Striped Skink": {
             "scientific_name": "Ctenotus robustus",
-            "threat_status": "Least Concern"
+            "threat_status": "Least Concern",
+            "anchor": "Swamp Skink" 
         }
     }
 
@@ -1270,18 +1270,35 @@ def run_radar_system():
             print(f"      [NEW] Could not find a match for '{sp_name}', added as new discovery")
 
     # ==========================================
-    # --- FINAL SORT ---
+    # --- NATURAL ORDER INJECTION ---
     # ==========================================
-    print("    🧹 Sorting master list by Taxonomy...")
-    
-    # Sorts by Taxonomy (Reptiles, Birds, etc.) first, then Alphabetically by name
-    library_payload = dict(sorted(
-        library_payload.items(), 
-        key=lambda item: (
-            item[1].get('liveTaxonomy') or item[1].get('Taxonomy') or 'Z_Unknown', 
-            item[0]
-        )
-    ))
+    print("    🧹 Restoring natural taxonomy and injecting new discoveries...")
+
+    # 1. Identify custom discoveries and temporarily pop them off the bottom of the list
+    new_discoveries_data = {}
+    for custom_name in custom_species_db.keys():
+        if custom_name in library_payload:
+            new_discoveries_data[custom_name] = library_payload.pop(custom_name)
+
+    # 2. Rebuild the master list using the perfect, original CSV order
+    final_payload = {}
+    for sp_key, sp_data in library_payload.items():
+        # Add the normal historical species
+        final_payload[sp_key] = sp_data
+        
+        # If this species is an anchor, instantly inject the new discovery right after it
+        for new_name, new_data in new_discoveries_data.items():
+            anchor_species = custom_species_db.get(new_name, {}).get("anchor")
+            if anchor_species and anchor_species.lower() == sp_key.lower():
+                final_payload[new_name] = new_data
+                print(f"      📍 Anchored '{new_name}' directly after '{sp_key}'")
+
+    # 3. Catch-all: If the anchor was missing or misspelled, put it at the end so data isn't lost
+    for new_name, new_data in new_discoveries_data.items():
+        if new_name not in final_payload:
+            final_payload[new_name] = new_data
+            
+    library_payload = final_payload
 
     print(f"    ✅ Library Complete: {len(library_payload)} total species cards ready.")
 
