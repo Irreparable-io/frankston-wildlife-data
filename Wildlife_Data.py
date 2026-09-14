@@ -123,7 +123,8 @@ SPECIES_MAP = {
     "eastern small eyed snake": "Eastern Small-eyed Snake",
     "pink eared duck": "Pink-eared Duck",
     "european starling": "Common Starling",
-    "delicate skink": "Dark-flecked Garden Sunskink"
+    "delicate skink": "Dark-flecked Garden Sunskink",
+    "robust ctenotus": "Eastern Striped Skink"
 }
 
 EXCLUDE_LIST = [
