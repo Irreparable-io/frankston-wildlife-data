@@ -170,7 +170,8 @@ STATUS_OVERRIDES = {
     "Eastern Short necked Turtle": "Critically Endangered",
     "Southern Toadlet": "Vulnerable",
     "Spotted Dove": "Introduced",
-    "Eastern Striped Skink": "Least Concern"
+    "Eastern Striped Skink": "Least Concern",
+    "Hardhead": "Least Concern"
 }
 
 def normalise_species_name(name):
