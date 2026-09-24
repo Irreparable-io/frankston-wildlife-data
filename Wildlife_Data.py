@@ -124,7 +124,8 @@ SPECIES_MAP = {
     "pink eared duck": "Pink-eared Duck",
     "european starling": "Common Starling",
     "delicate skink": "Dark-flecked Garden Sunskink",
-    "robust ctenotus": "Eastern Striped Skink"
+    "robust ctenotus": "Eastern Striped Skink",
+    "australian bush rat": "Bush Rat"
 }
 
 EXCLUDE_LIST = [
@@ -140,7 +141,7 @@ EXCLUDE_LIST = [
     "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
     "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
     "southern forest bat", "european starling", "swamp skink", "glossy grass skink",
-    "Southern Brood Frog"
+    "Southern Brood Frog", "australian bush rat", "bush rat"
     
 ]
 
