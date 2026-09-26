@@ -172,7 +172,8 @@ STATUS_OVERRIDES = {
     "Southern Toadlet": "Vulnerable",
     "Spotted Dove": "Introduced",
     "Eastern Striped Skink": "Least Concern",
-    "Hardhead": "Least Concern"
+    "Hardhead": "Least Concern",
+    "Australasian Shoveler": "Vulnerable"
 }
 
 def normalise_species_name(name):
