@@ -194,6 +194,40 @@ def normalise_species_name(name):
         
     return title_name.replace("'S", "'s")
 
+def load_missing_species():
+    """Load manually maintained species metadata that external sources lack."""
+    path = os.path.join(os.path.dirname(__file__), "missing_species.json")
+
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            raw_species = json.load(f)
+
+        missing_species = {}
+        for raw_name, metadata in raw_species.items():
+            name = normalise_species_name(raw_name)
+
+            if not isinstance(metadata, dict):
+                print(f"   ⚠️ Ignoring invalid metadata for {raw_name}")
+                continue
+
+            entry = dict(metadata)
+            entry.setdefault("scientific_name", "Unknown")
+            entry.setdefault("threat_status", STATUS_OVERRIDES.get(name, "Unknown"))
+            entry.setdefault("status", "unrecorded")
+            entry.setdefault("reserves", [])
+
+            missing_species[name] = entry
+
+        print(f"   📚 Loaded {len(missing_species)} manually defined species.")
+        return missing_species
+
+    except FileNotFoundError:
+        print("   ℹ️ No missing_species.json found.")
+        return {}
+    except json.JSONDecodeError as e:
+        print(f"   ❌ Invalid missing_species.json: {e}")
+        return {}
+
 def parse_vba_summary(filepath):
     with open(filepath, 'r', encoding='latin1') as f:
         lines = f.readlines()
@@ -262,6 +296,7 @@ def inject_inaturalist_data(species_dict):
 
 def build_master_list():
     print("🧬 Scanning repository for VBA Summary Files...")
+    manual_species = load_missing_species()
     
     # Recursively search the entire repository for CSV files
     all_csvs = glob.glob("**/*.csv", recursive=True) + glob.glob("**/*.CSV", recursive=True)
@@ -269,9 +304,9 @@ def build_master_list():
     # Filter to only grab your specific VBA reports
     vba_files = [f for f in all_csvs if "report_" in str(f).lower()]
     
-    if not vba_files:
-        print("   ⚠️ No VBA reports found! Make sure your CSVs are uploaded to GitHub.")
-        return {}
+        if not vba_files:
+        print("   ⚠️ No VBA reports found! Using manual species metadata only.")
+        return manual_species
 
     master_df = pd.DataFrame()
     for file in vba_files:
@@ -310,7 +345,16 @@ def build_master_list():
         elif reserve not in species_dict[name]["reserves"]:
             species_dict[name]["reserves"].append(reserve)
 
-    species_dict = inject_inaturalist_data(species_dict)
+        species_dict = inject_inaturalist_data(species_dict)
+
+    # Merge manual entries after VBA/iNaturalist data so they can seed
+    # species absent from both external sources. Manual fields take priority.
+    for name, manual_entry in manual_species.items():
+        if name in species_dict:
+            species_dict[name].update(manual_entry)
+        else:
+            species_dict[name] = manual_entry
+
     print(f"✅ Success! Extracted {len(species_dict)} expected species.")
     return species_dict
 
