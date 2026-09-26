@@ -1,0 +1,11 @@
+{
+  "Australasian Shoveler": {
+    "scientific_name": "Anas rhynchotis",
+    "threat_status": "Vulnerable",
+    "status": "recorded",
+    "reserves": ["Frankston Nature Conservation Reserve"],
+    "habitats": ["Swamp Scrub"],
+    "stratum": 0,
+    "notes": "Manually seeded species. No matching DEECA VBA record or local iNaturalist observation was available when added."
+  }
+}
