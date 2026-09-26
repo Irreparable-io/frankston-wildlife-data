@@ -304,7 +304,7 @@ def build_master_list():
     # Filter to only grab your specific VBA reports
     vba_files = [f for f in all_csvs if "report_" in str(f).lower()]
     
-        if not vba_files:
+    if not vba_files:
         print("   ⚠️ No VBA reports found! Using manual species metadata only.")
         return manual_species
 
