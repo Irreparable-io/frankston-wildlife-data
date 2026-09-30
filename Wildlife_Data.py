@@ -262,38 +262,54 @@ def parse_vba_summary(filepath):
     return pd.read_csv(io.StringIO(csv_data)), reserve_name
 
 def inject_inaturalist_data(species_dict):
-    print("   🌐 Fetching modern iNaturalist sightings...")
-    TARGET_TAXA = "3,40151,26036,20978"
-    
-    for reserve_name, coords in RESERVES.items():
-        lat_min, lat_max, lon_min, lon_max = coords
-        url = f"https://api.inaturalist.org/v1/observations/species_counts?swlat={lat_min}&swlng={lon_min}&nelat={lat_max}&nelng={lon_max}&quality_grade=research&taxon_id={TARGET_TAXA}"
-        
-        try:
-            response = requests.get(url, timeout=10)
-            if response.status_code == 200:
-                for result in response.json().get('results', []):
-                    taxon = result.get('taxon', {})
-                    raw_name = taxon.get('preferred_common_name') or taxon.get('name')
-                    if not raw_name: continue
-                        
-                    name = normalise_species_name(raw_name)
-                    if any(bad in name.lower() for bad in EXCLUDE_LIST): continue
-                    
-                    if name not in species_dict:
-                        species_dict[name] = {
-                            "scientific_name": taxon.get('name', 'Unknown'),
-                            "threat_status": "Least Concern", 
-                            "status": "unrecorded",
-                            "reserves": [reserve_name]
-                        }
-                    elif reserve_name not in species_dict[name]["reserves"]:
-                        species_dict[name]["reserves"].append(reserve_name)
-            time.sleep(1) 
-        except Exception as e:
-            print(f"   ❌ iNat Error for {reserve_name}: {e}")
-    return species_dict
+    print("   📚 Loading local species master instead of querying iNaturalist...")
 
+    cache_path = os.path.join(
+        os.path.dirname(__file__),
+        "expected_species_master.json"
+    )
+
+    try:
+        with open(cache_path, "r", encoding="utf-8") as f:
+            cached_species = json.load(f)
+
+        if not isinstance(cached_species, dict):
+            raise ValueError("expected_species_master.json must contain an object")
+
+        for raw_name, cached_entry in cached_species.items():
+            name = normalise_species_name(raw_name)
+
+            if not isinstance(cached_entry, dict):
+                continue
+
+            # Local cache fills gaps only; existing VBA data remains authoritative.
+            if name not in species_dict:
+                species_dict[name] = dict(cached_entry)
+            else:
+                existing = species_dict[name]
+
+                # Preserve local reserve coverage without overwriting VBA metadata.
+                cached_reserves = cached_entry.get("reserves", [])
+                existing_reserves = existing.setdefault("reserves", [])
+
+                if isinstance(cached_reserves, list):
+                    for reserve in cached_reserves:
+                        if reserve not in existing_reserves:
+                            existing_reserves.append(reserve)
+
+        print(f"   ✅ Loaded {len(cached_species)} species from local master.")
+        return species_dict
+
+    except FileNotFoundError:
+        print("   ⚠️ Local species master not found.")
+        print("   ⚠️ Skipping live iNaturalist lookup.")
+        return species_dict
+
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"   ⚠️ Invalid local species master: {e}")
+        print("   ⚠️ Skipping live iNaturalist lookup.")
+        return species_dict
+        
 def build_master_list():
     print("🧬 Scanning repository for VBA Summary Files...")
     manual_species = load_missing_species()
