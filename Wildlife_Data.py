@@ -143,7 +143,7 @@ EXCLUDE_LIST = [
     "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
     "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
     "southern forest bat", "european starling", "swamp skink", "glossy grass skink",
-    "Southern Brood Frog", "australian bush rat", "bush rat"
+    "southern brood frog", "australian bush rat", "bush rat", "eastern pygmy possum"
     
 ]
 
