@@ -125,7 +125,9 @@ SPECIES_MAP = {
     "european starling": "Common Starling",
     "delicate skink": "Dark-flecked Garden Sunskink",
     "robust ctenotus": "Eastern Striped Skink",
-    "australian bush rat": "Bush Rat"
+    "australian bush rat": "Bush Rat",
+    "shining bronze cuckoo": "Shining Bronze Cuckoo",
+    "shining bronze-cuckoo": "Shining Bronze Cuckoo"
 }
 
 EXCLUDE_LIST = [
