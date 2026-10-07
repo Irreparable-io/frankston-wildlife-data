@@ -220,5 +220,6 @@
     "Short-tailed Shearwater": { "habitats": ["Swamp Scrub"], "stratum": 0, "notes": "Pelagic; coastal proxy applied." },
     "Southern Brood Frog": { "habitats": ["Heathy Woodland", "Swamp Scrub"], "stratum": 0, "notes": "" },
     "Long-billed Corella": { "habitats": ["Grassy Woodland", "Urban/Disturbed"], "stratum": 50, "notes": "Excavates ground tubers in open areas, roosts high." },
-    "Spotless Crake": { "habitats": ["Swamp Scrub"], "stratum": 0, "notes": "Cryptic dense reedbed specialist." }
+    "Spotless Crake": { "habitats": ["Swamp Scrub"], "stratum": 0, "notes": "Cryptic dense reedbed specialist." },
+    "Australasian Shoveler": { "habitats": ["Swamp Scrub", "Urban/Disturbed"], "stratum": 0, "notes": "Dabbling duck; prefers shallow water and muddy margins." }
 }
