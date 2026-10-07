@@ -10,15 +10,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Eastern Striped Skink": {
-        "scientific_name": "Ctenotus robustus",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
-            "The Pines Flora and Fauna Reserve"
-        ]
-    },
     "Swamp Skink": {
         "scientific_name": "Lissolepis coventryi",
         "threat_status": "Endangered",
@@ -166,23 +157,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Tree Martin": {
-        "scientific_name": "Petrochelidon nigricans",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
-    "Fairy Martin": {
-        "scientific_name": "Petrochelidon ariel",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
-        ]
-    },
     "Grey Fantail": {
         "scientific_name": "Rhipidura albiscapa",
         "threat_status": "Least Concern",
@@ -210,15 +184,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Scarlet Robin": {
-        "scientific_name": "Petroica boodang",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
     "Flame Robin": {
         "scientific_name": "Petroica phoenicea",
         "threat_status": "Least Concern",
@@ -228,15 +193,6 @@
             "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
             "Frankston Nature Conservation Reserve",
             "Langwarrin FFR"
-        ]
-    },
-    "Hooded Robin": {
-        "scientific_name": "Melanodryas cucullata",
-        "threat_status": "Endangered",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
         ]
     },
     "Eastern Yellow Robin": {
@@ -354,15 +310,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Yellow-rumped Thornbill": {
-        "scientific_name": "Acanthiza chrysorrhoa",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
     "White-browed Scrubwren": {
         "scientific_name": "Sericornis frontalis",
         "threat_status": "Least Concern",
@@ -413,15 +360,6 @@
             "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
             "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
             "Langwarrin FFR"
-        ]
-    },
-    "White-throated Treecreeper": {
-        "scientific_name": "Cormobates leucophaea",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
         ]
     },
     "Mistletoebird": {
@@ -683,14 +621,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Australian Raven": {
-        "scientific_name": "Corvus coronoides",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
-        ]
-    },
     "Little Raven": {
         "scientific_name": "Corvus mellori",
         "threat_status": "Least Concern",
@@ -791,14 +721,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Weasel Skink": {
-        "scientific_name": "Saproscincus mustelinus",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']"
-        ]
-    },
     "Eastern Three-lined Skink": {
         "scientific_name": "Acritoscincus duperreyi",
         "threat_status": "Least Concern",
@@ -892,15 +814,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Eurasian Skylark": {
-        "scientific_name": "Alauda arvensis",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
     "European Greenfinch": {
         "scientific_name": "Chloris chloris",
         "threat_status": "Introduced",
@@ -942,14 +855,6 @@
             "Langwarrin FFR"
         ]
     },
-    "White-footed Dunnart": {
-        "scientific_name": "Sminthopsis leucopus",
-        "threat_status": "Vulnerable",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
     "Common Brushtail Possum": {
         "scientific_name": "Trichosurus vulpecula",
         "threat_status": "Least Concern",
@@ -975,14 +880,6 @@
             "Frankston Nature Conservation Reserve",
             "Kananook Creek",
             "Langwarrin FFR"
-        ]
-    },
-    "Eastern Pygmy Possum": {
-        "scientific_name": "Cercartetus nanus",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
         ]
     },
     "Koala": {
@@ -1034,14 +931,6 @@
             "Frankston Nature Conservation Reserve"
         ]
     },
-    "New Holland Mouse": {
-        "scientific_name": "Pseudomys novaehollandiae",
-        "threat_status": "Vulnerable",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
     "European Rabbit": {
         "scientific_name": "Oryctolagus cuniculus",
         "threat_status": "Introduced",
@@ -1052,15 +941,6 @@
             "['Type: Parks & Reserves   ', ' Frankston NCR\\n']",
             "The Pines Flora and Fauna Reserve",
             "Langwarrin FFR"
-        ]
-    },
-    "Southern Brown Bandicoot": {
-        "scientific_name": "Isoodon obesulus obesulus",
-        "threat_status": "Endangered",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
         ]
     },
     "Red Fox": {
@@ -1297,15 +1177,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Little Lorikeet": {
-        "scientific_name": "Parvipsitta pusilla",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
     "Glossy Black-Cockatoo": {
         "scientific_name": "Calyptorhynchus lathami",
         "threat_status": "Critically Endangered",
@@ -1380,15 +1251,6 @@
             "Frankston Nature Conservation Reserve",
             "Kananook Creek",
             "Langwarrin FFR"
-        ]
-    },
-    "Blue-winged Parrot": {
-        "scientific_name": "Neophema chrysostoma",
-        "threat_status": "Vulnerable",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
         ]
     },
     "Tawny Frogmouth": {
@@ -1599,14 +1461,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Australian Shelduck": {
-        "scientific_name": "Tadorna tadornoides",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Frankston NCR\\n']"
-        ]
-    },
     "Chestnut Teal": {
         "scientific_name": "Anas castanea",
         "threat_status": "Least Concern",
@@ -1691,14 +1545,6 @@
         "status": "unrecorded",
         "reserves": [
             "['Type: Parks & Reserves   ', ' Frankston NCR\\n']"
-        ]
-    },
-    "Brown Quail": {
-        "scientific_name": "Synoicus ypsilophorus",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
         ]
     },
     "Painted Buttonquail": {
@@ -1878,14 +1724,6 @@
             "Langwarrin FFR"
         ]
     },
-    "Leaden Flycatcher": {
-        "scientific_name": "Myiagra rubecula",
-        "threat_status": "Vulnerable",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
     "Satin Flycatcher": {
         "scientific_name": "Myiagra cyanoleuca",
         "threat_status": "Vulnerable",
@@ -1894,30 +1732,6 @@
             "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
             "Frankston Nature Conservation Reserve",
             "Langwarrin FFR"
-        ]
-    },
-    "Jacky Winter": {
-        "scientific_name": "Microeca fascinans",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
-    "Rose Robin": {
-        "scientific_name": "Petroica rosea",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
-    "White-fronted Chat": {
-        "scientific_name": "Epthianura albifrons",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
         ]
     },
     "Weebill": {
@@ -1945,22 +1759,6 @@
             "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
         ]
     },
-    "Painted Honeyeater": {
-        "scientific_name": "Grantiella picta",
-        "threat_status": "Vulnerable",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
-    "Australian Pipit": {
-        "scientific_name": "Anthus australis",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
-        ]
-    },
     "Olive-backed Oriole": {
         "scientific_name": "Oriolus sagittatus",
         "threat_status": "Least Concern",
@@ -1969,14 +1767,6 @@
             "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']",
             "Frankston Nature Conservation Reserve",
             "Langwarrin FFR"
-        ]
-    },
-    "Song Thrush": {
-        "scientific_name": "Turdus philomelos",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' Langwarrin FFR\\n']"
         ]
     },
     "Delicate Skink": {
@@ -2007,14 +1797,6 @@
             "['Type: Parks & Reserves   ', ' The Pines FFR\\n']",
             "The Pines Flora and Fauna Reserve",
             "Langwarrin FFR"
-        ]
-    },
-    "Eastern Brown Snake": {
-        "scientific_name": "Pseudonaja textilis",
-        "threat_status": "Least Concern",
-        "status": "unrecorded",
-        "reserves": [
-            "['Type: Parks & Reserves   ', ' The Pines FFR\\n']"
         ]
     },
     "White's Skink": {
