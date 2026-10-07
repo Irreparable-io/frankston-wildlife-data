@@ -125,9 +125,7 @@ SPECIES_MAP = {
     "european starling": "Common Starling",
     "delicate skink": "Dark-flecked Garden Sunskink",
     "robust ctenotus": "Eastern Striped Skink",
-    "australian bush rat": "Bush Rat",
-    "shining bronze cuckoo": "Shining Bronze Cuckoo",
-    "shining bronze-cuckoo": "Shining Bronze Cuckoo"
+    "australian bush rat": "Bush Rat"
 }
 
 EXCLUDE_LIST = [
@@ -143,7 +141,7 @@ EXCLUDE_LIST = [
     "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
     "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
     "southern forest bat", "european starling", "swamp skink", "glossy grass skink",
-    "southern brood frog", "australian bush rat", "bush rat", "eastern pygmy possum"
+    "Southern Brood Frog", "australian bush rat", "bush rat"
     
 ]
 
@@ -196,40 +194,6 @@ def normalise_species_name(name):
         
     return title_name.replace("'S", "'s")
 
-def load_missing_species():
-    """Load manually maintained species metadata that external sources lack."""
-    path = os.path.join(os.path.dirname(__file__), "missing_species.json")
-
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            raw_species = json.load(f)
-
-        missing_species = {}
-        for raw_name, metadata in raw_species.items():
-            name = normalise_species_name(raw_name)
-
-            if not isinstance(metadata, dict):
-                print(f"   ⚠️ Ignoring invalid metadata for {raw_name}")
-                continue
-
-            entry = dict(metadata)
-            entry.setdefault("scientific_name", "Unknown")
-            entry.setdefault("threat_status", STATUS_OVERRIDES.get(name, "Unknown"))
-            entry.setdefault("status", "unrecorded")
-            entry.setdefault("reserves", [])
-
-            missing_species[name] = entry
-
-        print(f"   📚 Loaded {len(missing_species)} manually defined species.")
-        return missing_species
-
-    except FileNotFoundError:
-        print("   ℹ️ No missing_species.json found.")
-        return {}
-    except json.JSONDecodeError as e:
-        print(f"   ❌ Invalid missing_species.json: {e}")
-        return {}
-
 def parse_vba_summary(filepath):
     with open(filepath, 'r', encoding='latin1') as f:
         lines = f.readlines()
@@ -264,33 +228,36 @@ def parse_vba_summary(filepath):
     return pd.read_csv(io.StringIO(csv_data)), reserve_name
 
 def inject_inaturalist_data(species_dict):
-    print("   📚 Loading local species master instead of querying iNaturalist...")
+    """Load species metadata from the local expected_species_master.json cache only.
 
-    cache_path = os.path.join(
-        os.path.dirname(__file__),
-        "expected_species_master.json"
-    )
+    Live iNaturalist calls are intentionally skipped to avoid out-of-bounds,
+    excluded, or stale species polluting the master list. This keeps the script
+    deterministic and fast while preserving the local vetted species set.
+    """
+    print("   📚 Loading pre-vetted species from local master list...")
+
+    cache_path = os.path.join(os.path.dirname(__file__), "expected_species_master.json")
 
     try:
         with open(cache_path, "r", encoding="utf-8") as f:
             cached_species = json.load(f)
 
         if not isinstance(cached_species, dict):
-            raise ValueError("expected_species_master.json must contain an object")
+            print("   ⚠️ expected_species_master.json is not a valid object.")
+            return species_dict
 
+        merged_count = 0
         for raw_name, cached_entry in cached_species.items():
             name = normalise_species_name(raw_name)
 
             if not isinstance(cached_entry, dict):
                 continue
 
-            # Local cache fills gaps only; existing VBA data remains authoritative.
             if name not in species_dict:
                 species_dict[name] = dict(cached_entry)
+                merged_count += 1
             else:
                 existing = species_dict[name]
-
-                # Preserve local reserve coverage without overwriting VBA metadata.
                 cached_reserves = cached_entry.get("reserves", [])
                 existing_reserves = existing.setdefault("reserves", [])
 
@@ -299,22 +266,20 @@ def inject_inaturalist_data(species_dict):
                         if reserve not in existing_reserves:
                             existing_reserves.append(reserve)
 
-        print(f"   ✅ Loaded {len(cached_species)} species from local master.")
+        print(f"   ✅ Loaded {len(cached_species)} species; {merged_count} new entries added.")
         return species_dict
 
     except FileNotFoundError:
-        print("   ⚠️ Local species master not found.")
-        print("   ⚠️ Skipping live iNaturalist lookup.")
+        print("   ⚠️ expected_species_master.json not found. Continuing with VBA data only.")
+        return species_dict
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"   ⚠️ Invalid expected_species_master.json: {e}")
+        print("   ⚠️ Continuing with VBA data only.")
         return species_dict
 
-    except (json.JSONDecodeError, ValueError) as e:
-        print(f"   ⚠️ Invalid local species master: {e}")
-        print("   ⚠️ Skipping live iNaturalist lookup.")
-        return species_dict
-        
+
 def build_master_list():
     print("🧬 Scanning repository for VBA Summary Files...")
-    manual_species = load_missing_species()
     
     # Recursively search the entire repository for CSV files
     all_csvs = glob.glob("**/*.csv", recursive=True) + glob.glob("**/*.CSV", recursive=True)
@@ -323,8 +288,8 @@ def build_master_list():
     vba_files = [f for f in all_csvs if "report_" in str(f).lower()]
     
     if not vba_files:
-        print("   ⚠️ No VBA reports found! Using manual species metadata only.")
-        return manual_species
+        print("   ⚠️ No VBA reports found! Make sure your CSVs are uploaded to GitHub.")
+        return {}
 
     master_df = pd.DataFrame()
     for file in vba_files:
@@ -363,16 +328,7 @@ def build_master_list():
         elif reserve not in species_dict[name]["reserves"]:
             species_dict[name]["reserves"].append(reserve)
 
-        species_dict = inject_inaturalist_data(species_dict)
-
-    # Merge manual entries after VBA/iNaturalist data so they can seed
-    # species absent from both external sources. Manual fields take priority.
-    for name, manual_entry in manual_species.items():
-        if name in species_dict:
-            species_dict[name].update(manual_entry)
-        else:
-            species_dict[name] = manual_entry
-
+    species_dict = inject_inaturalist_data(species_dict)
     print(f"✅ Success! Extracted {len(species_dict)} expected species.")
     return species_dict
 
@@ -431,7 +387,6 @@ def calculate_acoustic_prominence(observations):
     
     for obs in observations:
         species = str(obs.get('Common Name', '')).strip()
-        # Make it lowercase for safe searching
         media_type = str(obs.get('Media Type', '')).strip().lower() 
         
         if not species:
@@ -440,14 +395,10 @@ def calculate_acoustic_prominence(observations):
         if species not in species_counts:
             species_counts[species] = {'audio_hits': 0, 'total_hits': 0}
             
-        # Add to total encounters
         species_counts[species]['total_hits'] += 1
-        
-        # If the word 'audio' is anywhere in the Media Type column, count it!
         if 'audio' in media_type:
             species_counts[species]['audio_hits'] += 1
             
-    # Calculate the 0-100 score for each species
     acoustic_scores = {}
     for species, counts in species_counts.items():
         total = counts['total_hits']
@@ -480,19 +431,17 @@ def calculate_sociality(observations):
             try:
                 numbers = re.findall(r'\d+', qty_str)
                 qty = int(numbers.pop(0)) if numbers else 1
-            except Exception as e:
+            except Exception:
                 qty = 1
                 
         qty = max(1, qty)
         
-        # Track the LARGEST group ever seen
         if species not in species_max_qty:
             species_max_qty[species] = 1
             
         if qty > species_max_qty[species]:
             species_max_qty[species] = qty
 
-    # Calculate the scores
     sociality_scores = {}
     SOCIAL_CAP = 5.0 
     
@@ -512,9 +461,6 @@ def calculate_moisture_affinity(observations):
     import math 
     """Calculates a 0-100 Moisture score based on VPD from Temp and Humidity."""
     
-    # ==========================================
-    # 💧 THE OBLIGATE MOISTURE VIP LIST
-    # ==========================================
     OBLIGATE_WATER_SPECIES = [
         "Chestnut Teal", "Pacific Black Duck", "Domestic Mallard",
         "Eurasian Coot", "Australasian Swamphen", "Dusky Moorhen",
@@ -528,7 +474,6 @@ def calculate_moisture_affinity(observations):
     global_vpds = []
     all_seen_species = set()
     
-    # 1. Calculate VPD for every valid row
     for obs in observations:
         species = str(obs.get('Common Name', '')).strip()
         if not species:
@@ -539,66 +484,40 @@ def calculate_moisture_affinity(observations):
         temp_str = str(obs.get('Temp. (°C)', '')).strip()
         humid_str = str(obs.get('Humid. (%)', '')).strip()
         
-        # Skip VPD math if missing core data
         if not temp_str or not humid_str:
             continue
             
         try:
             T = float(temp_str)
             RH = float(humid_str)
-            
-            # Calculate Saturation Vapor Pressure (SVP) in kPa
             svp = 0.61078 * math.exp((17.27 * T) / (T + 237.3))
-            
-            # Calculate actual Vapor Pressure Deficit (VPD) in kPa
             vpd = svp * (1 - (RH / 100.0))
-            
-            # Log the data
             if species not in species_vpds:
                 species_vpds[species] = []
-                
             species_vpds[species].append(vpd)
-            global_vpds.append(vpd) # Keep a master list to find the baseline
-            
+            global_vpds.append(vpd)
         except ValueError:
-            # Silently catch rows where weather data might be "N/A" or corrupted
             pass
 
     affinity_scores = {}
 
-    # 2. Establish the Regional Baseline & Run Terrestrial Math
     if global_vpds:
-        global_min_vpd = min(global_vpds) # The wettest condition recorded
-        global_max_vpd = max(global_vpds) # The driest condition recorded
-        
-        print(f"\n--- Moisture Baseline Established ---")
-        print(f"Wettest (Max Affinity): {global_min_vpd:.2f} kPa")
-        print(f"Driest (Min Affinity): {global_max_vpd:.2f} kPa")
+        global_min_vpd = min(global_vpds)
+        global_max_vpd = max(global_vpds)
 
         for species, vpds in species_vpds.items():
             avg_vpd = sum(vpds) / len(vpds)
-            
-            # Prevent division by zero if all data comes from a single weather moment
             if global_max_vpd == global_min_vpd:
                 affinity_scores[species] = 50 
                 continue
-                
-            # Calculate percentage along the scale
             scale_pos = (avg_vpd - global_min_vpd) / (global_max_vpd - global_min_vpd)
-            
-            # Invert the scale: 100 = Wet (Min VPD), 0 = Dry (Max VPD)
             score = (1.0 - scale_pos) * 100
-            
-            affinity_scores[species] = int(max(0, min(100, score))) # Clamp between 0 and 100
+            affinity_scores[species] = int(max(0, min(100, score)))
 
     for species in all_seen_species:
         species_lower = species.lower()
-        
-        # If it's a waterbird or amphibian, bypass the math and force it to 100
         if species in OBLIGATE_WATER_SPECIES or "frog" in species_lower or "toad" in species_lower:
             affinity_scores[species] = 100
-            
-        # Safety net: If a terrestrial bird had NO weather data logged at all, give it a neutral 50
         elif species not in affinity_scores:
             affinity_scores[species] = 50
 
@@ -606,38 +525,24 @@ def calculate_moisture_affinity(observations):
 
 def generate_radar_payload(observations, traits_dict):
     """Compiles empirical data and LUT traits into the final radar chart JSON."""
-    
-    # 1. Run the empirical calculators once
     acoustic_data = calculate_acoustic_prominence(observations)
     sociality_data = calculate_sociality(observations)
     moisture_data = calculate_moisture_affinity(observations)
-    
-    # 2. Get a unique list of all species recorded so far
     recorded_species = set(str(obs.get('Common Name', '')).strip() for obs in observations if obs.get('Common Name'))
-    
     radar_payload = {}
-    
-    # 3. Assemble the 5 stats per species
     for species in recorded_species:
-        # A. Pull Empirical Scores (with safe defaults if missing)
         ac_score = acoustic_data.get(species, 0)
         soc_score = sociality_data.get(species, 20)
-        moist_score = moisture_data.get(species, 50) 
-        
-        # B. Pull Static Traits from the LUT
+        moist_score = moisture_data.get(species, 50)
         trait_info = traits_dict.get(species, {"habitats": [], "stratum": 50})
-        
         hab_score = (len(trait_info['habitats']) / 4.0) * 100
-        
-        # C. Build the final dictionary for this species
         radar_payload[species] = {
             "Acoustic_Prominence": ac_score,
             "Sociality": soc_score,
             "Moisture_Affinity": moist_score,
             "Vertical_Stratum": trait_info['stratum'],
-            "Habitat_Breadth": int(min(100, hab_score)) # Cap at 100
+            "Habitat_Breadth": int(min(100, hab_score))
         }
-        
     return radar_payload
 
 # ==========================================
@@ -647,22 +552,13 @@ def generate_radar_payload(observations, traits_dict):
 def run_radar_system():
     if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
     print("\n📡 INITIALISING DUNKLEY BIODIVERSITY RADAR (V4.5 - CLOUD EDITION)...")
-    
     try:
-        # 1. Pull the secret from the GitHub Cloud Environment
         creds_dict = json.loads(os.environ.get('GOOGLE_CREDENTIALS'))
-        
-        # 2. Authenticate the Bot
         client = gspread.service_account_from_dict(creds_dict)
-        
-        # 3. Open the main sheet safely and load into Pandas
         sheet = client.open_by_key(SHEET_KEY).sheet1
         df = pd.DataFrame(sheet.get_all_records())
         print(f"   📊 Successfully loaded {len(df)} observations from Google Sheets.")
 
-        # ==========================================
-        # 1. COLUMN MAPPING (Do this FIRST so Pandas knows the names!)
-        # ==========================================
         cols = {k.lower(): k for k in df.columns}
         name_col = cols.get('common name', cols.get('species', 'Common Name'))
         dist_col = next((c for c in df.columns if 'distance' in c.lower()), 'Distance')
@@ -671,14 +567,10 @@ def run_radar_system():
         zone_col = next((c for c in df.columns if 'zone' in c.lower()), 'Zone')
         notes_col = next((c for c in df.columns if 'note' in c.lower()), 'Notes')
         media_col = next((c for c in df.columns if 'media' in c.lower()), 'Media Type')
-        
-        # Original Weather columns
         temp_col = next((c for c in df.columns if 'temp' in c.lower() and 'local' not in c.lower()), 'Temp. (°C)')
         hum_col = next((c for c in df.columns if 'humid' in c.lower() and 'local' not in c.lower()), 'Humid. (%)')
         loc_t_col = next((c for c in df.columns if 'local t' in c.lower()), 'Local T.')
         loc_h_col = next((c for c in df.columns if 'local h' in c.lower()), 'Local H.')
-
-        # NEW: Map the 5 new covariates
         wspd_col = next((c for c in df.columns if 'speed' in c.lower()), 'W. Speed (Km/h)')
         wgust_col = next((c for c in df.columns if 'gust' in c.lower()), 'W. Gust (Km/h)')
         precip_col = next((c for c in df.columns if 'precip' in c.lower()), 'Precip.')
@@ -704,11 +596,7 @@ def run_radar_system():
             loc_h_col: 'Local H.'
         }, inplace=True)
 
-        # ==========================================
-        # 2. GLOBAL DATA SCRUBBER (Site-wide Exclusions)
-        # ==========================================
         print("   🧹 Scrubbing excluded species...")
-
         tier_col_name = df.columns 
         initial_count = len(df)
         df = df[~df.iloc[:, 1].astype(str).str.lower().str.contains('historical', na=False)]
@@ -729,75 +617,41 @@ def run_radar_system():
             "southern forest bat", "european starling", "swamp skink", "glossy grass skink",
             "Southern Brood Frog"
         ]
-         
         if 'Common Name' in df.columns:
-            # 1. Escape special characters (so " sp." is treated as text)
-            import re # Ensure regex is imported
+            import re
             escaped_excludes = [re.escape(word.lower()) for word in EXCLUDE_LIST]
-            
-            # 2. Join them into one massive OR statement (e.g., "dog|cat|ferret")
             exclude_pattern = '|'.join(escaped_excludes)
-            
-            # 3. Filter the DataFrame: Strip hyphens, then keep rows that DO NOT (~) contain the pattern
             original_count = len(df)
             df = df[~df['Common Name'].astype(str).str.lower().str.replace('-', ' ').str.replace('  ', ' ').str.contains(exclude_pattern, regex=True, na=False)]
-            
             print(f"   [✅] Scrubber removed {original_count - len(df)} invalid rows.")
         else:
             print("   [⚠️] 'Common Name' column still not found. Scrubber skipped.")
 
-        # ==========================================
-        # 3. DOWNLOAD EFFORT MATRIX
-        # ==========================================
         try:
             effort_sheet = client.open_by_key(SHEET_KEY).worksheet("Junk Drawer")
             matrix_data = effort_sheet.get("CH:CM")
-            
             if len(matrix_data) > 0:
-                # 1. Load into Pandas
                 df_effort = pd.DataFrame(matrix_data)
-                
-                # 2. Force exactly 6 columns (pads short rows, trims long rows)
                 df_effort = df_effort.reindex(columns=range(6))
                 df_effort.columns = ['Session_Date', 'Zone', 'Cell_ID', 'Active_Seconds', 'Cell_Lat', 'Cell_Lon']
-                
-                # 3. Drop the text header row if it exists
                 df_effort = df_effort[df_effort['Active_Seconds'] != 'Active_Seconds']
-                
-                # 4. Convert math columns to pure numbers
                 df_effort['Active_Seconds'] = pd.to_numeric(df_effort['Active_Seconds'], errors='coerce').fillna(0)
                 df_effort['Cell_Lat'] = pd.to_numeric(df_effort['Cell_Lat'], errors='coerce')
                 df_effort['Cell_Lon'] = pd.to_numeric(df_effort['Cell_Lon'], errors='coerce')
-                
-                # 5. Drop any empty/corrupted rows
                 df_effort = df_effort.dropna(subset=['Active_Seconds', 'Cell_Lat', 'Cell_Lon'])
-                
-                # ==========================================
-                # 6. 25m -> 50m TILES
-                # ==========================================
                 lat_step = 0.000450
                 lon_step = 0.000572
-                
-                # Snap the micro-coordinates to the new macro-grid
                 df_effort['Cell_Lat'] = (df_effort['Cell_Lat'] // lat_step) * lat_step
                 df_effort['Cell_Lon'] = (df_effort['Cell_Lon'] // lon_step) * lon_step
-                
-                # Overwrite the Cell_ID so the 4 grouped tiles now share the exact same ID
                 df_effort['Cell_ID'] = df_effort['Cell_Lat'].round(6).astype(str) + "_" + df_effort['Cell_Lon'].round(6).astype(str)
-                
-                # Squash the dataframe: Sum the Active Seconds for the new, larger Macro-Tiles
                 df_effort = df_effort.groupby(['Session_Date', 'Zone', 'Cell_ID', 'Cell_Lat', 'Cell_Lon'])['Active_Seconds'].sum().reset_index()
-                # ==========================================
-                
                 print(f"   🗺️ Successfully loaded {len(df_effort)} effort grid cells.")
             else:
                 print("   ⚠️ Junk Drawer matrix is empty.")
                 df_effort = pd.DataFrame()
-                
         except Exception as e:
             print(f"   ⚠️ Could not load Junk Drawer: {e}")
             df_effort = pd.DataFrame()
-            
     except KeyError:
         print("❌ Error: GOOGLE_CREDENTIALS secret not found in environment.")
         return
@@ -805,16 +659,12 @@ def run_radar_system():
         print(f"❌ Error connecting to Google Sheets: {e}")
         return
 
-    # --- 2. PURGE UNVERIFIED RECORDS BEFORE DOING ANY MATH ---
     df = df[~df['Notes'].astype(str).str.upper().str.contains(r'\[CONTENDED\]')]
-
-    # --- 2.5 PROJECT SCOPE FILTER (Remove Out-of-Scope Taxa) ---
     print("   📊 Removing out-of-scope taxonomy (Insects, Fish, etc.)...")
     if 'Taxonomy' in df.columns:
         tax_blacklist = ["insect", "spider", "fish", "aquatic", "invertebrate", "crustacean"]
         df = df[~df['Taxonomy'].astype(str).str.lower().str.contains('|'.join(tax_blacklist))]
 
-    # --- 3. DAILY AGGREGATION ---
     df['Distance'] = pd.to_numeric(df['Distance'], errors='coerce').fillna(0)
     df['Duration'] = pd.to_numeric(df['Duration'], errors='coerce').fillna(0)
     df['DateOnly'] = pd.to_datetime(df['Date/Time'], format="%d/%m/%Y %H:%M", errors='coerce').dt.date
@@ -824,31 +674,21 @@ def run_radar_system():
     total_hours = float(round(daily_stats['Duration'].sum() / 60, 1))
     print(f"   📊 MATH CHECK: {total_hours} Hours across {len(daily_stats)} unique field days.")
 
-    # =========================================================
-    # VPD & MICROCLIMATE PAYLOAD (FULLY SEPARATED SOURCES)
-    # =========================================================
     print("   📊 Calculating Independent VPDs & extracting Microclimate data...")
-
-    # 1. Ensure all potential weather columns are numeric
     df['Temp. (°C)'] = pd.to_numeric(df.get('Temp. (°C)', np.nan), errors='coerce')
     df['Humid. (%)'] = pd.to_numeric(df.get('Humid. (%)', np.nan), errors='coerce')
     df['Local T.'] = pd.to_numeric(df.get('Local T.', np.nan), errors='coerce')
     df['Local H.'] = pd.to_numeric(df.get('Local H.', np.nan), errors='coerce')
-    
-    # Coerce the new covariates
     df['W. Speed (Km/h)'] = pd.to_numeric(df.get('W. Speed (Km/h)', np.nan), errors='coerce')
     df['W. Gust (Km/h)'] = pd.to_numeric(df.get('W. Gust (Km/h)', np.nan), errors='coerce')
     df['Precip.'] = pd.to_numeric(df.get('Precip.', np.nan), errors='coerce')
     df['Press.'] = pd.to_numeric(df.get('Press.', np.nan), errors='coerce')
     df['Cloud'] = pd.to_numeric(df.get('Cloud', np.nan), errors='coerce')
-    
-    # Safely coerce Duration (checking both possible column names)
     if 'Duration (min)' in df.columns:
         df['Duration (min)'] = pd.to_numeric(df['Duration (min)'], errors='coerce')
     elif 'Duration' in df.columns:
         df['Duration'] = pd.to_numeric(df['Duration'], errors='coerce')
 
-    # 2. Calculate Independent VPDs
     def compute_api_vpd(row):
         t = row.get('Temp. (°C)')
         h = row.get('Humid. (%)')
@@ -861,69 +701,45 @@ def run_radar_system():
         if pd.notnull(t) and pd.notnull(h): return calculate_vpd(t, h)
         return None
 
-    # Legacy fallback for the live dashboard (so it doesn't break!)
     def compute_legacy_vpd(row):
         local_v = compute_local_vpd(row)
         if local_v is not None: return local_v
         return compute_api_vpd(row)
 
-    # 3. Apply math row by row
     df['API_VPD_kPa'] = df.apply(compute_api_vpd, axis=1)
     df['Local_VPD_kPa'] = df.apply(compute_local_vpd, axis=1)
     df['VPD_kPa'] = df.apply(compute_legacy_vpd, axis=1) 
-
-    # 4. Filter missing data (Keep row if it has AT LEAST ONE valid VPD source)
     vpd_df = df.dropna(subset=['VPD_kPa', 'Zone']).copy()
     vpd_df['Taxonomy'] = vpd_df.get('Taxonomy', 'Unknown')
-    
-    # 5. Extract the FAT payload
     vpd_export_data = []
     for _, row in vpd_df.iterrows():
-        
-        # Safely extract duration regardless of column name
         dur = None
         if 'Duration (min)' in df.columns and pd.notna(row['Duration (min)']):
             dur = round(float(row['Duration (min)']), 1)
         elif 'Duration' in df.columns and pd.notna(row['Duration']):
             dur = round(float(row['Duration']), 1)
-
         vpd_export_data.append({
             "Date/Time": row.get('Date/Time'),
             "Common Name": row.get('Common Name'),
             "Zone": row.get('Zone'),
             "Taxonomy": row.get('Taxonomy'),
-            
-            # --- LEGACY KEY (Keeps current live site working) ---
             "VPD_kPa": round(float(row['VPD_kPa']), 2) if pd.notna(row.get('VPD_kPa')) else None,
-            
-            # --- FULLY SEPARATED VPDs ---
             "API_VPD_kPa": round(float(row['API_VPD_kPa']), 2) if pd.notna(row.get('API_VPD_kPa')) else None,
             "Local_VPD_kPa": round(float(row['Local_VPD_kPa']), 2) if pd.notna(row.get('Local_VPD_kPa')) else None,
-            
-            # --- FULLY SEPARATED RAW SENSORS ---
             "API_Temp_C": round(float(row['Temp. (°C)']), 1) if pd.notna(row.get('Temp. (°C)')) else None,
             "API_Humid_Pct": round(float(row['Humid. (%)']), 1) if pd.notna(row.get('Humid. (%)')) else None,
             "Local_Temp_C": round(float(row['Local T.']), 1) if pd.notna(row.get('Local T.')) else None,
             "Local_Humid_Pct": round(float(row['Local H.']), 1) if pd.notna(row.get('Local H.')) else None,
-            
-            # --- EXPANDED WEATHER DATA ---
             "Wind_kmh": round(float(row['W. Speed (Km/h)']), 1) if pd.notna(row.get('W. Speed (Km/h)')) else None,
             "Gust_kmh": round(float(row['W. Gust (Km/h)']), 1) if pd.notna(row.get('W. Gust (Km/h)')) else None,
             "Precip_mm": round(float(row['Precip.']), 2) if pd.notna(row.get('Precip.')) else None,
             "Press_hPa": round(float(row['Press.']), 1) if pd.notna(row.get('Press.')) else None,
             "Cloud_Pct": round(float(row['Cloud']), 1) if pd.notna(row.get('Cloud')) else None,
-            
-            # --- EFFORT TRACKING ---
             "Duration (min)": dur
         })
-    
     print(f"   ✅ Generated {len(vpd_export_data)} Fully Separated Microclimate/VPD records.")
-    # =========================================================
 
-    # --- 3. ZONE STATS & MAP PROCESSING (COMPRESSED) ---
     zone_stats = {z: {"total_obs": 0, "species": set(), "tax_split": {"Birds":0, "Amphibians":0, "Reptiles":0, "Mammals":0, "Insects":0}} for z in RESERVES.keys()}
-    
-    # LEGENDS for compression
     species_legend = []
     zone_legend = []
     status_legend = []
@@ -933,36 +749,26 @@ def run_radar_system():
         if val not in legend_list: legend_list.append(val)
         return legend_list.index(val)
 
-    compressed_obs = []     # For the map markers
-    optimised_heatmap = []  # For the heatmap layer
+    compressed_obs = []
+    optimised_heatmap = []
 
     for _, row in df.iterrows():
-        # --- INTEGRITY BYPASS ---
         row_notes = str(row.get('Notes', '')).upper()
         if "[CONTENDED]" in row_notes:
             continue
-        # ------------------------
-
-        # Clean Inputs
         species_name = str(row.get('Common Name', 'Unknown')).strip()
         raw_zone = str(row.get('Zone', ''))
         clean_zone = normalise_zone_name(raw_zone)
         status = str(row.get('Conservation Status', 'Least Concern')).strip()
         st_lower = status.lower()
         media_val = str(row.get('Media Type', 'Unknown')).strip()
-        
-        # --- NEW STATUS LOGIC ---
         is_ghost = any(g in species_name.lower() for g in GHOST_SPECIES)
         is_pest = st_lower in ["introduced", "invasive", "pest", "feral"]
-        
-        # True Threatened: Not Least Concern, Not Unknown, AND Not a Pest
         is_threatened = (st_lower != "least concern" and st_lower != "unknown" and not is_pest) or is_ghost
 
-        # A. UPDATE ZONE CARDS (Standard Logic)
         if clean_zone != "Unknown" and not is_threatened:
             zone_stats[clean_zone]["total_obs"] += 1
             zone_stats[clean_zone]["species"].add(species_name)
-            
             tax = str(row.get('Taxonomy', 'Fauna')).lower()
             if "bird" in tax: zone_stats[clean_zone]["tax_split"]["Birds"] += 1
             elif "frog" in tax: zone_stats[clean_zone]["tax_split"]["Amphibians"] += 1
@@ -970,55 +776,38 @@ def run_radar_system():
             elif "mammal" in tax: zone_stats[clean_zone]["tax_split"]["Mammals"] += 1
             else: zone_stats[clean_zone]["tax_split"]["Insects"] += 1
 
-        # B. BUILD COMPRESSED LISTS
         if clean_zone != "Unknown":
             try:
                 lat = float(row.get('Latitude', 0))
                 lon = float(row.get('Longitude', 0))
-                
-                if lat == 0 or lon == 0 or pd.isna(lat): continue 
-                                   
+                if lat == 0 or lon == 0 or pd.isna(lat): continue
                 if is_threatened:
                     clean_zone = "Obscured"
-                    # Lock coordinates to generic Frankston center
-                    s_lat, s_lon = -38.1400, 145.1500 
+                    s_lat, s_lon = -38.1400, 145.1500
                 else:
-                    # Pests and Least Concern species will pass through here normally
                     s_lat, s_lon = obfuscate_location(lat, lon, status)
                     s_lat = round(s_lat, 5)
                     s_lon = round(s_lon, 5)
-                # ---------------------------------
-
-                # 2. Get IDs
                 sp_id = get_id(species_name, species_legend)
                 zn_id = get_id(clean_zone, zone_legend)
                 st_id = get_id(status, status_legend)
                 md_id = get_id(media_val, media_legend)
-
-                # 3. Minified Date (DD/MM/YY)
                 raw_date = str(row.get('Date/Time', ''))
                 try:
                     mini_date = datetime.strptime(raw_date, "%d/%m/%Y %H:%M").strftime("%d/%m/%y")
-                except: mini_date = ""
-
-                # 4. COMPRESSED ROW
+                except:
+                    mini_date = ""
                 compressed_obs.append([s_lat, s_lon, sp_id, zn_id, st_id, mini_date, md_id])
-                
-                # 5. HEATMAP (EXCLUDE THREATENED)
                 if not is_threatened:
                     optimised_heatmap.append([s_lat, s_lon, 0.5])
-            except: continue
+            except:
+                continue
 
-    # --- 3.5. DYNAMIC SEASONAL SPUE ENGINE ---
-    print("   📊 Calculating Dynamic Seasonal SPUE...")
-    
-    # 1. Parse timestamps and extract components
     df['dt_obj'] = pd.to_datetime(df['Date/Time'], dayfirst=True, errors='coerce')
     df['Month'] = df['dt_obj'].dt.month
     df['Hour'] = df['dt_obj'].dt.hour
     df['DateOnly'] = df['dt_obj'].dt.date
 
-    # 2. Map Months to Seasons
     def get_season(month):
         if pd.isna(month): return "Unknown"
         if month in [12, 1, 2]: return "Summer"
@@ -1028,66 +817,41 @@ def run_radar_system():
         return "Unknown"
 
     df['Season'] = df['Month'].apply(get_season)
-
-    # 3. Setup the blank dictionary structure (None = Un-surveyed)
     seasons_list = ["All Year", "Summer", "Autumn", "Winter", "Spring"]
     core_reserves = [
-        "The Pines Flora and Fauna Reserve", 
-        "Langwarrin Flora and Fauna Reserve", 
-        "Kananook Creek", 
+        "The Pines Flora and Fauna Reserve",
+        "Langwarrin Flora and Fauna Reserve",
+        "Kananook Creek",
         "Frankston Nature Conservation Reserve"
     ]
 
     def get_bookended_rates(df_slice):
-        """Calculates SPUE using session bookending for true zero-effort gaps."""
         rates = [None] * 24
         if df_slice.empty: return rates
-
-        # Drop records without a valid Date or Hour (e.g., Redacted Threatened Species)
         valid_df = df_slice.dropna(subset=['DateOnly', 'Hour']).copy()
         if valid_df.empty: return rates
-
-        # 1. Find the active span (min and max hour) for every individual field day
         session_spans = valid_df.groupby('DateOnly')['Hour'].agg(['min', 'max']).reset_index()
-
-        # 2. Tally 'Active Effort Days' per hour (filling in the gaps)
         effort_counts = {h: 0 for h in range(24)}
         for _, row in session_spans.iterrows():
-            # If min is 11 and max is 13, it adds effort to 11, 12, and 13
             for h in range(int(row['min']), int(row['max']) + 1):
                 effort_counts[h] += 1
-
-        # 3. Tally actual sightings per hour
         sighting_counts = valid_df.groupby('Hour').size().to_dict()
-
-        # 4. Calculate the final rates
         for h in range(24):
             if effort_counts[h] > 0:
                 total_sightings = sighting_counts.get(h, 0)
                 rates[h] = round(total_sightings / effort_counts[h], 2)
-                
         return rates
-    
-    # ==========================================
-    # 4. Calculate Effort-Corrected Rates
-    # ==========================================
-    # Make sure seasons_list explicitly includes "All Year" so the dictionary builds correctly!
+
     seasons_list = ["All Year", "Summer", "Autumn", "Winter", "Spring"]
     temporal_rates = {s: {z: [None] * 24 for z in core_reserves} for s in seasons_list}
-
     for z in core_reserves:
         zone_df = df[df['Zone'] == z].copy()
         if zone_df.empty: continue
-        
-        # Calculate the bookended rates for the entire year
         temporal_rates["All Year"][z] = get_bookended_rates(zone_df)
-        
-        # Break it down further by Season
         for s in ["Summer", "Autumn", "Winter", "Spring"]:
             season_df = zone_df[zone_df['Season'] == s]
             temporal_rates[s][z] = get_bookended_rates(season_df)
 
-    # Package clean zones and other metadata...
     clean_zones = {}
     for k, v in zone_stats.items():
         clean_zones[k] = {
@@ -1096,113 +860,69 @@ def run_radar_system():
             "taxonomy_split": v["tax_split"]
         }
 
-    # ==========================================
-    # --- 1. LIVE STATS ENGINE ---
-    # ==========================================
     print("   📊 Crunching live statistics from spreadsheet...")
-    
     pokedex_stats = {}
     rejection_log = []
-    
-    # Strip invisible spaces
     df.columns = df.columns.str.strip()
     df['DateObj'] = pd.to_datetime(df['Date/Time'], dayfirst=True, errors='coerce')
-
     if 'Species' in df.columns:
         df = df.rename(columns={'Species': 'Common Name'})
-        
-    # Drop the "CONTENDED" rows safely
     if 'Notes' in df.columns:
         df = df[~df['Notes'].astype(str).str.lower().str.contains('contended', na=False)]
-
-    # Define the official boundaries once
     valid_reserves = ["The Pines Flora and Fauna Reserve", "Langwarrin Flora and Fauna Reserve", "Kananook Creek", "Frankston Nature Conservation Reserve", "Obscured"]
-
     for species, group in df.groupby('Common Name'):
         raw_name = str(species).strip()
         clean_species_name = normalise_species_name(raw_name)
-
-        # 1. Apply the master Exclude List
         if any(bad in clean_species_name.lower() for bad in EXCLUDE_LIST):
             continue
-            
-        # 2. Zone Boundary Check
         zone_col = next((c for c in group.columns if str(c).strip().lower() == 'zone'), None)
         if zone_col:
             group_zones = group[zone_col].dropna().astype(str).str.strip().tolist()
-            # If the animal was NEVER seen inside a valid reserve, block it from the Library
             if not any(z in valid_reserves for z in group_zones):
                 rejection_log.append(f"Historical (Live),{clean_species_name},Outside Reserve,Out of Bounds Zone")
                 continue
-            
-        # 2. Safely pull and normalise Taxonomy WITHOUT dropping anything
         taxonomy = "Unknown"
         if 'Taxonomy' in group.columns and not group['Taxonomy'].dropna().empty:
             raw_tax = str(group['Taxonomy'].mode().iloc).lower()
-            
-            if "bird" in raw_tax or "aves" in raw_tax: 
-                taxonomy = "Bird"
-            elif "mammal" in raw_tax: 
-                taxonomy = "Mammal"
-            elif "reptile" in raw_tax: 
-                taxonomy = "Reptile"
-            elif "amphibian" in raw_tax or "frog" in raw_tax: 
-                taxonomy = "Amphibian"
-            elif "insect" in raw_tax or "arachnid" in raw_tax: 
-                taxonomy = "Insect"
-            elif "fish" in raw_tax:
-                taxonomy = "Fish"
-            elif raw_tax != "nan":
-                # Fallback: Just capitalise whatever it is, removing brackets
-                taxonomy = raw_tax.replace("[", "").replace("]", "").replace("'", "").title()
-
-        # A. Basic Counts & Dates
+            if "bird" in raw_tax or "aves" in raw_tax: taxonomy = "Bird"
+            elif "mammal" in raw_tax: taxonomy = "Mammal"
+            elif "reptile" in raw_tax: taxonomy = "Reptile"
+            elif "amphibian" in raw_tax or "frog" in raw_tax: taxonomy = "Amphibian"
+            elif "insect" in raw_tax or "arachnid" in raw_tax: taxonomy = "Insect"
+            elif "fish" in raw_tax: taxonomy = "Fish"
+            elif raw_tax != "nan": taxonomy = raw_tax.replace("[", "").replace("]", "").replace("'", "").title()
         encounters = int(len(group))
         latest_date = group['DateObj'].max()
         latest_str = "Unknown" if pd.isna(latest_date) else latest_date.strftime('%d/%m/%y')
-
-        # B. Detection Profile
         media_counts = group['Media Type'].astype(str).str.lower().value_counts()
         audio_c, visual_c = 0, 0
         for val, count in media_counts.items():
             if 'audio' in val: audio_c += count
             if 'visual' in val: visual_c += count
-        
         total_av = audio_c + visual_c
         if total_av > 0:
             a_pct = (audio_c / total_av) * 100
             detection = "Audio" if a_pct >= 75 else "Visual" if a_pct <= 25 else "Mixed"
         else:
             detection = "Unknown"
-
-       # C. Security & Hotspot Logic
         threat_keywords = ["vulnerable", "endangered", "threatened", "critically"]
-        
         raw_status = "unknown"
-        # Case-insensitive column search for Conservation Status
         status_col = next((c for c in group.columns if str(c).strip().lower() == 'conservation status'), None)
         if status_col:
             raw_status = str(group[status_col].to_list()).lower()
-            
-        is_sensitive = any(k in raw_status for k in threat_keywords) or \
-                       any(s in clean_species_name.lower() for s in ["glossy black-cockatoo", "powerful owl"])
-
+        is_sensitive = any(k in raw_status for k in threat_keywords) or any(s in clean_species_name.lower() for s in ["glossy black-cockatoo", "powerful owl"])
         if is_sensitive:
             hotspot = "Hidden"
         else:
             hotspot = "Unknown"
-            
             zone_col = next((c for c in group.columns if str(c).strip().lower() == 'zone'), None)
-            
             if zone_col:
                 valid_zones = group[zone_col].dropna().astype(str).str.strip()
                 valid_zones = valid_zones[valid_zones != ""]
                 valid_zones = valid_zones[valid_zones.str.lower() != "nan"]
-                
                 if not valid_zones.empty:
                     raw_hotspot = str(valid_zones.mode().tolist())
                     clean_hotspot = raw_hotspot.replace("[", "").replace("]", "").replace("'", "").replace('"', "").strip()
-
                     if "Frankston" in clean_hotspot and "Nature" in clean_hotspot:
                         hotspot = "Frankston NCR"
                     elif "Langwarrin" in clean_hotspot:
@@ -1213,33 +933,20 @@ def run_radar_system():
                         hotspot = "Kananook Creek"
                     else:
                         hotspot = clean_hotspot
-
-        if "gull" in clean_species_name.lower() or "echidna" in clean_species_name.lower():
-            print(f"      📍 Hotspot Calculated: '{hotspot}'")
-
-        # Store results
         pokedex_stats[clean_species_name] = {
             "count": encounters,
             "latest_date": latest_str,
-            "detection": detection, 
+            "detection": detection,
             "hotspot": hotspot,
             "taxonomy": taxonomy
         }
-        
-        if "gull" in clean_species_name.lower():
-            print("      ✅ Added to Pokedex Stats successfully!")
-    # ========================
-    # --- 2. MASTER MERGE ---
-    # ========================
+
     print("    🧬 Building Expected Master List from VBA & iNat...")
     library_payload = build_master_list()
-
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
     safe_keywords = ['fantail', 'cormorant', 'kingfisher', 'antechinus', 'frogmouth', 'bee-eater', 'fly-catcher']
-    
     global_exclude_list = ["blue spotted hawker", "domestic cat", "ferret", "domestic dog", "cattle"]
 
-    # 1. Scrub the historical VBA/iNat data
     keys_to_delete = [
         sp for sp in library_payload.keys() 
         if (any(omit in str(sp).lower() for omit in js_omit_list) and not any(safe in str(sp).lower() for safe in safe_keywords))
@@ -1250,8 +957,6 @@ def run_radar_system():
         del library_payload[k]
 
     print("    🔗 Merging Live Spreadsheet Data...")
-
-    # --- ALIAS RENAMING (Preserves Natural Order) ---
     temp_payload = {}
     for k, v in library_payload.items():
         if k == "Robust Ctenotus":
@@ -1259,53 +964,40 @@ def run_radar_system():
         else:
             temp_payload[k] = v
     library_payload = temp_payload
-    
     norm_library_keys = {normalise_species_name(lib_key).lower(): lib_key for lib_key in library_payload}
 
     for sp_name, stats in pokedex_stats.items():
-        
         obs_norm = normalise_species_name(sp_name).lower()
-        
         if any(banned in obs_norm for banned in global_exclude_list):
             rejection_log.append(f"Historical (Live),{sp_name},N/A,Hard Exclusion")
             continue
-        
         if any(omit in obs_norm for omit in js_omit_list) and not any(safe in obs_norm for safe in safe_keywords):
             rejection_log.append(f"Historical (Live),{sp_name},N/A,Taxonomy Exclusion")
             continue
-        
         matched_key = norm_library_keys.get(obs_norm, None)
-        
         if not matched_key:
             import difflib
-            close_matches = difflib.get_close_matches(
-                obs_norm,
-                norm_library_keys.keys(),
-                n=1, cutoff=0.85
-            )
+            close_matches = difflib.get_close_matches(obs_norm, norm_library_keys.keys(), n=1, cutoff=0.85)
             if close_matches:
-                matched_key = norm_library_keys[close_matches[0]] 
+                matched_key = norm_library_keys[close_matches[0]]
                 print(f"      🪄 Fuzzy Matched: '{sp_name}' -> '{matched_key}'")
                 df.loc[df['Common Name'] == sp_name, 'Common Name'] = matched_key
-
         if matched_key:
             entry = library_payload[matched_key]
             entry['status'] = "recorded"
             entry['liveCount'] = entry.get('liveCount', 0) + stats['count']
-            
             current_latest = entry.get('liveLastSighted', "")
             new_latest = stats['latest_date']
             if new_latest > current_latest:
                 entry['liveLastSighted'] = new_latest
-                
             entry['liveDetection'] = stats['detection']
             entry['liveHotspot'] = stats['hotspot']
             entry['liveTaxonomy'] = stats['taxonomy']
         else:
             clean_new_name = normalise_species_name(sp_name)
             library_payload[clean_new_name] = {
-                "scientific_name": "Unknown (New Discovery)", 
-                "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"), 
+                "scientific_name": "Unknown (New Discovery)",
+                "threat_status": STATUS_OVERRIDES.get(sp_name, "Unknown"),
                 "status": "recorded",
                 "liveCount": stats['count'],
                 "liveLastSighted": stats['latest_date'],
@@ -1317,25 +1009,17 @@ def run_radar_system():
             print(f"      [NEW] Could not find a match for '{sp_name}', added as new discovery")
 
     print(f"    ✅ Library Complete: {len(library_payload)} total species cards ready.")
-
-    # ==========================================
-    # --- FINAL PAYLOAD SPLIT & LOCAL EXPORT ---
-    # ==========================================
     print("    📦 Assembling and writing final JSON payloads...")
 
-    # 1. Enhanced atomic_write function with verbose logging
     def atomic_write(payload_data, filename):
         final_path = os.path.join(OUTPUT_DIR, filename)
         temp_path = final_path + ".tmp"
         print(f"    🔍 Writing to: {final_path}")
         print(f"    📦 Payload size: {len(json.dumps(payload_data))} bytes")
-        
         try:
             with open(temp_path, 'w') as f:
                 json.dump(payload_data, f, separators=(',', ':'), default=str)
             print(f"    ✓ Temp file created: {temp_path}")
-            
-            # Verify temp file was created
             if os.path.exists(temp_path):
                 shutil.move(temp_path, final_path)
                 print(f"    ✅ {filename} Written Successfully.")
@@ -1346,86 +1030,61 @@ def run_radar_system():
             import traceback
             traceback.print_exc()
 
-    # 2. THE PERFECT MATCH ALGORITHM
-    
     js_threat_blacklist = ["least concern", "introduced", "invasive", "pest", "feral", "unknown"]
-    
     strict_species_set = set()
     strict_threatened_set = set()
     strict_obs_count = 0
-    
     valid_zones = [
-        "The Pines Flora and Fauna Reserve", 
-        "Langwarrin Flora and Fauna Reserve", 
-        "Kananook Creek", 
+        "The Pines Flora and Fauna Reserve",
+        "Langwarrin Flora and Fauna Reserve",
+        "Kananook Creek",
         "Frankston Nature Conservation Reserve",
         "Obscured"
     ]
-
-    # Tracker for the Zone Badges
     zone_species_sets = {z: set() for z in valid_zones if z != "Obscured"}
-    
     for row in compressed_obs:
         if len(row) < 5: continue
-        
-        # Safe extraction without brackets
         sp_idx = row.__getitem__(2)
         zn_idx = row.__getitem__(3)
         st_idx = row.__getitem__(4)
-        
         sp_name = species_legend.__getitem__(sp_idx)
         zn_name = zone_legend.__getitem__(zn_idx)
         st_name = status_legend.__getitem__(st_idx)
-        
-        # Javascript Exclusion Rule & Global Exclude List
         name_lower = str(sp_name).lower()
-        
         if any(banned in name_lower for banned in global_exclude_list):
             rejection_log.append(f"Live Data,{sp_name},{zn_name},Hard Exclusion")
             continue
-
         if any(omit in name_lower for omit in js_omit_list) and not any(safe in name_lower for safe in safe_keywords):
             rejection_log.append(f"Live Data,{sp_name},{zn_name},Taxonomy Exclusion")
             continue
-            
-        # Zone Exclusion Rule
         if zn_name not in valid_zones:
             rejection_log.append(f"Live Data,{sp_name},{zn_name},Out of Bounds Zone")
             continue
-            
-        # Add to Final Counts
         if zn_name != "Unknown":
             strict_obs_count += 1
             strict_species_set.add(sp_name)
-            
             if not any(b in str(st_name).lower() for b in js_threat_blacklist):
                 strict_threatened_set.add(sp_name)
-
-            # Add to Zone Badges (tracks unique species per zone)
             if zn_name in zone_species_sets:
-                # Bracket-safe dictionary update
                 zone_species_sets.get(zn_name).add(sp_name)
 
-    # Calculate final zone badges directly from the tracker
     final_zone_badges = {z: len(sp_set) for z, sp_set in zone_species_sets.items()}
-
-    # 3. BUILD ALL PAYLOADS
     landing_payload = {
         "meta": {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
         "summary": {
-            "total_observations": strict_obs_count, 
-            "total_species": len(strict_species_set), 
-            "total_km": total_km, 
+            "total_observations": strict_obs_count,
+            "total_species": len(strict_species_set),
+            "total_km": total_km,
             "total_hours": total_hours,
             "threatened_count": len(strict_threatened_set)
         },
         "zone_badges": final_zone_badges,
-        "heatmap_data": optimised_heatmap 
+        "heatmap_data": optimised_heatmap
     }
 
     dashboard_payload = {
         "meta": {"generated_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
-        "summary": landing_payload.get("summary"), # Bracket-safe dictionary grab
+        "summary": landing_payload.get("summary"),
         "legends": {
             "species": species_legend,
             "zones": zone_legend,
@@ -1434,82 +1093,52 @@ def run_radar_system():
         },
         "zones": clean_zones,
         "temporal_rates": temporal_rates,
-        "vpd_data": vpd_export_data,  
-        "data": compressed_obs 
+        "vpd_data": vpd_export_data,
+        "data": compressed_obs
     }
 
-    # ==========================================
-    # 🚨 SPATIAL EFFORT & GEOJSON GENERATOR 🚨
-    # ==========================================
     if not df_effort.empty:
         print("\n   🗺️ Building Effort-Corrected GeoJSON Heatmap...")
         try:
-            # 🚨 THE FIX: Doubled the step sizes to match the 50x50m (2x2) Macro-Tiles
-            LAT_STEP = 0.000450  
-            LON_STEP = 0.000572  
-            
-            # 1. Aggregate historical effort per cell (Sum the seconds!)
+            LAT_STEP = 0.000450
+            LON_STEP = 0.000572
             effort_grouped = df_effort.groupby('Cell_ID').agg({
                 'Active_Seconds': 'sum',
                 'Cell_Lat': 'first',
                 'Cell_Lon': 'first',
                 'Zone': 'first'
             }).reset_index()
-
-            # 2. Find Lat/Lon columns in your main observation dataframe
             lat_col = next((c for c in df.columns if 'lat' in c.lower()), 'Latitude')
             lon_col = next((c for c in df.columns if 'lon' in c.lower()), 'Longitude')
-            
-            # 3. Snap observations to the NEW 50x50m grid
             df_geo = df.dropna(subset=[lat_col, lon_col]).copy()
-            
             def get_cell_id(row):
                 try:
                     c_lat = math.floor(float(row[lat_col]) / LAT_STEP) * LAT_STEP
                     c_lon = math.floor(float(row[lon_col]) / LON_STEP) * LON_STEP
-                    # 🚨 THE FIX: Ensured the rounding matches the 6-decimal string format from df_effort
                     return f"{round(c_lat, 6)}_{round(c_lon, 6)}"
                 except:
                     return "Invalid"
-                    
             df_geo['Cell_ID'] = df_geo.apply(get_cell_id, axis=1)
-            
-            # 4. Count sightings per cell
             sighting_counts = df_geo[df_geo['Cell_ID'] != "Invalid"].groupby('Cell_ID').size().reset_index(name='Sightings')
-            
-            # 5. Merge Effort with Sightings and Calculate Density
             matrix = pd.merge(effort_grouped, sighting_counts, on='Cell_ID', how='left')
             matrix['Sightings'] = matrix['Sightings'].fillna(0)
-            
-            SMOOTHING_ANCHOR_HOURS = 0.16 
-            
+            SMOOTHING_ANCHOR_HOURS = 0.16
             matrix['Active_Hours'] = matrix['Active_Seconds'] / 3600.0
-            
-            matrix['Density'] = matrix.apply(
-                lambda r: round(r['Sightings'] / (r['Active_Hours'] + SMOOTHING_ANCHOR_HOURS), 2) if r['Active_Hours'] > 0 else 0, axis=1
-            )
-            
-            # 6. Build the GeoJSON Polygons (using the new 50m steps)
+            matrix['Density'] = matrix.apply(lambda r: round(r['Sightings'] / (r['Active_Hours'] + SMOOTHING_ANCHOR_HOURS), 2) if r['Active_Hours'] > 0 else 0, axis=1)
             features = []
             for _, row in matrix.iterrows():
                 c_lat = float(row['Cell_Lat'])
                 c_lon = float(row['Cell_Lon'])
-                
-                # GeoJSON expects coordinates in [Longitude, Latitude] format
                 poly = [
-                    [c_lon, c_lat], 
-                    [c_lon + LON_STEP, c_lat], 
-                    [c_lon + LON_STEP, c_lat + LAT_STEP], 
-                    [c_lon, c_lat + LAT_STEP], 
-                    [c_lon, c_lat] # Close the loop
+                    [c_lon, c_lat],
+                    [c_lon + LON_STEP, c_lat],
+                    [c_lon + LON_STEP, c_lat + LAT_STEP],
+                    [c_lon, c_lat + LAT_STEP],
+                    [c_lon, c_lat]
                 ]
-                
                 features.append({
                     "type": "Feature",
-                    "geometry": {
-                        "type": "Polygon",
-                        "coordinates": [poly]
-                    },
+                    "geometry": {"type": "Polygon", "coordinates": [poly]},
                     "properties": {
                         "cell_id": row['Cell_ID'],
                         "zone": row['Zone'],
@@ -1518,62 +1147,32 @@ def run_radar_system():
                         "density": row['Density']
                     }
                 })
-                
-            geojson_data = {
-                "type": "FeatureCollection",
-                "features": features
-            }
-            
-            # 7. Save it to your output folder
+            geojson_data = {"type": "FeatureCollection", "features": features}
             geojson_path = os.path.join(OUTPUT_DIR, "effort_heatmap.geojson")
             with open(geojson_path, "w") as f:
                 json.dump(geojson_data, f)
-                
             print(f"      [✅] GeoJSON Generated: {len(features)} spatial macro-cells mapped.")
-
         except Exception as e:
             print(f"      [❌] GeoJSON Generation Error: {e}")
 
-    # ==========================================
-    # 🚨 FINAL STATUS OVERRIDE ENFORCER
-    # ==========================================
     print("\n   🛡️ Enforcing manual conservation statuses...")
-    
-    # 1. Create a "bulletproof" version of your override list (lowercase, no hyphens)
-    safe_overrides = {
-        k.lower().replace('-', ' ').replace('  ', ' '): v 
-        for k, v in STATUS_OVERRIDES.items()
-    }
-
-    # 2. Scan every single animal going to the website
+    safe_overrides = {k.lower().replace('-', ' ').replace('  ', ' '): v for k, v in STATUS_OVERRIDES.items()}
     override_count = 0
     for sp_name, data in library_payload.items():
-        # Strip the incoming database name down to the same bulletproof format
         safe_db_name = sp_name.lower().replace('-', ' ').replace('  ', ' ')
-        
-        # If it matches, ruthlessly overwrite whatever DEECA/iNat said
         if safe_db_name in safe_overrides:
             data['threat_status'] = safe_overrides[safe_db_name]
             override_count += 1
-            
     print(f"      [✅] Successfully forced {override_count} custom conservation statuses.")
-    
-    # ==========================================
-    # GENERATE REJECTION RECEIPT
-    # ==========================================
 
     print("\n--- Species in landing_data.json (strict_species_set) ---")
     print(sorted(strict_species_set))
     print(f"Count: {len(strict_species_set)}")
-
     print("\n--- Species in library_stats.json (library_payload.keys()) ---")
     print(sorted(library_payload.keys()))
     print(f"Count: {len(library_payload)}")
-
-    # Diff sets
     missing_from_library = set(strict_species_set) - set(library_payload.keys())
     print("\nSpecies in landing, but NOT in library:", sorted(missing_from_library))
-
     missing_from_landing = set(library_payload.keys()) - set(strict_species_set)
     print("\nSpecies in library, but NOT in landing:", sorted(missing_from_landing))
 
@@ -1586,35 +1185,23 @@ def run_radar_system():
                 f.write(row + "\n")
         print(f"   [✅] Saved to {log_path}. Check GitHub repo for this file!")
 
-    # ==========================================
-    # GENERATE RADAR CHARTS
-    # ==========================================
     print("\n🕸️ Generating Radar Chart Payload...")
     try:
-        # 1. Load the biological traits dictionary (LUT)
         lut_path = os.path.join(os.path.dirname(__file__), "species_traits_reference.json")
         with open(lut_path, "r", encoding="utf-8") as f:
             species_traits_lut = json.load(f)
-            
-        # 2. Sanitise and Filter the DataFrame
         df.fillna('', inplace=True)
-        
-        # --- ENFORCE TAXONOMY BLACKLIST ---
         if 'Taxonomy' in df.columns:
             tax_blacklist = ["insect", "spider", "fish", "aquatic", "invertebrate", "crustacean"]
             radar_df = df[~df['Taxonomy'].astype(str).str.lower().str.contains('|'.join(tax_blacklist))]
         else:
-            radar_df = df # Fallback if column is missing
-            
-        # 3. Run the assembler on the FILTERED data
+            radar_df = df
         observations_list = radar_df.to_dict('records')
         radar_payload = generate_radar_payload(observations_list, species_traits_lut)
-        
         if len(radar_payload) == 0:
             print("   [⚠️] WARNING: Radar payload is empty! Check column names.")
         else:
             print(f"   [✅] Radar Payload Generated for {len(radar_payload)} species.")
-        
     except FileNotFoundError:
         print("   [❌] Radar Error: Could not find 'species_traits_reference.json'.")
         radar_payload = {}
@@ -1622,7 +1209,6 @@ def run_radar_system():
         print(f"   [❌] Radar Generation Error: {e}")
         radar_payload = {}
 
-    # 4. EXPORT EVERYTHING
     print("\n   📝 Starting file exports...\n")
     atomic_write(library_payload, "library_stats.json")
     atomic_write(landing_payload, "landing_data.json")
