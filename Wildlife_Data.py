@@ -934,8 +934,8 @@ def run_radar_system():
             "taxonomy": taxonomy
         }
 
-    print("    🧬 Building Expected Master List from VBA & iNat...")
-    library_payload = build_master_list()
+        print("    🧬 Building Expected Master List from VBA & iNat...")
+        library_payload = build_master_list()
 
     # ==========================================
     # --- MISSING SPECIES JSON INJECTION ---
