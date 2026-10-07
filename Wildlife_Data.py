@@ -942,7 +942,6 @@ def run_radar_system():
     # ==========================================
     print("    🧩 Loading custom missing_species.json...")
     try:
-        import json
         with open('missing_species.json', 'r') as f:
             missing_species_data = json.load(f)
             
