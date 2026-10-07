@@ -144,7 +144,9 @@ EXCLUDE_LIST = [
     "eurasian skylark", "lesser long eared bat", "haswell's frog", "haswells frog",
     "south eastern free tailed bat", "hooded robin", "chocolate wattled bat",
     "southern forest bat", "european starling", "swamp skink", "glossy grass skink",
-    "Southern Brood Frog", "australian bush rat", "bush rat", "little lorikeet"
+    "Southern Brood Frog", "australian bush rat", "bush rat", "little lorikeet",
+    "leaden flycatcher", "weasel skink", "brown quail", "yellow thornbill", "scarlet robin",
+    "tree martin", "pink robin"
     
 ]
 
