@@ -125,7 +125,10 @@ SPECIES_MAP = {
     "european starling": "Common Starling",
     "delicate skink": "Dark-flecked Garden Sunskink",
     "robust ctenotus": "Eastern Striped Skink",
-    "australian bush rat": "Bush Rat"
+    "australian bush rat": "Bush Rat",
+    "eastern short beaked echidna": "Eastern Short-beaked Echidna",
+    "australasian shoveler": "Australasian Shoveler",
+    "short beaked echidna": "Eastern Short-beaked Echidna",
 }
 
 EXCLUDE_LIST = [
@@ -177,22 +180,27 @@ STATUS_OVERRIDES = {
 }
 
 def normalise_species_name(name):
-    safe_name = str(name).replace("-", " ") 
+    safe_name = str(name).replace("-", " ")
     clean_name = safe_name.strip().lower()
-    if clean_name in SPECIES_MAP: 
+
+    # Canonicalize common spacing variants before the map lookup
+    clean_name = re.sub(r"\s+", " ", clean_name).strip()
+
+    if clean_name in SPECIES_MAP:
         return SPECIES_MAP[clean_name]
-        
+
     title_name = safe_name.strip().title()
     lowercase_suffixes = [
-        'tailed', 'rumped', 'eared', 'breasted', 'winged', 'naped', 
-        'bellied', 'capped', 'crowned', 'throated', 'backed', 'billed', 
+        'tailed', 'rumped', 'eared', 'breasted', 'winged', 'naped',
+        'bellied', 'capped', 'crowned', 'throated', 'backed', 'billed',
         'faced', 'headed', 'necked', 'eyed', 'legged', 'footed', 'browed',
         'wren', 'shrike', 'cuckoo', 'quail', 'knee', 'beaked'
     ]
     for suffix in lowercase_suffixes:
         title_name = title_name.replace(f"-{suffix.title()}", f"-{suffix}")
-        
-    return title_name.replace("'S", "'s")
+
+    title_name = title_name.replace("'S", "'s")
+    return title_name
 
 def parse_vba_summary(filepath):
     with open(filepath, 'r', encoding='latin1') as f:
@@ -228,54 +236,69 @@ def parse_vba_summary(filepath):
     return pd.read_csv(io.StringIO(csv_data)), reserve_name
 
 def inject_inaturalist_data(species_dict):
-    """Load species metadata from the local expected_species_master.json cache only.
+    """Load the vetted species cache and missing-species overrides, normalized to canonical names."""
+    print("   📚 Loading vetted local species data...")
 
-    Live iNaturalist calls are intentionally skipped to avoid out-of-bounds,
-    excluded, or stale species polluting the master list. This keeps the script
-    deterministic and fast while preserving the local vetted species set.
-    """
-    print("   📚 Loading pre-vetted species from local master list...")
+    merged_count = 0
 
+    # 1) Load expected_species_master.json
     cache_path = os.path.join(os.path.dirname(__file__), "expected_species_master.json")
-
     try:
         with open(cache_path, "r", encoding="utf-8") as f:
             cached_species = json.load(f)
 
-        if not isinstance(cached_species, dict):
-            print("   ⚠️ expected_species_master.json is not a valid object.")
-            return species_dict
+        if isinstance(cached_species, dict):
+            for raw_name, cached_entry in cached_species.items():
+                name = normalise_species_name(raw_name)
+                if not isinstance(cached_entry, dict):
+                    continue
 
-        merged_count = 0
-        for raw_name, cached_entry in cached_species.items():
-            name = normalise_species_name(raw_name)
-
-            if not isinstance(cached_entry, dict):
-                continue
-
-            if name not in species_dict:
-                species_dict[name] = dict(cached_entry)
-                merged_count += 1
-            else:
-                existing = species_dict[name]
-                cached_reserves = cached_entry.get("reserves", [])
-                existing_reserves = existing.setdefault("reserves", [])
-
-                if isinstance(cached_reserves, list):
-                    for reserve in cached_reserves:
-                        if reserve not in existing_reserves:
-                            existing_reserves.append(reserve)
-
-        print(f"   ✅ Loaded {len(cached_species)} species; {merged_count} new entries added.")
-        return species_dict
-
+                if name not in species_dict:
+                    species_dict[name] = dict(cached_entry)
+                    merged_count += 1
+                else:
+                    existing = species_dict[name]
+                    existing_reserves = existing.setdefault("reserves", [])
+                    cached_reserves = cached_entry.get("reserves", [])
+                    if isinstance(cached_reserves, list):
+                        for reserve in cached_reserves:
+                            if reserve not in existing_reserves:
+                                existing_reserves.append(reserve)
     except FileNotFoundError:
-        print("   ⚠️ expected_species_master.json not found. Continuing with VBA data only.")
-        return species_dict
-    except (json.JSONDecodeError, ValueError) as e:
-        print(f"   ⚠️ Invalid expected_species_master.json: {e}")
-        print("   ⚠️ Continuing with VBA data only.")
-        return species_dict
+        pass
+    except (json.JSONDecodeError, ValueError):
+        pass
+
+    # 2) Load missing_species.json
+    missing_path = os.path.join(os.path.dirname(__file__), "missing_species.json")
+    try:
+        with open(missing_path, "r", encoding="utf-8") as f:
+            missing_species = json.load(f)
+
+        if isinstance(missing_species, dict):
+            for raw_name, entry in missing_species.items():
+                name = normalise_species_name(raw_name)
+                if not isinstance(entry, dict):
+                    continue
+
+                if name not in species_dict:
+                    species_dict[name] = dict(entry)
+                    merged_count += 1
+                else:
+                    existing = species_dict[name]
+                    existing.update(entry)
+                    if "reserves" in entry and isinstance(entry["reserves"], list):
+                        existing_reserves = existing.setdefault("reserves", [])
+                        for reserve in entry["reserves"]:
+                            if reserve not in existing_reserves:
+                                existing_reserves.append(reserve)
+    except FileNotFoundError:
+        pass
+    except (json.JSONDecodeError, ValueError):
+        pass
+
+    print(f"   ✅ Merged {merged_count} vetted species entries from local datasets.")
+    return species_dict
 
 
 def build_master_list():
