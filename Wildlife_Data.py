@@ -236,10 +236,14 @@ def parse_vba_summary(filepath):
     return pd.read_csv(io.StringIO(csv_data)), reserve_name
 
 def inject_inaturalist_data(species_dict):
-    """Load the vetted species cache and missing-species overrides, normalized to canonical names."""
-    print("   📚 Loading vetted local species data...")
+    """Load vetted species from local cache and missing_species.json.
+    
+    Only species present in these vetted lists are allowed. 
+    Species removed from the cache are purged from the library.
+    """
+    print("   📚 Loading vetted species list (filtering VBA records)...")
 
-    merged_count = 0
+    vetted_species = {}
 
     # 1) Load expected_species_master.json
     cache_path = os.path.join(os.path.dirname(__file__), "expected_species_master.json")
@@ -250,26 +254,12 @@ def inject_inaturalist_data(species_dict):
         if isinstance(cached_species, dict):
             for raw_name, cached_entry in cached_species.items():
                 name = normalise_species_name(raw_name)
-                if not isinstance(cached_entry, dict):
-                    continue
-
-                if name not in species_dict:
-                    species_dict[name] = dict(cached_entry)
-                    merged_count += 1
-                else:
-                    existing = species_dict[name]
-                    existing_reserves = existing.setdefault("reserves", [])
-                    cached_reserves = cached_entry.get("reserves", [])
-                    if isinstance(cached_reserves, list):
-                        for reserve in cached_reserves:
-                            if reserve not in existing_reserves:
-                                existing_reserves.append(reserve)
-    except FileNotFoundError:
-        pass
-    except (json.JSONDecodeError, ValueError):
+                if isinstance(cached_entry, dict):
+                    vetted_species[name] = dict(cached_entry)
+    except (FileNotFoundError, json.JSONDecodeError, ValueError):
         pass
 
-    # 2) Load missing_species.json
+    # 2) Load missing_species.json (additions to the vetted list)
     missing_path = os.path.join(os.path.dirname(__file__), "missing_species.json")
     try:
         with open(missing_path, "r", encoding="utf-8") as f:
@@ -278,27 +268,32 @@ def inject_inaturalist_data(species_dict):
         if isinstance(missing_species, dict):
             for raw_name, entry in missing_species.items():
                 name = normalise_species_name(raw_name)
-                if not isinstance(entry, dict):
-                    continue
-
-                if name not in species_dict:
-                    species_dict[name] = dict(entry)
-                    merged_count += 1
-                else:
-                    existing = species_dict[name]
-                    existing.update(entry)
-                    if "reserves" in entry and isinstance(entry["reserves"], list):
-                        existing_reserves = existing.setdefault("reserves", [])
-                        for reserve in entry["reserves"]:
-                            if reserve not in existing_reserves:
-                                existing_reserves.append(reserve)
-    except FileNotFoundError:
-        pass
-    except (json.JSONDecodeError, ValueError):
+                if isinstance(entry, dict):
+                    if name in vetted_species:
+                        # Merge with existing cache entry
+                        vetted_species[name].update(entry)
+                    else:
+                        # Add as new vetted entry
+                        vetted_species[name] = dict(entry)
+    except (FileNotFoundError, json.JSONDecodeError, ValueError):
         pass
 
-    print(f"   ✅ Merged {merged_count} vetted species entries from local datasets.")
-    return species_dict
+    # 3) Filter species_dict to ONLY include vetted species
+    filtered_dict = {}
+    for name, entry in species_dict.items():
+        if name in vetted_species:
+            # Keep the VBA entry but merge any metadata from vetted list
+            filtered_dict[name] = entry
+            # Ensure reserves from vetted list are included
+            existing_reserves = entry.get("reserves", [])
+            vetted_reserves = vetted_species[name].get("reserves", [])
+            if isinstance(vetted_reserves, list):
+                for reserve in vetted_reserves:
+                    if reserve not in existing_reserves:
+                        existing_reserves.append(reserve)
+
+    print(f"   ✅ Filtered to {len(filtered_dict)} vetted species (removed {len(species_dict) - len(filtered_dict)}).")
+    return filtered_dict
 
 
 def build_master_list():
