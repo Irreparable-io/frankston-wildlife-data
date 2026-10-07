@@ -934,8 +934,34 @@ def run_radar_system():
             "taxonomy": taxonomy
         }
 
-    print("    🧬 Building Expected Master List from VBA & iNat...")
+   print("    🧬 Building Expected Master List from VBA & iNat...")
     library_payload = build_master_list()
+
+    # ==========================================
+    # --- MISSING SPECIES JSON INJECTION ---
+    # ==========================================
+    print("    🧩 Loading custom missing_species.json...")
+    try:
+        import json
+        with open('missing_species.json', 'r') as f:
+            missing_species_data = json.load(f)
+            
+        for species_name, species_info in missing_species_data.items():
+            clean_name = normalise_species_name(species_name)
+            if clean_name not in library_payload:
+                library_payload[clean_name] = {
+                    "scientific_name": species_info.get("scientific_name", "Unknown"),
+                    "threat_status": species_info.get("threat_status", "Least Concern"),
+                    "status": "unrecorded",
+                    "reserves": species_info.get("reserves", [])
+                }
+                print(f"      + Added {clean_name} from JSON")
+    except FileNotFoundError:
+        print("      ⚠️ missing_species.json not found. Skipping.")
+    except Exception as e:
+        print(f"      ❌ Error parsing missing_species.json: {e}")
+    # ==========================================
+
     js_omit_list = ['bee', 'wasp', 'ant', 'butterfly', 'moth', 'spider', 'insect', 'fish', 'eel', 'gambusia', 'dragonfly', 'crustacean', 'invertebrate']
     safe_keywords = ['fantail', 'cormorant', 'kingfisher', 'antechinus', 'frogmouth', 'bee-eater', 'fly-catcher']
     global_exclude_list = ["blue spotted hawker", "domestic cat", "ferret", "domestic dog", "cattle"]
