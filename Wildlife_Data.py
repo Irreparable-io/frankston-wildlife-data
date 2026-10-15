@@ -47,7 +47,6 @@ SPECIES_MAP = {
     "glossy black cockatoo": "Glossy Black-Cockatoo",
     "yellow tailed black cockatoo": "Yellow-tailed Black-Cockatoo",
     "black shouldered kite": "Black-shouldered Kite",
-    "australian swamp rat": "Swamp Rat",
     "australian ibis": "Australian White Ibis",
     "australian rufous fantail": "Rufous Fantail",
     "pale-flecked garden sunskink": "Garden Skink",
