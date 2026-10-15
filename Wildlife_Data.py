@@ -128,7 +128,8 @@ SPECIES_MAP = {
     "eastern short beaked echidna": "Eastern Short-beaked Echidna",
     "australasian shoveler": "Australasian Shoveler",
     "short beaked echidna": "Eastern Short-beaked Echidna",
-    "common coot": "Eurasian Coot"
+    "common coot": "Eurasian Coot",
+    "swamp rat": "Australian Swamp Rat"
 }
 
 EXCLUDE_LIST = [
