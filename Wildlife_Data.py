@@ -129,7 +129,13 @@ SPECIES_MAP = {
     "australasian shoveler": "Australasian Shoveler",
     "short beaked echidna": "Eastern Short-beaked Echidna",
     "common coot": "Eurasian Coot",
-    "swamp rat": "Australian Swamp Rat"
+    "swamp rat": "Australian Swamp Rat",
+    "rock pigeon": "Feral Pigeon",
+    "rock dove": "Feral Pigeon",
+    "blotched blue tongue": "Blotched Blue-tongued Lizard",
+    "blue tongued skink": "Blue-tongued Lizard",
+    "shining bronze cuckoo": "Shining Bronze Cuckoo",
+    "horsfield s bronze cuckoo": "Horsfield's Bronze Cuckoo"
 }
 
 EXCLUDE_LIST = [
