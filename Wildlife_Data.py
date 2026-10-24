@@ -135,7 +135,8 @@ SPECIES_MAP = {
     "blotched blue tongue": "Blotched Blue-tongued Lizard",
     "blue tongued skink": "Blue-tongued Lizard",
     "shining bronze cuckoo": "Shining Bronze Cuckoo",
-    "horsfield s bronze cuckoo": "Horsfield's Bronze Cuckoo"
+    "horsfield s bronze cuckoo": "Horsfield's Bronze Cuckoo",
+    "eurasian coot": "Australasian Coot"
 }
 
 EXCLUDE_LIST = [
