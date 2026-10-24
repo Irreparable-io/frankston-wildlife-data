@@ -100,7 +100,7 @@
     "Brush Bronzewing": { "habitats": ["Heathy Woodland"], "stratum": 0, "notes": "Requires dense heath understory." },
     "Crested Pigeon": { "habitats": ["Urban/Disturbed", "Grassy Woodland"], "stratum": 0, "notes": "" },
     "Dusky Moorhen": { "habitats": ["Swamp Scrub", "Urban/Disturbed"], "stratum": 0, "notes": "Wetland obligate." },
-    "Eurasian Coot": { "habitats": ["Swamp Scrub"], "stratum": 0, "notes": "Wetland obligate." },
+    "Australasian Coot": { "habitats": ["Swamp Scrub"], "stratum": 0, "notes": "Wetland obligate." },
     "Australasian Grebe": { "habitats": ["Swamp Scrub"], "stratum": 0, "notes": "Wetland obligate." },
     "Latham's Snipe": { "habitats": ["Swamp Scrub", "Grassy Woodland"], "stratum": 0, "notes": "Migratory; requires shallow wetlands and damp grasslands." },
     "Australian White Ibis": { "habitats": ["Urban/Disturbed", "Swamp Scrub", "Grassy Woodland"], "stratum": 0, "notes": "" },
