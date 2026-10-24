@@ -128,7 +128,7 @@ SPECIES_MAP = {
     "eastern short beaked echidna": "Eastern Short-beaked Echidna",
     "australasian shoveler": "Australasian Shoveler",
     "short beaked echidna": "Eastern Short-beaked Echidna",
-    "common coot": "Eurasian Coot",
+    "common coot": "Australasian Coot",
     "swamp rat": "Australian Swamp Rat",
     "rock pigeon": "Feral Pigeon",
     "rock dove": "Feral Pigeon",
